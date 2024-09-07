@@ -1,0 +1,646 @@
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="favicon.png" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+
+    <!-- Vendor -->
+    <link href="admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="css/tiny-slider.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <title>iLalin</title>
+  </head>
+
+  <body>
+    <!-- Start Header/Navigation -->
+    <nav
+      class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark"
+      arial-label="Furni navigation bar"
+    >
+      <div class="container">
+        <a class="navbar-brand" href="index.html">iLalin<span>.</span></a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarsFurni"
+          aria-controls="navbarsFurni"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+          <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item active">
+              <a class="nav-link" href="index.html">Beranda</a>
+            </li>
+            <li>
+              <a class="nav-link" href="tentang.html">Tentang</a>
+            </li>
+            <li><a class="nav-link" href="layanan.html">Layanan</a></li>
+            <li><a class="nav-link" href="mitra.html">Mitra</a></li>
+          </ul>
+
+          <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+            <li>
+              <a class="nav-link" href="auth/login.html"><img src="images/user.svg" /></a>
+            </li>
+            <li>
+              <a class="nav-link" href=""
+                ><i class="ri-route-fill text-yellow fs-2"></i
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Start Hero Section -->
+    <div class="hero">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-5">
+            <div class="intro-excerpt">
+              <h1>
+                Mau Kemana-mana? <span clsas="d-block">iLalin Ajah!</span>
+              </h1>
+              <p class="mb-4">
+                Layanan transportasi yang berfokus untuk mengantar penumpang
+                dengan jarak yang jauh tapi masih dalam satu tanah artinya tidak
+                pindah pulau.
+              </p>
+              <p>
+                <a href="" class="btn btn-secondary me-2">Mulai Perjalanan</a
+                ><a href="layanan.html#kabupaten" class="btn btn-white-outline"
+                  >Lihat Kabupaten</a
+                >
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="hero-img-wrap">
+              <img src="images/couch.png" class="img-fluid" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Hero Section -->
+
+    <!-- Start Product Section -->
+    <div class="product-section">
+      <div class="container">
+        <div class="row align-items-center justify-content-center text-center">
+          <!-- Start Column 1 -->
+          <div class="col-8 mb-5 mb-lg-0">
+            <h2 class="mb-4 section-title">
+              Dibuat dengan Layanan Berkualitas Tinggi.
+            </h2>
+            <p class="mb-4">
+              Dengan web aplikasi iLalin ini perjalanan anda pasti dipermudah
+              dengan adanya pilihan lokasi di berbagaai kabupaten/kota di
+              Sulawesi selatan dengan spesifik.
+            </p>
+            <p>
+              <a href="layanan.html" class="btn shadow-sm"
+                >Penawaran Kami</a>
+            </p>
+          </div>
+          <!-- End Column 1 -->
+
+          <!-- Start Column 2 -->
+          <!-- <div class="col-2 col-md-4 col-lg-3 mb-5 mb-md-0">
+            <a class="product-item" href="cart.html">
+              <img
+                src="images/product-1.png"
+                class="img-fluid product-thumbnail"
+              />
+              <h3 class="product-title">Nordic Chair</h3>
+              <strong class="product-price">$50.00</strong>
+
+              <span class="icon-cross">
+                <img src="images/cross.svg" class="img-fluid" />
+              </span>
+            </a>
+          </div> -->
+          <!-- End Column 2 -->
+        </div>
+      </div>
+    </div>
+    <!-- End Product Section -->
+
+    <!-- Start Why Choose Us Section -->
+    <div class="why-choose-section bg-main shadow">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-6">
+            <h2 class="section-title">Mengapa Kami?</h2>
+            <div class="row my-5">
+              <div class="col-6 col-md-6">
+                <div class="feature">
+                  <div class="icon">
+                    <i class="ri-crosshair-2-line text-dark fs-1"></i>
+                  </div>
+                  <h3>Pemantauan Realtime</h3>
+                  <p>
+                    Lacak perjalanan Anda secara real-time dengan akurasi
+                    tinggi.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-6">
+                <div class="feature">
+                  <div class="icon">
+                    <i class="ri-wallet-line text-dark fs-1"></i>
+                  </div>
+                  <h3>Pembayaran Aman</h3>
+                  <p>Nikmati kemudahan dan keamanan dalam setiap transaksi</p>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-6">
+                <div class="feature">
+                  <div class="icon">
+                    <i class="ri-customer-service-2-fill text-dark fs-1"></i>
+                  </div>
+                  <h3>24/7 Support</h3>
+                  <p>
+                    Kenyamanan Maksimal. Dapatkan dukungan kapan saja, dimana
+                    saja.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-6">
+                <div class="feature">
+                  <div class="icon">
+                    <i class="ri-speed-up-fill text-dark fs-1"></i>
+                  </div>
+                  <h3>Kecepatan dan Efisiensi</h3>
+                  <p>
+                    Ilalin memastikan Anda tiba di tujuan dengan cepat dan
+                    efisien, menghemat waktu berharga Anda.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="img-wrap">
+              <img src="images/Supir/tr4.png" alt="Image" class="img-fluid" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Why Choose Us Section -->
+
+    <!-- Start We Help Section -->
+    <div class="we-help-section">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-7 mb-5 mb-lg-0">
+            <div class="imgs-grid">
+              <div class="grid grid-1">
+                <img src="images/kabupaten/barru/Kab Barru.jpg" alt="barru" />
+              </div>
+              <div class="grid grid-2">
+                <img
+                  src="images/kabupaten/Pinrang/Pinrang.jpg"
+                  alt="Untree.co"
+                />
+              </div>
+              <div class="grid grid-3">
+                <img src="images/Supir/tr2.jpg" alt="Untree.co" />
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 ps-lg-5">
+            <h2 class="section-title mb-4">
+              Kami Membantu Anda Menemukan Solusi Transportasi Terbaik
+            </h2>
+            <p>
+              Nikmati kemudahan pemesanan, berbagai pilihan kendaraan, dan
+              layanan pelanggan yang siap membantu Anda kapan saja. Ilalin
+              adalah solusi transportasi yang Anda butuhkan untuk perjalanan
+              yang lebih baik.
+            </p>
+
+            <p><a href="mitra.html#our_mitra" class="btn btn-text">Lihat Mitra Kami</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End We Help Section -->
+
+    <!-- Start Popular Product -->
+    <div class="popular-product">
+      <div class="container">
+        <h2 class="section-title mb-5">Top 3 Kunjungan terbanyak tahun ini</h2>
+        <div class="row">
+          <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+            <div class="product-item-sm d-flex">
+              <div class="thumbnail">
+                <img
+                  src="images/kabupaten/Enrekang/Lambang_Kabupaten_Enrekang.png"
+                  alt="Image"
+                  class="img-fluid product-sm"
+                />
+              </div>
+              <div class="pt-3">
+                <h3>Enrekang</h3>
+                <p>Telah dikunjungi sebanyak <span>59</span> kali.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+            <div class="product-item-sm d-flex">
+              <div class="thumbnail">
+                <img
+                  src="images/kabupaten/Selayar/Logo_Kabupaten_Kepulauan_Selayar.png"
+                  alt="Image"
+                  class="img-fluid product-sm"
+                />
+              </div>
+              <div class="pt-3">
+                <h3>Selayar</h3>
+                <p>Telah dikunjungi sebanyak <span>78</span> kali.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+            <div class="product-item-sm d-flex">
+              <div class="thumbnail">
+                <img
+                  src="images/kabupaten/Bulkum/Lambang_Kabupaten_Bulukumba.svg.png"
+                  alt="Image"
+                  class="img-fluid product-sm"
+                />
+              </div>
+              <div class="pt-3">
+                <h3>Bulukumba</h3>
+                <p>Telah dikunjungi sebanyak <span>128</span> kali.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Popular Product -->
+
+    <!-- Start Testimonial Slider -->
+    <div class="testimonial-section bg-main shadow">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-7 mx-auto text-center">
+            <h2 class="section-title">Testimoni</h2>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-12">
+            <div class="testimonial-slider-wrap text-center">
+              <div id="testimonial-nav">
+                <span class="prev" data-controls="prev"
+                  ><span class="fa fa-chevron-left"></span
+                ></span>
+                <span class="next" data-controls="next"
+                  ><span class="fa fa-chevron-right"></span
+                ></span>
+              </div>
+
+              <div class="testimonial-slider">
+                <div class="item">
+                  <div class="row justify-content-center">
+                    <div class="col-lg-8 mx-auto">
+                      <div class="testimonial-block text-center">
+                        <blockquote class="mb-5">
+                          <p>
+                            &ldquo;Aplikasi ini memberikan pengalaman yang
+                            sangat memuaskan, dan saya merasa sangat terbantu
+                            dengan kemudahan dan efisiensi yang ditawarkannya.
+                            Ini adalah solusi transportasi yang saya
+                            rekomendasikan tanpa ragu untuk siapa saja yang
+                            membutuhkan perjalanan antar kabupaten yang nyaman
+                            dan terjangkau.&rdquo;
+                          </p>
+                        </blockquote>
+
+                        <div class="author-info">
+                          <div class="author-pic">
+                            <img
+                              src="images/WhatsApp-Image-2024-05-07-at-17.07.45.jpeg"
+                              alt="Maria Jones"
+                              class="img-fluid"
+                            />
+                          </div>
+                          <h3 class="font-weight-bold">Prof Karta Jayadi</h3>
+                          <span class="position d-block mb-3"
+                            >Rektor Universitas Negeri Makassar</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- END item -->
+
+                <div class="item">
+                  <div class="row justify-content-center">
+                    <div class="col-lg-8 mx-auto">
+                      <div class="testimonial-block text-center">
+                        <blockquote class="mb-5">
+                          <p>
+                            &ldquo;Saya suka aplikasi ini karena menawarkan
+                            travel antar kabupaten dengan harga yang lebih murah
+                            dibandingkan transportasi umum lainnya. Selain itu,
+                            proses pemesanannya juga cepat dan praktis, tinggal
+                            pilih rute dan jam, langsung beres. Mobilnya standar
+                            tapi cukup nyaman. Saya sering menggunakan ini untuk
+                            pulang ke kampung halaman atau keperluan
+                            kerja.&rdquo;
+                          </p>
+                        </blockquote>
+
+                        <div class="author-info">
+                          <div class="author-pic">
+                            <img
+                              src="images/Foto Pria Ganteng Indonesia (21).jpg"
+                              alt="Maria Jones"
+                              class="img-fluid"
+                            />
+                          </div>
+                          <h3 class="font-weight-bold">Andi</h3>
+                          <span class="position d-block mb-3">Freelance</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- END item -->
+
+                <div class="item">
+                  <div class="row justify-content-center">
+                    <div class="col-lg-8 mx-auto">
+                      <div class="testimonial-block text-center">
+                        <blockquote class="mb-5">
+                          <p>
+                            &ldquo;Sebagai anak kost yang sering banget
+                            pulang-pergi ke kampung, aplikasi ini bener-bener
+                            bikin hemat! Pilihan rutenya lumayan lengkap, dan
+                            biaya travelnya murah banget dibanding opsi lain.
+                            Yang paling saya suka, ada pilihan jadwal yang
+                            fleksibel, jadi bisa sesuaikan sama waktu kuliah.
+                            Secara keseluruhan, worth it banget buat anak kost
+                            yang mau jalan-jalan hemat! &rdquo;
+                          </p>
+                        </blockquote>
+
+                        <div class="author-info">
+                          <div class="author-pic">
+                            <img
+                              src="images/cheerful-student-holding-notebook-and-pointing-wit-2022-12-16-18-27-47-utc-1-e1675416945189.jpg"
+                              alt="Maria Jones"
+                              class="img-fluid"
+                            />
+                          </div>
+                          <h3 class="font-weight-bold">Citra</h3>
+                          <span class="position d-block mb-3">Mahasiswi</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- END item -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Testimonial Slider -->
+
+    <!-- Start Blog Section -->
+    <div class="blog-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-6">
+            <h2 class="section-title">Ceritakan Perjalanan Anda</h2>
+            <p>Setiap perjalanan punya cerita. Bagikan pengalaman Anda menggunakan iLalin dan dapatkan kesempatan untuk ditampilkan di blog kami!</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+            <div class="post-entry">
+              <a href="#" class="post-thumbnail"
+                ><img src="images/travel_experience/experience_1.png" alt="Image" class="img-fluid"
+              /></a>
+              <div class="post-content-entry">
+                <h3><a href="#">Solusi Terbaik Untuk Pulkam</a></h3>
+                <div class="meta">
+                  <span>oleh <a href="#">Andi Rahmat</a></span>
+                  <span>pada </span> <a href="#">15 Agustus 2024</a></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+            <div class="post-entry">
+              <a href="#" class="post-thumbnail"
+                ><img src="images/travel_experience/experience_2.png" alt="Image" class="img-fluid"
+              /></a>
+              <div class="post-content-entry">
+                <h3><a href="#">Perjalanan Bisnis Jadi Lebih Mudah dengan iLalin</a></h3>
+                <div class="meta">
+                  <span>oleh <a href="#">Budi Santoso</a></span>
+                  <span>pada <a href="#">5 September 2024</a></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <a href="#" class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 row align-items-center ">
+            <div class="post-entry text-center bg-main h-100 d-flex align-items-center justify-content-center rounded">
+              <p class="more btn btn-text text-decoration-underline">Lihat Semua Cerita</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- End Blog Section -->
+
+    <!-- Start Footer Section -->
+    <footer class="footer-section">
+      <div class="container relative">
+        <div class="sofa-img">
+          <img
+            src="images/mobil/avanza putih.png"
+            alt="Image"
+            class="img-fluid"
+          />
+        </div>
+
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form">
+              <h3 class="d-flex align-items-center">
+                <span class="me-1"
+                  ><img
+                    src="images/envelope-outline.svg"
+                    alt="Image"
+                    class="img-fluid"
+                /></span>
+                <span>Gratis dan Mudah</span>
+              </h3>
+              <p>
+                Daftar newsletter kami secara gratis dan mudah! Jangan lewatkan
+                informasi penting dari jasa kami
+              </p>
+
+              <form action="#" class="row g-3" id="newsletter">
+                <div class="col-auto">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    placeholder="Masukkan nama anda"
+                  />
+                </div>
+                <div class="col-auto">
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="Masukkan email anda"
+                  />
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary">
+                    <span class="fa fa-paper-plane"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-5 mb-5 justify-content-between">
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap">
+              <a href="#" class="footer-logo">iLalin<span>.</span></a>
+            </div>
+            <p class="mb-4">
+              Solusi andal dan mudah digunakan, Ilalin memastikan setiap
+              perjalanan Anda menjadi pengalaman yang menyenangkan dan bebas
+              stres.
+            </p>
+
+            <ul class="list-unstyled custom-social">
+              <li>
+                <a href="#"><span class="fa fa-brands fa-facebook-f"></span></a>
+              </li>
+              <li>
+                <a href="#"><span class="fa fa-brands fa-twitter"></span></a>
+              </li>
+              <li>
+                <a href="#"><span class="fa fa-brands fa-instagram"></span></a>
+              </li>
+              <li>
+                <a href="#"><span class="fa fa-brands fa-linkedin"></span></a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="row links-wrap justify-content-end">
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="tentang.html">Tentang</a></li>
+                  <li><a href="layanan.html">Layanan</a></li>
+                  <li><a href="tentang.html#kontak">Kontak Kami</a></li>
+                </ul>
+              </div>
+
+              <!-- <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Support</a></li>
+                  <li><a href="#">Knowledge base</a></li>
+                  <li><a href="#">Live chat</a></li>
+                </ul>
+              </div> -->
+
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="mitra.html">Mitra</a></li>
+                  <li><a href="tentang.html#tim_kami">Tim</a></li>              
+                  <li><a href="blog/index.html">Blog</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">
+                Copyright &copy;
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                . All Rights Reserved. &mdash; Designed with love by
+                <a href="https://untree.co">Untree.co</a> Distributed By
+                <a hreff="https://themewagon.com">ThemeWagon</a>
+                <!-- License information: https://untree.co/license/ -->
+              </p>
+            </div>
+
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- End Footer Section -->
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/tiny-slider.js"></script>
+    <script src="js/custom.js"></script>
+  </body>
+</html>
