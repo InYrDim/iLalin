@@ -254,8 +254,7 @@ include '../php/connection.php';
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center"
-                                href="../php/admin/action_admin_logout.php">
+                            <a class="dropdown-item d-flex align-items-center" href="../php/admin/admin_logout.php">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
                             </a>
