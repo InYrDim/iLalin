@@ -1,0 +1,8 @@
+#profileImage {
+  width: 200px;
+  /* Ubah ukuran lebar */
+  height: 200px;
+  /* Ubah ukuran tinggi */
+  object-fit: cover;
+  /* Memastikan gambar tidak terdistorsi */
+}

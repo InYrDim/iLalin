@@ -5,6 +5,121 @@
 * Template URI: https://untree.co/
 * License: https://creativecommons.org/licenses/by/3.0/
 */ -->
+
+
+<?php
+session_start();
+
+// Include the database connection file
+include '../php/database.php';
+
+// Create Account Validation
+$isSubmit = isset($_POST['submit']);
+
+if($isSubmit) {
+    // Check for empty fields by POST method
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Get form data
+        $username = $_POST['username'];
+        $role = $_POST['role'];
+        $email = $_POST['email'];
+        $tel = $_POST['telepon'];
+        $password = $_POST['password'];
+        $confirm_password = $_POST['confirm_password'];
+ 
+        function duplicate($email) {
+            $db = new Database();
+            $result = $db->fetch('users', "*", 'email = ?', [$email]);
+
+            if ($result) {
+                return true;
+            }
+
+            return false;
+        };
+
+        // Check for duplicated email addresss
+        if(duplicate($email)) { 
+?>
+
+<!-- Popup Duplicated Email -->
+<div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true"
+    style="position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);">
+
+    <div class="toast-header  ">
+        <strong class="me-auto" style="color: var(rgb(--primary-color)) !important;">Error! Duplicate Email
+            Address</strong>
+        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        Gunakan alamat email yang berbeda.
+    </div>
+</div>
+<?php 
+
+        } else {
+            $db = new Database();
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            
+            function getBase64($image_path) {
+                $image_data = file_get_contents($image_path);
+                return base64_encode($image_data);
+            }
+
+            $data = [
+                'nama' => $username, 
+                'email' => $email,
+                'nomor_telepon' => $tel,
+                'password' => $hashed_password, 
+                'peran' => $role,        
+                'profile_image' => getBase64('../images/default_profile.png')
+            ];
+            $insertResult = $db->insert('users', $data);
+            
+            if ($insertResult !== false) {
+                $message = "Data inserted successfully!";
+                
+                $_SESSION['message'] = $message;
+                $_SESSION['email'] = $email;
+                $_SESSION['username'] = $username;
+
+                unset($_SESSION['message']);
+                ?>
+
+<!-- Account Created Successfully Pop UP -->
+<div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true"
+    style="position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);">
+
+    <div class="toast-header  ">
+        <p class="me-auto" style="color: var(rgb(--primary-color)) !important;"> Great
+            <strong><?=$username?></strong>!,
+            Account Created Successfully!
+        </p>
+        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">We will redirect you to user page in a few seconds
+    </div>
+</div>
+<script>
+setTimeout(function() {
+    window.location.href = '../users/index.php';
+}, 3000);
+</script>
+
+<?php
+
+            } else {
+                echo "Error inserting data";
+            }
+            $db->close();
+        }
+
+    } 
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,13 +141,16 @@
 
 
     <link href="../css/tiny-slider.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
     <link href="../css/style.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="sign-google.css">
+
+    <link rel="stylesheet" href="./style/sign-google.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js" defer></script>
 
-    <title>Login - iLalin</title>
+    <title>Signin - iLalin</title>
 </head>
 
 <body>
@@ -44,16 +162,16 @@
                 <a class="navbar-brand fs-4 w-100" href="../index.php">iLalin<span>.</span></a>
                 <ul class="navbar-nav flex-row gap-3 fs-5">
                     <li class="nav-item active">
-                        <a class="nav-link" href="../index.php"><i class="ri-home-6-line text-white-80"></i></a>
+                        <a class="nav-link" href="../index.html"><i class="ri-home-6-line text-white-80"></i></a>
                     </li>
                     <li>
-                        <a class="nav-link" href="../tentang.php"><i class="ri-team-line text-white-80"></i></a>
+                        <a class="nav-link" href="../tentang.html"><i class="ri-team-line text-white-80"></i></a>
                     </li>
                     <li>
-                        <a class="nav-link" href="../layanan.php"><i class="ri-service-line text-white-80"></i></a>
+                        <a class="nav-link" href="../layanan.html"><i class="ri-service-line text-white-80"></i></a>
                     </li>
                     <li>
-                        <a class="nav-link" href="../mitra.php"><i class="ri-shake-hands-line text-white-80"></i></a>
+                        <a class="nav-link" href="../mitra.html"><i class="ri-shake-hands-line text-white-80"></i></a>
                     </li>
                 </ul>
             </nav>
@@ -97,24 +215,24 @@
                         </div>
 
                         <!-- Manual Sigin -->
-                        <form action="#!">
+                        <form action="" method="POST">
                             <div class="row gy-2">
 
-                                <!-- Nama -->
+                                <!-- Username -->
                                 <div class="col-lg-6">
                                     <div class="form-floating mb-1">
-                                        <input type="name" class="form-control" name="name" id="name" value=""
-                                            placeholder="Name" required />
-                                        <label for="email" class="form-label">Nama</label>
+                                        <input type="text" minlength="4" class="form-control" name="username" id="name"
+                                            value="" placeholder="Name" required />
+                                        <label for="username" class="form-label">Nama Pengguna</label>
                                     </div>
                                 </div>
 
                                 <!-- Role -->
                                 <div class="col-lg-6">
                                     <div class="form-floating mb-1">
-                                        <select class="form-control" id="floatingSelect"
-                                            aria-label="Floating label select example">
-                                            <option selected value="penumpang">Penumpang</option>
+                                        <select class="form-control" id="floatingSelect" name="role"
+                                            aria-label="Floating label select example" required>
+                                            <option value="penumpang">Penumpang</option>
                                             <option value="pengemudi">Pengemudi</option>
                                         </select>
                                         <label for="floatingSelect">Masuk sebagai: </label>
@@ -133,8 +251,7 @@
                                 <!-- No Telepon -->
                                 <div class="col-lg-6">
                                     <div class="form-floating mb-1">
-                                        <input type="tel" id="telepon" name="telepon"
-                                            pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" class="form-control" value=""
+                                        <input type="tel" id="telepon" name="telepon" class="form-control" value=""
                                             placeholder="Telepon" required />
                                         <label for="telepon" class="form-label">Telepon</label>
                                     </div>
@@ -152,11 +269,13 @@
                                 <!-- Konfirmasi Password -->
                                 <div class="col-12">
                                     <div class="form-floating mb-1">
-                                        <input type="password" class="form-control" name="password" id="password"
-                                            value="" placeholder="Password" required />
-                                        <label for="password" class="form-label">Konfirmasi Password</label>
+                                        <input type="password" class="form-control" name="confirm_password"
+                                            id="confirm_password" value="" placeholder="Confirm Password" required />
+                                        <label for="confirm_password" class="form-label">Konfirmasi Password</label>
                                     </div>
                                 </div>
+
+
 
                                 <!-- Keep Login -->
                                 <div class="col-12">
@@ -172,7 +291,7 @@
                                 <!-- Login BTN -->
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <button class="btn btn-dark" type="submit">
+                                        <button class="btn btn-dark" type="submit" name="submit">
                                             Masuk
                                         </button>
                                     </div>
@@ -189,8 +308,9 @@
                             </div>
                         </div>
 
-                        <!-- Sigin With Google -->
-                        <div class="d-flex justify-content-center  ">
+
+                        <!-- Google Sign In -->
+                        <!-- <div class="d-flex justify-content-center  ">
                             <button class="gsi-material-button mt-3">
                                 <div class="gsi-material-button-state"></div>
                                 <div class="gsi-material-button-content-wrapper">
@@ -216,7 +336,8 @@
                                     <span style="display: none;">Sign in with Google</span>
                                 </div>
                             </button>
-                        </div>
+                        </div> -->
+
 
                     </div>
                 </div>
@@ -227,10 +348,7 @@
     <script src="../js/bootstrap.bundle.min.js"></script>
     <script src="../js/tiny-slider.js"></script>
     <script src="../js/custom.js"></script>
-    <script>
-    $("#tel").intlTelInput({
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js"
-    });
+    <script src="./js/script.js"></script>
     </script>
 </body>
 

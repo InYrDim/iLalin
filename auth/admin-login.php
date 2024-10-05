@@ -23,6 +23,7 @@ if (isset($_SESSION['message'])) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="author" content="Untree.co" />
+
     <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
 
     <meta name="description" content="" />
@@ -36,11 +37,12 @@ if (isset($_SESSION['message'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="../css/tiny-slider.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
-    <title>iLalin</title>
+
+    <title>Admin Login</title>
+
 </head>
 
 <body>
-
     <div class="row h-screen">
         <!-- Login 1 - Bootstrap Brain Component -->
         <div class="bg-light py-3 py-md-5">
@@ -48,32 +50,38 @@ if (isset($_SESSION['message'])) {
                 <div class="row justify-content-md-center">
                     <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
                         <div class="bg-white p-4 p-md-5 rounded shadow-sm">
+
+                            <!-- Form Header Container -->
                             <div class="row align-items-center">
                                 <div class="col-12">
+
+                                    <!-- Logo container -->
                                     <div class="text-center mb-2">
-                                        <a href="../index.php">
+                                        <a href="../index.html">
                                             <img src="../images/logo/logo-ilalin.png" alt="BootstrapBrain Logo"
                                                 width="100" height="100" />
                                         </a>
                                     </div>
+
+                                    <!-- Navigation -->
                                     <div class="mb-3">
                                         <h4 class="text-center">Welcome Admin!</h4>
                                         <div class="">
                                             <ul class="navbar-nav flex-row justify-content-center gap-3 fs-5">
                                                 <li class="nav-item active">
-                                                    <a class="nav-link" href="../index.php"><i
+                                                    <a class="nav-link" href="../index.html"><i
                                                             class="ri-home-6-line text-dark"></i></a>
                                                 </li>
                                                 <li>
-                                                    <a class="nav-link" href="../tentang.php"><i
+                                                    <a class="nav-link" href="../tentang.html"><i
                                                             class="ri-team-line text-dark"></i></a>
                                                 </li>
                                                 <li>
-                                                    <a class="nav-link" href="../layanan.php"><i
+                                                    <a class="nav-link" href="../layanan.html"><i
                                                             class="ri-service-line text-dark"></i></a>
                                                 </li>
                                                 <li>
-                                                    <a class="nav-link" href="../mitra.php"><i
+                                                    <a class="nav-link" href="../mitra.html"><i
                                                             class="ri-shake-hands-line text-dark"></i></a>
                                                 </li>
                                             </ul>
@@ -82,6 +90,7 @@ if (isset($_SESSION['message'])) {
                                 </div>
                             </div>
 
+                            <!-- Login Form -->
                             <form method="POST" action="../php/admin/action_admin_login.php">
                                 <div class="row gy-3 gy-md-4 overflow-hidden">
                                     <div class="col-12">

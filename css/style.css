@@ -5,6 +5,8 @@
 * License: https://creativecommons.org/licenses/by/3.0/
 */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("main.css");
+
 body {
   overflow-x: hidden;
   position: relative;
@@ -231,9 +233,6 @@ a.more {
   font-weight: 600;
   padding: 12px 30px;
   border-radius: 30px;
-  color: #ffffff;
-  background: #2f2f2f;
-  border-color: #2f2f2f;
 }
 .btn:hover {
   color: #ffffff;
@@ -942,3 +941,5 @@ textarea {
   border-radius: 50%;
   background: rgba(59, 93, 80, 0.2);
 }
+
+/* MyCustom */

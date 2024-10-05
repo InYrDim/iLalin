@@ -14,10 +14,3 @@ $conn = new mysqli($host, $username, $password, $database);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-// If you reach here, the connection was successful
-echo "Connected successfully";
-
-// Close the connection (optional, you can also keep it open for further queries)
-?>
-

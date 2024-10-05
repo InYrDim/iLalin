@@ -1,0 +1,19 @@
+.rating {
+  font-size: 30px;
+}
+
+.star {
+  cursor: pointer;
+  color: #ffd700;
+  /* warna default */
+}
+
+.star:hover {
+  color: #ffd700;
+  /* warna hover */
+}
+
+.star.active {
+  color: #ffd700;
+  /* warna aktif */
+}

@@ -30,7 +30,6 @@
 
 <body>
     <!-- Start Header/Navigation -->
-    <?php include_once './components/header.php' ?>
     <!-- End Header/Navigation -->
 
     <!-- Start Hero Section -->
@@ -42,7 +41,6 @@
                         <h1>
                             Mulai Rute Perjalanan Anda <span clsas="d-block">Pake iLalin Ajah!</span>
                         </h1>
-
                     </div>
                 </div>
             </div>
@@ -51,7 +49,6 @@
     <!-- End Hero Section -->
 
     <!-- Start Footer Section -->
-    <?php include_once './components/footer.php'; ?>
     <!-- End Footer Section -->
 
     <script src="js/bootstrap.bundle.min.js"></script>

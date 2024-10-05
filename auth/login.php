@@ -5,6 +5,87 @@
 * Template URI: https://untree.co/
 * License: https://creativecommons.org/licenses/by/3.0/
 */ -->
+
+<?php
+
+session_start();
+
+// Include the database connection file
+include '../php/connection.php';
+include '../php/validator.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get form data
+    $validator = new FormValidator($_POST);
+
+    try {
+        $validator->validate();
+        // If validation passes, process the form
+    
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        // Prepare and execute SQL query to fetch the admin record
+        $stmt = $conn->prepare("SELECT id_pengguna, nama, email, nomor_telepon, password, peran, profile_image FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        // Validate Password
+        if ($stmt->num_rows == 1) {
+            // Bind the result to variables
+            $stmt->bind_result($id_pengguna, $nama, $email, $nomor_telepn, $hashed_password, $peran, $profileImage);
+            $stmt->fetch();
+            
+            if (password_verify($password, $hashed_password)) {
+                // Password is correct, store user data in the session and redirect
+                $_SESSION['user_id'] = $id_pengguna;
+                $_SESSION['email'] = $email;
+
+                // username as name from the 'name' fields
+                $_SESSION['username'] = $nama;
+                $_SESSION['profile_image'] = $profileImage;
+                $_SESSION['message'] = "Login successful!";
+                $_SESSION['email'] = $email;
+                $_SESSION['role'] = $peran;
+                $_SESSION['profile_image'] = $profileImage;
+                
+                header("Location: ../users/index.php"); // Redirect to a protected page
+                exit();
+            } else {
+
+    ?>
+<!-- Popup Invalid Credential -->
+<div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true"
+    style="position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);">
+    <div class="toast-header  ">
+        <strong class="me-auto" style="color: var(rgb(--primary-color)) !important;">Error! Invalid Credential</strong>
+        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        Masukkan Email/Password yang benar.
+    </div>
+</div>
+<?php
+
+                    $_SESSION['message'] = "Invalid password.";
+                    //header("Location: ../../auth/admin-login.php");
+                    echo $_SESSION['message'];
+                }
+            } else {
+                $_SESSION['message'] = "No account found with that email.";
+                echo $_SESSION['message'];
+                header("Location: ");
+                // exit();
+        }
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+
+} 
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,7 +106,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="../css/tiny-slider.css" rel="stylesheet" />
     <link href="../css/style.css" rel="stylesheet" />
-    <link rel="stylesheet" href="sign-google.css">
+    <link rel="stylesheet" href="./style/sign-google.css">
 
     <title>Login - iLalin</title>
 </head>
@@ -39,16 +120,16 @@
                 <a class="navbar-brand fs-4 w-100" href="../index.php">iLalin<span>.</span></a>
                 <ul class="navbar-nav flex-row gap-3 fs-5">
                     <li class="nav-item active">
-                        <a class="nav-link" href="../index.php"><i class="ri-home-6-line text-white-80"></i></a>
+                        <a class="nav-link" href="../index.html"><i class="ri-home-6-line text-white-80"></i></a>
                     </li>
                     <li>
-                        <a class="nav-link" href="../tentang.php"><i class="ri-team-line text-white-80"></i></a>
+                        <a class="nav-link" href="../tentang.html"><i class="ri-team-line text-white-80"></i></a>
                     </li>
                     <li>
-                        <a class="nav-link" href="../layanan.php"><i class="ri-service-line text-white-80"></i></a>
+                        <a class="nav-link" href="../layanan.html"><i class="ri-service-line text-white-80"></i></a>
                     </li>
                     <li>
-                        <a class="nav-link" href="../mitra.php"><i class="ri-shake-hands-line text-white-80"></i></a>
+                        <a class="nav-link" href="../mitra.html"><i class="ri-shake-hands-line text-white-80"></i></a>
                     </li>
                 </ul>
             </nav>
@@ -93,7 +174,7 @@
 
 
 
-                        <form action="../php/user/action_user_login.php">
+                        <form action="" method="POST">
                             <div class="row gy-2">
 
                                 <!-- Email -->
@@ -146,8 +227,8 @@
                             </div>
                         </div>
 
-
-                        <div class="d-flex justify-content-center  ">
+                        <!-- Google Sign In -->
+                        <!-- <div class="d-flex justify-content-center  ">
                             <button class="gsi-material-button mt-3">
                                 <div class="gsi-material-button-state"></div>
                                 <div class="gsi-material-button-content-wrapper">
@@ -173,7 +254,7 @@
                                     <span style="display: none;">Sign in with Google</span>
                                 </div>
                             </button>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 include '../php/middleware.php';
 include '../php/connection.php';
 ?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -24,11 +25,9 @@ include '../php/connection.php';
 
     <!-- Vendor CSS Files -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
     <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
     <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
     <!-- Template Main CSS File -->
@@ -46,36 +45,24 @@ include '../php/connection.php';
 <body>
 
     <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top d-flex align-items-center">
+    <header id="header" class="header fixed-top d-flex align-items-center justify-content-between">
 
-        <div class="d-flex align-items-center justify-content-between">
-            <a href="./" class="logo d-flex align-items-center">
+        <div class="d-flex align-items-center">
+            <a href="./" class="logo d-flex align-items-center w-100">
                 <img src="../images/logo/logo-ilalin.png" alt="">
                 <span class="d-none d-lg-block">iLalin Admin</span>
             </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
+            <i class="bi bi-list "></i>
+            <i class="ri-side-bar-line  toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="search-bar">
-            <form class="search-form d-flex align-items-center m-0" method="POST" action="#">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-            </form>
-        </div><!-- End Search Bar -->
-
-        <nav class="header-nav ms-auto">
+        <nav class="header-nav">
             <ul class="d-flex align-items-center">
 
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link nav-icon search-bar-toggle " href="#">
-                        <i class="bi bi-search"></i>
-                    </a>
-                </li><!-- End Search Icon-->
 
                 <li class="nav-item dropdown">
-
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell"></i>
+                        <i class="ri-notification-4-fill"></i>
                         <span class="badge bg-primary badge-number">4</span>
                     </a><!-- End Notification Icon -->
 
@@ -148,9 +135,8 @@ include '../php/connection.php';
                 </li><!-- End Notification Nav -->
 
                 <li class="nav-item dropdown">
-
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-chat-left-text"></i>
+                        <i class="ri-message-2-fill"></i>
                         <span class="badge bg-success badge-number">3</span>
                     </a><!-- End Messages Icon -->
 
@@ -225,7 +211,7 @@ include '../php/connection.php';
 
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="pages/user-profile.php">
-                                <i class="bi bi-person"></i>
+                                <i class="ri-profile-line"></i>
                                 <span>My Profile</span>
                             </a>
                         </li>
@@ -235,7 +221,7 @@ include '../php/connection.php';
 
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-gear"></i>
+                                <i class="ri-user-settings-line"></i>
                                 <span>Account Settings</span>
                             </a>
                         </li>
@@ -244,19 +230,13 @@ include '../php/connection.php';
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                                <i class="bi bi-question-circle"></i>
-                                <span>Need Help?</span>
-                            </a>
-                        </li>
-                        <li>
                             <hr class="dropdown-divider">
                         </li>
 
                         <li>
                             <a class="dropdown-item d-flex align-items-center"
                                 href="../php/admin/action_admin_logout.php">
-                                <i class="bi bi-box-arrow-right"></i>
+                                <i class="ri-logout-circle-line"></i>
                                 <span>Sign Out</span>
                             </a>
                         </li>
@@ -283,235 +263,35 @@ include '../php/connection.php';
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link " href="index.html">
-                    <i class="bi bi-grid"></i>
+                <a class="nav-link " href="index.php">
+                    <i class="ri-dashboard-horizontal-line"></i>
                     <span>Dashboard</span>
                 </a>
             </li><!-- End Dashboard Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-menu-button-wide"></i><span>Components</span><i
-                        class="bi bi-chevron-down ms-auto"></i>
+                <a class="nav-link " href="Manajemen pengemudi.php">
+                    <i class="ri-steering-2-line"></i></i><span>Manajemen Pengemudi</span><i></i>
                 </a>
-                <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="components-alerts.html">
-                            <i class="bi bi-circle"></i><span>Alerts</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-accordion.html">
-                            <i class="bi bi-circle"></i><span>Accordion</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-badges.html">
-                            <i class="bi bi-circle"></i><span>Badges</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-breadcrumbs.html">
-                            <i class="bi bi-circle"></i><span>Breadcrumbs</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-buttons.html">
-                            <i class="bi bi-circle"></i><span>Buttons</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-cards.html">
-                            <i class="bi bi-circle"></i><span>Cards</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-carousel.html">
-                            <i class="bi bi-circle"></i><span>Carousel</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-list-group.html">
-                            <i class="bi bi-circle"></i><span>List group</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-modal.html">
-                            <i class="bi bi-circle"></i><span>Modal</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-tabs.html">
-                            <i class="bi bi-circle"></i><span>Tabs</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-pagination.html">
-                            <i class="bi bi-circle"></i><span>Pagination</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-progress.html">
-                            <i class="bi bi-circle"></i><span>Progress</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-spinners.html">
-                            <i class="bi bi-circle"></i><span>Spinners</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="components-tooltips.html">
-                            <i class="bi bi-circle"></i><span>Tooltips</span>
-                        </a>
-                    </li>
-                </ul>
             </li><!-- End Components Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-journal-text"></i><span>Forms</span><i class="bi bi-chevron-down ms-auto"></i>
+                <a class="nav-link " href="Manajemen Pengguna.php">
+                    <i class="ri-user-heart-line"></i><span>Manajemen Pengguna</span><i></i>
                 </a>
-                <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="forms-elements.html">
-                            <i class="bi bi-circle"></i><span>Form Elements</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="forms-layouts.html">
-                            <i class="bi bi-circle"></i><span>Form Layouts</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="forms-editors.html">
-                            <i class="bi bi-circle"></i><span>Form Editors</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="forms-validation.html">
-                            <i class="bi bi-circle"></i><span>Form Validation</span>
-                        </a>
-                    </li>
-                </ul>
             </li><!-- End Forms Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i
-                        class="bi bi-chevron-down ms-auto"></i>
+                <a class="nav-link " href="manajemen perjalanan.php">
+                    <i class="ri-taxi-fill"></i><span>Manajeman Perjalanan</span><i></i>
                 </a>
-                <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="tables-general.html">
-                            <i class="bi bi-circle"></i><span>General Tables</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="tables-data.html">
-                            <i class="bi bi-circle"></i><span>Data Tables</span>
-                        </a>
-                    </li>
-                </ul>
             </li><!-- End Tables Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-bar-chart"></i><span>Charts</span><i class="bi bi-chevron-down ms-auto"></i>
+                <a class="nav-link " href="Analisis dan Laporan.php">
+                    <i class="ri-line-chart-line"></i></i><span>Analisis dan Laporan</span><i></i>
                 </a>
-                <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="charts-chartjs.html">
-                            <i class="bi bi-circle"></i><span>Chart.js</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="charts-apexcharts.html">
-                            <i class="bi bi-circle"></i><span>ApexCharts</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="charts-echarts.html">
-                            <i class="bi bi-circle"></i><span>ECharts</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Charts Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-gem"></i><span>Icons</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="icons-bootstrap.html">
-                            <i class="bi bi-circle"></i><span>Bootstrap Icons</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="icons-remix.html">
-                            <i class="bi bi-circle"></i><span>Remix Icons</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="icons-boxicons.html">
-                            <i class="bi bi-circle"></i><span>Boxicons</span>
-                        </a>
-                    </li>
-                </ul>
             </li><!-- End Icons Nav -->
-
-            <li class="nav-heading">Pages</li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="users-profile.html">
-                    <i class="bi bi-person"></i>
-                    <span>Profile</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-faq.html">
-                    <i class="bi bi-question-circle"></i>
-                    <span>F.A.Q</span>
-                </a>
-            </li><!-- End F.A.Q Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-contact.html">
-                    <i class="bi bi-envelope"></i>
-                    <span>Contact</span>
-                </a>
-            </li><!-- End Contact Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-register.html">
-                    <i class="bi bi-card-list"></i>
-                    <span>Register</span>
-                </a>
-            </li><!-- End Register Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-login.html">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Login</span>
-                </a>
-            </li><!-- End Login Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-error-404.html">
-                    <i class="bi bi-dash-circle"></i>
-                    <span>Error 404</span>
-                </a>
-            </li><!-- End Error 404 Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-blank.html">
-                    <i class="bi bi-file-earmark"></i>
-                    <span>Blank</span>
-                </a>
-            </li><!-- End Blank Page Nav -->
-
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -522,7 +302,7 @@ include '../php/connection.php';
             <h1>Dashboard</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
                 </ol>
             </nav>
@@ -921,79 +701,7 @@ include '../php/connection.php';
                         </div>
                     </div><!-- End Recent Activity -->
 
-                    <!-- Budget Report -->
-                    <!-- <div class="card">
-            <div class="filter">
-              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <li class="dropdown-header text-start">
-                  <h6>Filter</h6>
-                </li>
 
-                <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-              </ul>
-            </div>
-
-            <div class="card-body pb-0">
-              <h5 class="card-title">Budget Report <span>| Bulan Ini</span></h5>
-
-              <div id="budgetChart" style="min-height: 400px;" class="echart"></div>
-
-              <script>
-                document.addEventListener("DOMContentLoaded", () => {
-                  var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
-                    legend: {
-                      data: ['Allocated Budget', 'Actual Spending']
-                    },
-                    radar: {
-                      // shape: 'circle',
-                      indicator: [{
-                          name: 'Sales',
-                          max: 6500
-                        },
-                        {
-                          name: 'Administration',
-                          max: 16000
-                        },
-                        {
-                          name: 'Information Technology',
-                          max: 30000
-                        },
-                        {
-                          name: 'Customer Support',
-                          max: 38000
-                        },
-                        {
-                          name: 'Development',
-                          max: 52000
-                        },
-                        {
-                          name: 'Marketing',
-                          max: 25000
-                        }
-                      ]
-                    },
-                    series: [{
-                      name: 'Budget vs spending',
-                      type: 'radar',
-                      data: [{
-                          value: [4200, 3000, 20000, 35000, 50000, 18000],
-                          name: 'Allocated Budget'
-                        },
-                        {
-                          value: [5000, 14000, 28000, 26000, 42000, 21000],
-                          name: 'Actual Spending'
-                        }
-                      ]
-                    }]
-                  });
-                });
-              </script>
-
-            </div>
-          </div>End Budget Report -->
 
                     <!-- Website Traffic -->
                     <div class="card">
