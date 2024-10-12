@@ -120,7 +120,6 @@ class Routing extends LeafletMap {
     this.startingPoint = new MapPoint("Starting Point", 0, 0, startIcon);
     this.finishingPoint = new MapPoint("Finishing Point", 0, 0, finishIcon);
 
-    // Initialize Routing Machine
     /**
      * Clearing Marker from Default Routing Machine
      **/

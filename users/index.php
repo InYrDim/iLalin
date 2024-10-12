@@ -25,6 +25,7 @@ if(isset($email)) {
 
     <!-- Vendor -->
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <script src="../assets/vendor/tailwind/tailwindcss" defer></script>
 
     <!-- Leafet -->
     <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css" />
