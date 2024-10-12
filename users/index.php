@@ -50,6 +50,20 @@ if(isset($email)) {
         background-color: var(--primary-color-name);
         color: white;
     }
+
+    .custom-input-icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .start-icon {
+        left: 10px;
+    }
+
+    .end-icon {
+        right: 10px;
+    }
     </style>
     <title>iLalin</title>
 </head>
@@ -132,57 +146,53 @@ if(isset($email)) {
 
             <!-- Start Routing -->
             <div class="position-fixed" id="routingForm"
-                style="max-width:480px; z-index:999; transition:1s cubic-bezier(.68,.04,.14,.87); bottom: -100%; margin-bottom: -10px;">
-                <div style="" class="d-flex flex-column align-items-center justify-content-center border border-4 border-primary
-                    rounded rounded-5 p-5 pb-0 bg-white fs-7 ">
-                    <div class="mb-3 w-100">
+                style="max-width:360px; z-index:999; transition:1s cubic-bezier(.68,.04,.14,.87); bottom: -100%; margin-bottom: -10px;">
+                <div style="background-color: #F5F5F5;" class="d-flex flex-column align-items-center justify-content-center 
+                    rounded rounded-5 p-4 pb-0 fs-7 ">
+                    <div class="mb-2 w-100">
                         <div class="d-flex align-items-center gap-4">
-                            <i class="ri-stop-large-fill fs-4 text-secondary"></i>
-                            <div class="form-floating w-100 position-relative">
-                                <input type="text" class="form-control" id="inputTitikAwal" placeholder="">
-                                <label for="inputTitikAwal">Titik Awal</label>
-                                <!-- <div class="position-absolute w-100 -bottom-100 mt-1" style="z-index: 10;"
-                                    aria-label="search result">
-                                    <div class="flex flex-column border-1 border border-primary rounded bg-white shadow white"
-                                        id="search-result-options">
-                                        <div class="py-2 px-3 border border-bottom-1 lh-sm placeOption">Option<span
-                                                class="d-block opacity-75" style="font-size: .8rem;">auvayudvaud</span>
-                                        </div>
-                                        <div class="py-2 px-1 border border-bottom-1">opt1</div>
-                                        <div class="py-2 px-1 border border-bottom-1">opt1</div>
-                                    </div>
-                                </div> -->
+                            <div class="mb-2 position-relative">
+                                <input type="text" class="form-control ps-5 pe-5" placeholder="Titik awal"
+                                    id="inputTitikAwal">
+                                <i class="ri-map-pin-line custom-input-icon start-icon text-warning"
+                                    style="font-size: 1.5em;"></i>
                             </div>
 
                             <a onClick="showCurrentPosition();" class="getCurrentLocationBtn">
                                 <i class="ri-focus-3-line fs-3"></i>
                             </a>
                         </div>
-                        <i class="ri-checkbox-blank-circle-fill fs-7"></i>
                         <div class="d-flex align-items-center gap-4">
-                            <i class="ri-stop-large-fill fs-4 text-primary bx-rotate-270"></i>
-                            <div class="form-floating w-100">
-                                <input type="text" class="form-control" id="inputTitikAkhir" placeholder="">
-                                <label for="inputTitikAkhir">Titik Akhir</label>
+                            <div class="mb-3 position-relative">
+                                <input type="text" class="form-control ps-5 pe-5" placeholder="Tujuan"
+                                    id="inputTitikAkhir">
+                                <i class="ri-map-pin-fill custom-input-icon start-icon text-success"
+                                    style="font-size: 1.5em;"></i>
                             </div>
                             <i class="ri-arrow-up-down-line fs-3"></i>
                         </div>
 
 
                     </div>
-                    <div class="py-3 bg-primary text-center rounded rounded-5 text-white fw-bold mb-3 w-100">Detail
-                        Perjalanan
-                    </div>
+
                     <div class="pt-2 pb-4 px-4 border border-1 border-primary rounded rounded-5 w-100">
-                        <div class="py-2 text-primary">
-                            <div id="startpoint" class="fw-bold">Pinrang</div>
-                            <div class="divider border border-1 border-secondary my-1"></div>
-                            <div id="endpoint" class="fw-bold">Makassar</div>
+                        <div class="py-2 text-primary ">
+                            <div id="startpoint" class="fw-bold">
+                                <div style="line-height: 1rem; font-size:1rem;   font-weight:600; ">Pinrang</div>
+                                <span style="font-weight:300;opacity: .7; font-size:1rem;">JL. Lembu, Kabupaten
+                                    Pinrang</span>
+                            </div>
+                            <div class="divider border border-1 border-secondary my-3"></div>
+                            <div id="endpoint" class="fw-bold">
+                                <div style="line-height: 1rem; font-size:1rem;   font-weight:600; ">Makassar</div>
+                                <span style="font-weight:300;opacity: .7; font-size:1rem;">Jl. DG. Tata Lama
+                                    No.23</span>
+                            </div>
                         </div>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control border border-1 border-primary"
-                                placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-                            <label for="floatingTextarea">Catatan Perjalanan</label>
+                        <div class="form-floating mt-4 mb-4 d-flex justify-content-between align-items-center py-2 px-3"
+                            style="border-radius: .6rem; background-color: white; background-color: white; filter: drop-shadow(0px 00px 5.5px #0000001f);">
+                            <div style="font-size: 1rem;" class="text-primary">Jarak</div>
+                            <span id="distance_container">200M</span>
                         </div>
                         <div class="d-flex gap-2">
                             <a class="flex-grow-1 btn btn-outline-primary rounded rounded-5" id="cancelRouting">Batal

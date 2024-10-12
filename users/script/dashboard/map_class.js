@@ -108,11 +108,11 @@ class Routing extends LeafletMap {
   constructor(mapId) {
     super(mapId);
 
-    const startIcon = L.divIcon({
+    const finishIcon = L.divIcon({
       html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-primary
       "></i>`,
     });
-    const finishIcon = L.divIcon({
+    const startIcon = L.divIcon({
       html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-secondary
       "></i>`,
     });
