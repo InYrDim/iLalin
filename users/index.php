@@ -31,11 +31,9 @@ if(isset($email)) {
     <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.css" />
 
-
     <!-- Bootstrap CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link href="../assets/css/tiny-slider.css" rel="stylesheet" />
     <link href="../assets/css/style.css" rel="stylesheet" />
     <link href="./css/sidebar.css" rel="stylesheet" />
