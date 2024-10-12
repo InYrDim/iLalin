@@ -34,12 +34,12 @@ async function resolveIlalinMap() {
   const routing = L.Routing.control({
     collapsible: false,
     reverseWaypoints: true,
-    show: true,
-    geocoder: L.Control.Geocoder.nominatim({
-      geocodingQueryParams: {
-        countrycodes: "id",
-      },
-    }),
+    show: false,
+    // geocoder: L.Control.Geocoder.nominatim({
+    //   geocodingQueryParams: {
+    //     countrycodes: "id",
+    //   },
+    // }),
     position: "bottomleft",
   }).addTo(ilalinMap);
 

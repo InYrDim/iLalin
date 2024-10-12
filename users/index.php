@@ -27,8 +27,6 @@ if(isset($email)) {
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
 
     <!-- Leafet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.css" />
 
@@ -47,6 +45,11 @@ if(isset($email)) {
     <style>
     .inputRouteContainer {
         margin-bottom: 1rem;
+    }
+
+    #routingForm .placeOption:hover {
+        background-color: var(--primary-color-name);
+        color: white;
     }
     </style>
     <title>iLalin</title>
@@ -129,17 +132,29 @@ if(isset($email)) {
             </div>
 
             <!-- Start Routing -->
-            <!-- <div class="d-none position-fixed" id="routingForm"
+            <div class="position-fixed" id="routingForm"
                 style="max-width:480px; z-index:999; transition:1s cubic-bezier(.68,.04,.14,.87); bottom: -100%; margin-bottom: -10px;">
                 <div style="" class="d-flex flex-column align-items-center justify-content-center border border-4 border-primary
                     rounded rounded-5 p-5 pb-0 bg-white fs-7 ">
                     <div class="mb-3 w-100">
                         <div class="d-flex align-items-center gap-4">
                             <i class="ri-stop-large-fill fs-4 text-secondary"></i>
-                            <div class="form-floating w-100">
+                            <div class="form-floating w-100 position-relative">
                                 <input type="text" class="form-control" id="inputTitikAwal" placeholder="">
                                 <label for="inputTitikAwal">Titik Awal</label>
+                                <!-- <div class="position-absolute w-100 -bottom-100 mt-1" style="z-index: 10;"
+                                    aria-label="search result">
+                                    <div class="flex flex-column border-1 border border-primary rounded bg-white shadow white"
+                                        id="search-result-options">
+                                        <div class="py-2 px-3 border border-bottom-1 lh-sm placeOption">Option<span
+                                                class="d-block opacity-75" style="font-size: .8rem;">auvayudvaud</span>
+                                        </div>
+                                        <div class="py-2 px-1 border border-bottom-1">opt1</div>
+                                        <div class="py-2 px-1 border border-bottom-1">opt1</div>
+                                    </div>
+                                </div> -->
                             </div>
+
                             <a onClick="showCurrentPosition();" class="getCurrentLocationBtn">
                                 <i class="ri-focus-3-line fs-3"></i>
                             </a>
@@ -177,7 +192,7 @@ if(isset($email)) {
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
 
             <!-- Maps -->
             <div id="ilalinMap" class="shadow position-fixed top-0" style=" inset: 0; transition: 1s all; ">
@@ -195,11 +210,12 @@ if(isset($email)) {
 
     <!-- Leafet -->
     <script src="../assets/vendor/leaflet/leaflet.js"></script>
-    <script src="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.js"></script>
+    <script src="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.min.js"></script>
     <script src="../assets/vendor/leaflet-geocoder/Control.Geocoder.js"></script>
+
     <!-- MAP for Leafet -->
     <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
-    <script src="script/dashboard/__map.js"></script>
+    <script src="script/dashboard/map_class.js"></script>
 
 </body>
 

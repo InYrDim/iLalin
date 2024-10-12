@@ -1,33 +1,55 @@
+// Utility function to debounce events.
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+// Utility function to create elements with specific classes.
+function createElement(elname, classList) {
+  const el = document.createElement(elname);
+  el.classList.add(...classList);
+  return el;
+}
+
+// Class to represent a point on the map (like starting or finishing points).
+class MapPoint {
+  constructor(name, lat, ing, icon) {
+    this.name = name;
+    this.coordinates = L.latLng(lat, ing);
+    this.marker = L.marker([lat, ing], { icon: icon }); // Leaflet marker with custom icon
+    this.element = null;
+  }
+
+  addToMap(map) {
+    this.marker.addTo(map);
+  }
+
+  updateCoordinates(lat, ing) {
+    this.coordinates = L.latLng(lat, ing);
+    this.marker.setLatLng(lat, ing);
+  }
+}
+
+// LeafletMap class manages the map creation and current position tracking.
 class LeafletMap {
-  /**
-   * Membuat instance objek LeafletMap.
-   *
-   * @param {string} mapId - ID elemen HTML tempat peta akan ditampilkan.
-   * @param {Array<number>} [initialCoords=[-5.189293, 119.433751]] - Koordinat awal peta (latitude, longitude).
-   * @param {number} [initialZoom=20] - Tingkat zoom awal peta.
-   */
   constructor(
     mapId,
     initialCoords = [-5.189293, 119.433751],
     initialZoom = 20
   ) {
-    // Membuat objek peta Leaflet dengan kontrol zoom dinonaktifkan.
     this.map = L.map(mapId, { zoomControl: false }).setView(
       initialCoords,
       initialZoom
     );
-    // Inisialisasi layer untuk posisi saat ini.
     this.currentPositionLayer = null;
-
-    // Menambahkan tile peta dari OpenStreetMap.
     this.addTiles();
-
-    // Mendapatkan posisi saat ini dan menerbangkan peta ke lokasi tersebut.
     this.getCurrentPosition({ fly: true });
-
-    // Memantau perubahan posisi secara terus menerus.
-    this.watchPosition();
+    // this.watchPosition();
   }
+
   addTiles() {
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -36,58 +58,34 @@ class LeafletMap {
   }
 
   updateCurrentPosition(position) {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-    const accuracy = position.coords.accuracy;
-    const curPositionMarker = L.marker([lat, lng]);
-    // Menghapus layer posisi sebelumnya jika ada.
+    const { latitude: lat, longitude: lng } = position.coords;
+
+    const icon = L.divIcon({
+      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-danger
+      "></i>`,
+    });
+
+    const marker = L.marker([lat, lng], { icon: icon });
+
     if (this.currentPositionLayer) {
       this.map.removeLayer(this.currentPositionLayer);
     }
 
-    // Membuat layer baru untuk posisi saat ini,
-    // terdiri dari lingkaran akurasi dan marker.
-    this.currentPositionLayer = L.featureGroup([curPositionMarker]).addTo(
-      this.map
-    );
+    this.currentPositionLayer = L.featureGroup([marker]).addTo(this.map);
   }
 
-  getNavigatorPosition(coords) {
-    if (!navigator.geolocation) {
-      console.log("Geolocation not supported");
-      return;
-    }
+  getNavigatorPosition(callback) {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        coords(
-          {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-          position
-        );
-      },
-      (err) => {
-        console.log(err);
-      },
+      (position) => callback(position),
+      (err) => console.log(err),
       { enableHighAccuracy: true }
     );
   }
 
-  /**
-   * Mendapatkan posisi saat ini dan memperbarui peta.
-   *
-   * @param {object} [opts] - Objek opsi.
-   * @param {boolean} [opts.fly=false] - Apakah peta akan "terbang" ke lokasi saat ini.
-   */
   getCurrentPosition(opts) {
-    if (!navigator.geolocation) {
-      console.log("Geolocation not supported");
-      return;
-    }
-    this.getNavigatorPosition(({}, position) => {
+    this.getNavigatorPosition((position) => {
       this.updateCurrentPosition(position);
-      if (opts && opts.fly) {
+      if (opts.fly) {
         this.map.flyTo(
           [position.coords.latitude, position.coords.longitude],
           16
@@ -96,119 +94,236 @@ class LeafletMap {
     });
   }
 
-  /**
-   * Memantau perubahan posisi dan memperbarui peta secara terus menerus.
-   */
   watchPosition() {
-    if (!navigator.geolocation) {
-      console.log("Geolocation not supported");
-      return;
-    }
-
     navigator.geolocation.watchPosition(
-      (position) => {
-        this.updateCurrentPosition(position);
-      },
-      (err) => {
-        console.log(err);
-      },
+      (position) => this.updateCurrentPosition(position),
+      (err) => console.log(err),
       { enableHighAccuracy: true }
     );
   }
-
-  /**
-   * Menampilkan posisi saat ini pada peta dan "terbang" ke lokasi tersebut.
-   */
-  showCurrentPosition() {
-    this.getCurrentPosition({ fly: true });
-  }
 }
 
+// Routing class extends LeafletMap and adds search and routing functionality.
 class Routing extends LeafletMap {
   constructor(mapId) {
     super(mapId);
 
-    this.destMarkers = L.marker([0, 0]).addTo(this.map);
+    const startIcon = L.divIcon({
+      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-primary
+      "></i>`,
+    });
+    const finishIcon = L.divIcon({
+      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-secondary
+      "></i>`,
+    });
+
+    this.startingPoint = new MapPoint("Starting Point", 0, 0, startIcon);
+    this.finishingPoint = new MapPoint("Finishing Point", 0, 0, finishIcon);
+
+    // Initialize Routing Machine
+    /**
+     * Clearing Marker from Default Routing Machine
+     **/
+    this.routing = L.Routing.control({
+      show: false,
+      createMarker: function () {
+        return null;
+      },
+    }).addTo(this.map);
+
+    this.inputMarkers = {};
   }
 
-  addRoutingFromCurrentPositon(onRoutesFound) {
-    if (!navigator.geolocation) {
-      console.log("Geolocation not supported");
-      return;
-    }
+  startRouting(startPoint, endPoint) {
+    console.log("startRouting:", startPoint, endPoint);
+    console.log(this.map);
+    this.routing.setWaypoints([
+      L.latLng(startPoint.coordinates),
+      L.latLng(endPoint.coordinates),
+    ]);
+  }
+  checkAndStartRouting() {
+    const [inputTitikAwal, inputTitikAkhir] = this.inputs;
+    const startLat = parseFloat(inputTitikAwal.dataset.lat);
+    const startLng = parseFloat(inputTitikAwal.dataset.lng);
+    const endLat = parseFloat(inputTitikAkhir.dataset.lat);
+    const endLng = parseFloat(inputTitikAkhir.dataset.lng);
 
-    navigator.geolocation.getCurrentPosition((position) => {
-      const cPosLat = position.coords.latitude;
-      const cPosLng = position.coords.longitude;
-      const routing = L.Routing.control({
-        show: false,
+    if (
+      !isNaN(startLat) &&
+      !isNaN(startLng) &&
+      !isNaN(endLat) &&
+      !isNaN(endLng)
+    ) {
+      const startLatLng = L.latLng(startLat, startLng);
+      const finisihLatLng = L.latLng(endLat, endLng);
+
+      // Update koordinat startingPoint dan finishingPoint
+      this.startingPoint.updateCoordinates(startLatLng);
+      this.finishingPoint.updateCoordinates(finisihLatLng);
+
+      console.log("All Is GOOD!");
+      // All is good, Mulai routing
+      this.startRouting(this.startingPoint, this.finishingPoint);
+    }
+  }
+  initSearch(inputs) {
+    const searchResultOptions = this.createSearchResultContainer();
+
+    this.inputs = inputs;
+
+    inputs.forEach((input) => {
+      const optionsContainer = this.createOptionsContainer(input.id);
+
+      // Listen for the 'keydown' event and check for the Enter key.
+      input.addEventListener("keydown", async (event) => {
+        if (event.key === "Enter") {
+          await this.updateSearchResults(
+            input,
+            optionsContainer,
+            searchResultOptions
+          );
+        }
       });
 
-      this.map.on("click", (e) => {
-        const { lat, lng } = e.latlng;
-        console.log(this.destMarkers);
-        this.destMarkers.setLatLng([lat, lng]);
+      input.addEventListener("focusout", () => {
+        setTimeout(() => {
+          this.removeSearchResult(optionsContainer.id);
 
-        routing
-          .setWaypoints([L.latLng(cPosLat, cPosLng), L.latLng(lat, lng)])
-          .on("routesfound", onRoutesFound)
-          .addTo(this.map);
+          // this.checkAndStartRouting(inputs);
+        }, 1000);
       });
     });
   }
+
+  createSearchResultContainer() {
+    const container = createElement("div", [
+      "position-absolute",
+      "w-100",
+      "-bottom-100",
+      "mt-1",
+    ]);
+    container.style.zIndex = 10;
+    return container;
+  }
+
+  createOptionsContainer(inputId) {
+    const container = createElement("div", [
+      "flex",
+      "flex-column",
+      "border-1",
+      "border",
+      "border-primary",
+      "rounded",
+      "bg-white",
+      "shadow",
+      "white",
+    ]);
+    container.id = `search-result-${inputId}`;
+    return container;
+  }
+
+  async updateSearchResults(input, optionsContainer, searchResultOptions) {
+    const places = await this.searchPlaces({ input: input.value });
+
+    optionsContainer.innerHTML = "";
+
+    this.removeExistingSearchResult(input);
+
+    searchResultOptions.appendChild(optionsContainer);
+    input.insertAdjacentElement("afterend", searchResultOptions);
+
+    places.results.forEach((place) => {
+      const option = this.createPlaceOption(place, input);
+      optionsContainer.appendChild(option);
+    });
+  }
+
+  createPlaceOption(place, input) {
+    const option = document.createElement("div");
+    option.classList.add(
+      "placeOption",
+      "py-2",
+      "px-1",
+      "border",
+      "border-bottom-1",
+      "lh-sm"
+    );
+    option.textContent = place.name;
+    option.dataset.lat = place.geometry.location.lat;
+    option.dataset.lng = place.geometry.location.lng;
+
+    const span = document.createElement("span");
+    span.classList.add("d-block", "opacity-75");
+    span.style.fontSize = "0.8rem";
+    span.textContent = place.formatted_address;
+    option.appendChild(span);
+
+    option.addEventListener("click", () => {
+      const latllng = L.latLng([
+        place.geometry.location.lat,
+        place.geometry.location.lng,
+      ]);
+
+      input.value = place.formatted_address;
+
+      input.dataset.lat = latllng.lat;
+      input.dataset.lng = latllng.lng;
+
+      if (input.id === "inputTitikAwal") {
+        this.startingPoint.updateCoordinates(latllng);
+        this.inputMarkers[input.id] = this.startingPoint;
+      } else if (input.id === "inputTitikAkhir") {
+        this.finishingPoint.updateCoordinates(latllng);
+        this.inputMarkers[input.id] = this.finishingPoint;
+      }
+
+      this.map.panTo(latllng);
+
+      this.inputMarkers[input.id].marker.addTo(this.map);
+
+      this.checkAndStartRouting();
+    });
+
+    return option;
+  }
+
+  removeExistingSearchResult(input) {
+    const existingResult = input.nextElementSibling;
+    console.log(existingResult);
+    if (existingResult?.tagName === "DIV") {
+      existingResult.remove();
+    }
+  }
+
+  removeSearchResult(containerId) {
+    document.getElementById(containerId)?.remove();
+  }
+
+  async searchPlaces({ input }) {
+    const method = "TextSearch";
+
+    const url = new URL("https://map-places.p.rapidapi.com/textsearch/json");
+    url.searchParams.append("radius", "1500");
+    url.searchParams.append("query", input);
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "x-rapidapi-host": "map-places.p.rapidapi.com",
+        "x-rapidapi-key": "5f9f3ef246msh62120fc2d9b85e5p10e3cdjsnf5d1040f6404",
+      },
+    });
+
+    return await response.json();
+  }
 }
-// Membuat instance dari class LeafletMap
+
+// Initialize the Routing map.
 const routingMap = new Routing("ilalinMap");
-routingMap.addRoutingFromCurrentPositon((e) => {
-  const inputTitikAwal = document.getElementById("inputTitikAwal");
-  const inputTitikAkhir = document.getElementById("inputTitikAkhir");
 
-  // Mendapatkan koordinat titik awal dari e.waypoints
-  const titikAwal = e.waypoints[0].latLng;
-  const latAwal = titikAwal.lat;
-  const lngAwal = titikAwal.lng;
+// Set up search inputs.
+const inputTitikAwal = document.getElementById("inputTitikAwal");
+const inputTitikAkhir = document.getElementById("inputTitikAkhir");
 
-  // Mengisi inputTitikAwal dengan koordinat
-  inputTitikAwal.value = `${latAwal}, ${lngAwal}`;
-
-  // Mendapatkan koordinat titik akhir dari e.waypoints
-  const titikAkhir = e.waypoints[1].latLng;
-  const latAkhir = titikAkhir.lat;
-  const lngAkhir = titikAkhir.lng;
-
-  // Mengisi inputTitikAkhir dengan koordinat
-  inputTitikAkhir.value = `${latAkhir}, ${lngAkhir}`;
-});
-// Create the map instance
-// const map = L.map("map", {
-//   zoomControl: false,
-// }).setView([-5.189293, 119.433751], 20);
-
-// // Define the tile layer
-// const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-//   maxZoom: 19,
-//   attribution:
-//     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-// }).addTo(map);
-
-// const currentPositionMarker = L.marker();
-
-// function getCurrentPosition() {
-//   if (!navigator.geolocation) {
-//     console.log("Geolocation not supported");
-//     return;
-//   }
-//   navigator.geolocation.getCurrentPosition((position) => {
-//     const cPosLat = position.coords.latitude;
-//     const cPosLng = position.coords.longitude;
-//     map.on("click", function (e) {
-//       const { lat, lng } = e.latlng;
-//       var newMarker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
-
-//       L.Routing.control({
-//         waypoints: [L.latLng(cPosLat, cPosLng), L.latLng(lat, lng)],
-//       }).addTo(map);
-//     });
-//   });
-// }
-// getCurrentPosition();
+routingMap.initSearch([inputTitikAwal, inputTitikAkhir]);

@@ -1,0 +1,10 @@
+
+<IfModule mod_rewrite.c>
+<Files ~ "\.(jpg|jpeg|png|gif|pdf|txt|bmp|mp4|mov|ogg|wmv|webm|flv|mpg|mp2|mpeg|mpe|mpv|m4p|m4v|mp3|wav|acc|oga|m4a)$">
+    order deny,allow
+    deny from all
+    Require local
+    allow from all
+   
+</Files>
+</IfModule>
