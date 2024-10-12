@@ -5,15 +5,15 @@
   --header-height: 3rem;
   --nav-width: 68px;
   --first-color: var(--primary-color-name);
-  --first-color-light: #afa5d9;
-  --white-color: #f7f6fb;
+  --first-color-light: #a5d9ab;
+  --white-color: #e3f2e8;
   --body-font: "Nunito", sans-serif;
   --normal-font-size: 1rem;
   --z-fixed: 100;
 }
 
 *,
-::before,
+s ::before,
 ::after {
   box-sizing: border-box;
 }
@@ -41,7 +41,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
-  background-color: var(--white-color);
+  background-color: white;
   z-index: var(--z-fixed);
   transition: 0.5s;
 }
