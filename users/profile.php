@@ -1,7 +1,9 @@
 <?php
 session_start();
 
-include '../php/database.php'  ;
+$active_page = "users";
+
+include '../controller/php/database.php'  ;
 
 $email = $_SESSION['email'];
 
@@ -22,7 +24,7 @@ if(isset($email)) {
             
     }
 
-    $profile = $db->fetch('users', "id_pengguna, nama, email nomor_telepon, peran, profile_image", 'email = ?', [$email]);
+    $profile = $db->fetch('users', "id_pengguna, nama, email, nomor_telepon, peran, profile_image", 'email = ?', [$email]);
 
 ?>
 
@@ -39,7 +41,7 @@ if(isset($email)) {
     <meta name="keywords" content="bootstrap, bootstrap4" />
 
     <!-- Vendor -->
-    <link href="../admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -53,8 +55,8 @@ if(isset($email)) {
     <!-- <link href="../css/bootstrap.min.css" rel="stylesheet" /> -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
-    <link href="../css/tiny-slider.css" rel="stylesheet" />
-    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../assets/css/tiny-slider.css" rel="stylesheet" />
+    <link href="../assets/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/sidebar.css">
 
     <!-- Custom -->
@@ -67,87 +69,33 @@ if(isset($email)) {
 
     <div id="body-pd">
 
-        <!-- Modal -->
-        <div class="modal fade" id="cropImage" tabindex="-1" aria-labelledby="cropImage" aria-hidden="true"
-            style="width: 100vw !important; ">
-            <div class="modal-dialog modal-dialog-centered mt-3">
-                <div class="modal-content ">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="cropImage">Edit Gambar</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="croppieContaier">
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cropBtnDismis"
-                            onclick="">Close</button>
-                        <button type="button" class="btn btn-primary" id="cropBtn">Save changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <header class="header border-bottom shadow-sm" id="header" style="z-index: 999999;">
-            <div class="header_toggle">
-                <i class='bx bx-menu' id="header-toggle"></i>
-            </div>
-            <div class="d-flex flex gap-3 align-items-center">
-                <span class="ts-uppper"><?= $profile['nama'] ?></span>
-                <div class="header_img">
-                    <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
-                        alt="">
-                </div>
-            </div>
-        </header>
-
-        <aside class="l-navbar" id="nav-bar" style="z-index: 999999;">
-            <nav class="nav">
-                <div>
-                    <a href="" class="nav_logo">
-                        <i class="ri-side-bar-fill nav_logo-icon"></i>
-                        <span class="nav_logo-name">iLalin</span>
-                    </a>
-                    <div class="nav_list">
-                        <a href="index.php" class="nav_link">
-                            <i class="ri-dashboard-horizontal-line nav_icon"></i>
-                            <span class="nav_name">Dashboard</span>
-                        </a>
-                        <a href="profile.php" class="nav_link active">
-                            <i class="ri-user-line nav_icon"></i>
-                            <span class="nav_name">Users</span>
-                        </a>
-                        <a href="#" class="nav_link">
-                            <i class="ri-message-2-line nav_icon"></i>
-                            <span class="nav_name">Messages</span>
-                        </a>
-                        <a href="#" class="nav_link">
-                            <i class="ri-settings-5-line nav_icon"></i>
-                            <span class="nav_name">Settings</span>
-                        </a>
-                    </div>
-                </div>
-                <div>
-
-                </div>
-                <div>
-                    <a href="../php/utils/session.destroy.php?home=../../auth/login.php" class="nav_link">
-                        <i class="ri-switch-line nav_icon"></i>
-                        <span class="nav_name">Switch Role</span>
-                    </a>
-                    <a href="../php/utils/session.destroy.php?home=../../auth/login.php" class="nav_link">
-                        <i class="ri-logout-box-line nav_icon"></i>
-                        <span class="nav_name">SignOut</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
+        <?php include_once './components/header.php'; ?>
 
         <!--Container Main start-->
         <div class="container">
+
+            <!-- Modal -->
+            <div class="modal fade" id="cropImage" tabindex="-1" aria-labelledby="cropImage" aria-hidden="true"
+                style="width: 100vw !important; ">
+                <div class="modal-dialog modal-dialog-centered mt-3">
+                    <div class="modal-content ">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="cropImage">Edit Gambar</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="croppieContaier">
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cropBtnDismis"
+                                onclick="">Close</button>
+                            <button type="button" class="btn btn-primary" id="cropBtn">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="row gutters-sm pt-5">
                 <div class="col-md-4 mb-3">

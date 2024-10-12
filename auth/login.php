@@ -11,8 +11,8 @@
 session_start();
 
 // Include the database connection file
-include '../php/connection.php';
-include '../php/validator.php';
+include '../controller/php/connection.php';
+include '../controller/php/validator.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="author" content="Untree.co" />
-    <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
+    <link rel="shortcut icon" href="../assets/images/logo/logo-ilalin.ico" />
 
     <meta name="description" content="" />
     <meta name="keywords" content="bootstrap, bootstrap4" />
@@ -102,11 +102,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="../admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
 
     <!-- Bootstrap CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="../css/tiny-slider.css" rel="stylesheet" />
-    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../assets/css/tiny-slider.css" rel="stylesheet" />
+    <link href="../assets/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="./style/sign-google.css">
+    <style>
+    .bg-mitra {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(28, 56, 39, 0.641)),
+            url("../assets/images/supir/tr5.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: top;
+    }
+    </style>
 
     <title>Login - iLalin</title>
 </head>
@@ -159,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div class="text-center mb-4">
                             <a href="../index.php">
-                                <img src="../images/logo/logo-ilalin.png" alt="BootstrapBrain Logo" width="100"
+                                <img src="../assets/images/logo/logo-ilalin.png" alt="BootstrapBrain Logo" width="100"
                                     height="100">
                             </a>
                         </div>
@@ -201,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <div class="form-check d-flex align-items-center gap-1">
                                         <input class="form-check-input" type="checkbox" value=""
                                             name="simpan_kredensial" id="simpan_kredensial" />
-                                        <label class="form-check-label text-secondary" for="simpan_kredensial">
+                                        <label class="form-check-label text-primary" for="simpan_kredensial">
                                             Simpan Kredensial
                                         </label>
                                     </div>
@@ -210,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <!-- Login BTN -->
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <button class="btn btn-dark" type="submit">
+                                        <button class="btn btn-primary" type="submit">
                                             Masuk
                                         </button>
                                     </div>
@@ -262,9 +271,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/tiny-slider.js"></script>
-    <script src="js/custom.js"></script>
 </body>
 
 </html>

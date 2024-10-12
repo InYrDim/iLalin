@@ -7,7 +7,7 @@
 */ -->
 
 <?php
-include '../php/middleware.php';
+include '../controller/php/middleware.php';
 
 // Check if there is a message in the session
 if (isset($_SESSION['message'])) {
@@ -24,7 +24,7 @@ if (isset($_SESSION['message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="author" content="Untree.co" />
 
-    <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
+    <link rel="shortcut icon" href="../assets/images/logo/logo-ilalin.ico" />
 
     <meta name="description" content="" />
     <meta name="keywords" content="bootstrap, bootstrap4" />
@@ -33,10 +33,10 @@ if (isset($_SESSION['message'])) {
     <link href="../admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
 
     <!-- Bootstrap CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="../css/tiny-slider.css" rel="stylesheet" />
-    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../assets/css/tiny-slider.css" rel="stylesheet" />
+    <link href="../assets/css/style.css" rel="stylesheet" />
 
     <title>Admin Login</title>
 
@@ -58,7 +58,7 @@ if (isset($_SESSION['message'])) {
                                     <!-- Logo container -->
                                     <div class="text-center mb-2">
                                         <a href="../index.html">
-                                            <img src="../images/logo/logo-ilalin.png" alt="BootstrapBrain Logo"
+                                            <img src="../assets/images/logo/logo-ilalin.png" alt="BootstrapBrain Logo"
                                                 width="100" height="100" />
                                         </a>
                                     </div>
@@ -91,7 +91,7 @@ if (isset($_SESSION['message'])) {
                             </div>
 
                             <!-- Login Form -->
-                            <form method="POST" action="../php/admin/action_admin_login.php">
+                            <form method="POST" action="../controller/php/admin/action_admin_login.php">
                                 <div class="row gy-3 gy-md-4 overflow-hidden">
                                     <div class="col-12">
                                         <label for="email" class="form-label">Email <span
@@ -139,9 +139,6 @@ if (isset($_SESSION['message'])) {
         </div>
     </div>
 
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/tiny-slider.js"></script>
-    <script src="js/custom.js"></script>
 </body>
 
 </html>

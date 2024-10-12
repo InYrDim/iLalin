@@ -1,10 +1,3 @@
-<!-- /*
-* Bootstrap 5
-* Template Name: Furni
-* Template Author: Untree.co
-* Template URI: https://untree.co/
-* License: https://creativecommons.org/licenses/by/3.0/
-*/ -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,35 +13,58 @@
     <meta name="keywords" content="bootstrap, bootstrap4" />
 
     <!-- Vendor -->
-    <link href="admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
 
     <!-- Bootstrap CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
       rel="stylesheet"
     />
-    <link href="css/tiny-slider.css" rel="stylesheet" />
-    <link href="css/style.css" rel="stylesheet" />
+    <link href="assets/css/tiny-slider.css" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />
     <style>
+      html {
+        scroll-behavior: smooth !important;
+      }
       .h-40vh {
         height: 40vh;
       }
-
       .masonry-img {
-        max-height: 100%;
-        min-width: 100%;
+        width: 100%;
         object-fit: cover;
-        vertical-align: bottom;
       }
-
       .black-overlay {
         position: absolute;
         inset: 0;
         background-color: rgba(var(--primary-color), 0.4);
       }
+      .grid-sizer,
+      .grid-item {
+        width: 320px;
+        filter: drop-shadow(10px 5px 5px rgba(0, 0, 0, 0.138));
+        z-index: 0;
+      }
+
+      .card-body {
+        position: absolute;
+        z-index: 99;
+        bottom: 0;
+        left: 0;
+      }
+      .card-img {
+        border-radius: 0%;
+        filter: grayscale(1) brightness(50%);
+        transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+      .grid-item:hover .card-img {
+        filter: grayscale(0) brightness(100%);
+      }
+      #spreadkabupaten {
+        transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
     </style>
-    <title>iLalin</title>
+    <title>Layanan - iLalin</title>
   </head>
 
   <body>
@@ -114,7 +130,7 @@
               <h1>Perjalanan Nyaman Hanya dengan Beberapa Klik</h1>
 
               <p>
-                <a href="" class="btn btn-text-light me-2 fs-7"
+                <a href="#fitur_utama" class="btn btn-text-light me-2 fs-7"
                   >Lihat bagaimana iLalin memudahkan perjalanan anda</a
                 >
               </p>
@@ -149,7 +165,7 @@
       </div>
       <div class="flex-grow-1 h-40vh">
         <img
-          src="./images/kabupaten/Makassar/WhatsApp Image 2024-09-06 at 20.03.49_cf7098be.jpg"
+          src="./images/kabupaten/Makassar/makassar-landscape.jpg"
           class="img-fluid h-40vh masonry-img"
         />
       </div>
@@ -169,433 +185,121 @@
 
     <!-- Start Kabupaten Section -->
     <div class="container kab-container" id="kabupaten">
-      <h4 class="display-3 mb-5 fw-bold">
-        Daftar Kabupaten Yang Telah Kami Jangkau.
-      </h4>
-      <div class="row gap-4">
-        <!-- Start Column 1 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Jepot/jeneponto.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Jepot/Logo_Jeneponto.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Jeneponto</p>
-              </div>
-            </div>
-          </a>
+      <div>
+        <h4 class="display-3 mb-5 fw-bold">
+          Daftar Kabupaten Yang Telah Kami Jangkau.
+        </h4>
+        <div class="p-5 d-flex justify-content-end">
+          <div id="spreadkabupaten">
+            <i class="ri-function-line display-6"></i>
+          </div>
         </div>
-        <!-- End Column 1 -->
-
-        <!-- Start Column 2 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Bulkum/Bulkum.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Bulkum/Lambang_Kabupaten_Bulukumba.svg.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Bulukumba</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 2 -->
-
-        <!-- Start Column 3 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="./images/kabupaten/Pinrang/Pinrang-landscape.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="./images/kabupaten/Pinrang/Pinrang-Logo.jpg"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Pinrang</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 3 -->
-
-        <!-- Start Column 4 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Bantaeng/Bantaeng 1.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Bantaeng/LOGO KABUPATEN BANTAENG.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Bantaeng</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 4 -->
-
-        <!-- Start Column 5 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/barru/Kab Barru.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/barru/Kab. Barru.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Barru</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 5 -->
-
-        <!-- Start Column 6 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Bone/Kabupaten-Bone.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Bone/Bone.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Bone</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 6 -->
-
-        <!-- Start Column 7 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Enrekang/enrekang.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Enrekang/Lambang_Kabupaten_Enrekang.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Enrekang</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 7 -->
-
-        <!-- Start Column 8 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Gowa/Gowa.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Gowa/New_Coat_of_Arms_of_Gowa.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Gowa</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 8 -->
-
-        <!-- Start Column 9 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Luwu/istana_luwu.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Luwu/Luwu_Regency_Logo.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Luwu</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 9 -->
-
-        <!-- Start Column 10 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Luwu Timur/Luwu timur.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Luwu Timur/Lambang_Kabupaten_Luwu_Timur.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Luwu Timur</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 10 -->
-
-        <!-- Start Column 11 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Luwu utara/Masamba.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Luwu utara/Luwu_Utara_Logo_(North_Luwu).png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Luwu Utara</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 11 -->
-
-        <!-- Start Column 12 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="./images/kabupaten/Makassar/makassar-landscape.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="./images/kabupaten/Makassar/makassar-logo.jpg"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Makassar</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 12 -->
-
-        <!-- Start Column 13 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/MAros/maros.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/MAros/Maros_Regency_Official_Logo.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Maros</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 13 -->
-
-        <!-- Start Column 14 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/WhatsApp Image 2024-09-06 at 20.04.13_a2872389.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Sidrap/WhatsApp Image 2024-09-06 at 20.04.14_480550a2.jpg"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Sidrap</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 14 -->
-
-        <!-- Start Column 15 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/WhatsApp Image 2024-09-06 at 20.03.49_3f53f197.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Pangkep/WhatsApp Image 2024-09-06 at 20.04.13_4612d42c.jpg"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Pangkep</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 15 -->
-
-        <!-- Start Column 16 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Parepare/WhatsApp Image 2024-09-06 at 20.03.49_1cfc5275.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Parepare/WhatsApp Image 2024-09-06 at 20.03.49_8c99ee54.jpg"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Parepare</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 16 -->
-
-        <!-- Start Column 17 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Selayar/selayar.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Selayar/Logo_Kabupaten_Kepulauan_Selayar.png"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Selayar</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 17 -->
-
-        <!-- Start Column 18 -->
-        <div class="col-12 col-md-4 col-lg-3 mb-5">
-          <a class="product-item" href="#">
-            <div class="card" style="width: 18rem">
-              <img
-                src="images/kabupaten/Soppeng/Soppeng.jpg"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body d-flex gap-2">
-                <img
-                  src="images/kabupaten/Soppeng/Logo_Kabupaten_Soppeng.jpg"
-                  alt=""
-                  width="30px"
-                  height="30px"
-                />
-                <p class="card-text">Soppeng</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <!-- End Column 18 -->
       </div>
+
+      <div class="grid js-masonry" id="kabs"></div>
     </div>
     <!-- End Kabupaten Section -->
+
+    <!-- Start Fitur Utama -->
+    <style>
+      .fitur-container {
+        display: flex;
+        gap: 2rem;
+      }
+      .fitur {
+        border: 1px solid rgba(var(--primary-color), 1);
+        filter: drop-shadow(1px 2px 1px rgba(var(--primary-color), 0.5));
+        border-radius: 5px;
+        background-color: white;
+        padding: 1rem;
+        transition: all 0.3s ease-in-out;
+      }
+      .fitur:hover {
+        background-color: rgba(var(--primary-color), 0.9);
+        filter: drop-shadow(1px 2px 2px rgba(var(--primary-color), 0.5));
+        color: white;
+      }
+      .icon {
+        font-size: 3rem;
+        padding-block: 1rem;
+        color: var(--primary-color-name);
+        transition: all 0.2s ease-in-out;
+      }
+      .fitur:hover .icon {
+        color: rgba(var(--secondary-color), 0.4);
+      }
+      .fitur-info {
+        margin-top: 1rem;
+      }
+    </style>
+    <section class="container kab-container">
+      <div class="py-5">
+        <h2
+          class="text-end mb-5 fw-bold text-decoration-underline"
+          id="fitur_utama"
+        >
+          --- Fitur Utama Layanan Kami
+        </h2>
+        <div class="fitur-container">
+          <div class="fitur">
+            <div class="icon">
+              <i class="ri-time-fill"></i>
+            </div>
+            <div class="fitur-info">
+              <h3>Layanan 24/7</h3>
+              <p>
+                Kami siap melayani Anda kapan saja, di mana saja, selama 24 jam
+                penuh.
+              </p>
+            </div>
+          </div>
+          <div class="fitur">
+            <div class="icon">
+              <i class="ri-steering-2-fill"></i>
+            </div>
+            <div class="fitur-info">
+              <h3>Pengemudi Berpengalaman</h3>
+              <p>
+                Pengemudi kami profesional, berlisensi, dan memiliki pengalaman
+                yang tinggi.
+              </p>
+            </div>
+          </div>
+          <div class="fitur">
+            <div class="icon">
+              <i class="ri-wallet-fill"></i>
+            </div>
+            <div class="fitur-info">
+              <h3>Harga Transparan</h3>
+              <p>
+                Tidak ada biaya tersembunyi. Semua harga jelas dan terperinci di
+                awal pemesanan.
+              </p>
+            </div>
+          </div>
+          <div class="fitur col-3">
+            <div class="icon">
+              <i class="ri-hearts-fill"></i>
+            </div>
+            <div class="fitur-info">
+              <h3>Kendaraan Nyaman</h3>
+              <p>
+                Nikmati perjalanan dengan armada kami yang bersih, modern, dan
+                nyaman.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Fitur Utama -->
 
     <!-- Start Footer Section -->
     <footer class="footer-section">
       <div class="container relative">
         <div class="sofa-img">
           <img
-            src="images/mobil/avanza putih.png"
+            src="./assets/images/mobil/avanza putih.png"
             alt="Image"
             class="img-fluid"
           />
@@ -605,12 +309,7 @@
           <div class="col-lg-8">
             <div class="subscription-form">
               <h3 class="d-flex align-items-center">
-                <span class="me-1"
-                  ><img
-                    src="images/envelope-outline.svg"
-                    alt="Image"
-                    class="img-fluid"
-                /></span>
+                <span class="me-1"><i class="ri-mail-line"></i> </span>
                 <span>Gratis dan Mudah</span>
               </h3>
               <p>
@@ -636,8 +335,8 @@
                   />
                 </div>
                 <div class="col-auto">
-                  <button class="btn btn-primary">
-                    <span class="fa fa-paper-plane"></span>
+                  <button class="btn btn-primary fs-6">
+                    <i class="ri-send-plane-fill"></i>
                   </button>
                 </div>
               </form>
@@ -658,16 +357,16 @@
 
             <ul class="list-unstyled custom-social">
               <li>
-                <a href="#"><span class="fa fa-brands fa-facebook-f"></span></a>
+                <a href="#" class="fs-5"><i class="ri-facebook-fill"></i></span></a>
               </li>
               <li>
-                <a href="#"><span class="fa fa-brands fa-twitter"></span></a>
+                <a href="#" class="fs-5"><i class="ri-twitter-x-fill"></i></span></a>
               </li>
               <li>
-                <a href="#"><span class="fa fa-brands fa-instagram"></span></a>
+                <a href="#" class="fs-5"><i class="ri-instagram-fill"></i></span></a>
               </li>
               <li>
-                <a href="#"><span class="fa fa-brands fa-linkedin"></span></a>
+                <a href="#" class="fs-5"><i class="ri-linkedin-fill"></i></span></a>
               </li>
             </ul>
           </div>
@@ -676,16 +375,16 @@
             <div class="row links-wrap justify-content-end">
               <div class="col-6 col-sm-6 col-md-3">
                 <ul class="list-unstyled">
-                  <li><a href="tentang.php">Tentang</a></li>
-                  <li><a href="layanan.php">Layanan</a></li>
-                  <li><a href="tentang.php#kontak">Kontak Kami</a></li>
+                  <li><a href="tentang.html">Tentang</a></li>
+                  <li><a href="layanan.html">Layanan</a></li>
+                  <li><a href="tentang.html#kontak">Kontak Kami</a></li>
                 </ul>
               </div>
               <div class="col-6 col-sm-6 col-md-3">
                 <ul class="list-unstyled">
-                  <li><a href="mitra.php">Mitra</a></li>
-                  <li><a href="tentang.php#tim_kami">Tim</a></li>
-                  <li><a href="blog/index.php">Blog</a></li>
+                  <li><a href="mitra.html">Mitra</a></li>
+                  <li><a href="tentang.html#tim_kami">Tim</a></li>
+                  <li><a href="blog/index.html">Blog</a></li>
                 </ul>
               </div>
             </div>
@@ -717,10 +416,157 @@
         </div>
       </div>
     </footer>
-    <!-- End Footer Section -->
+  <!-- End Footer Section -->
 
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/tiny-slider.js"></script>
-    <script src="js/custom.js"></script>
+    <!-- Vendor -->
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/tiny-slider.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <script>
+      var renderKabupatens = function () {
+        const kabupatenData = [
+          {
+            name: "Bulukumba",
+            image: "images/kabupaten/Bulkum/Bulkum.jpg",
+            logo: "images/kabupaten/Bulkum/Lambang_Kabupaten_Bulukumba.svg.png",
+          },
+          {
+            name: "Pinrang",
+            image: "images/kabupaten/Pinrang/Pinrang-landscape.jpg",
+            logo: "images/kabupaten/Pinrang/Pinrang-Logo.jpg",
+          },
+          {
+            name: "Bantaeng",
+            image: "images/kabupaten/Bantaeng/Bantaeng 1.jpg",
+            logo: "images/kabupaten/Bantaeng/LOGO KABUPATEN BANTAENG.png",
+          },
+          {
+            name: "Barru",
+            image: "images/kabupaten/barru/Kab Barru.jpg",
+            logo: "images/kabupaten/barru/Kab. Barru.png",
+          },
+          {
+            name: "Bone",
+            image: "images/kabupaten/Bone/Kabupaten-Bone.jpg",
+            logo: "images/kabupaten/Bone/Bone.png",
+          },
+          {
+            name: "Enrekang",
+            image: "images/kabupaten/Enrekang/enrekang.jpg",
+            logo: "images/kabupaten/Enrekang/Lambang_Kabupaten_Enrekang.png",
+          },
+          {
+            name: "Gowa",
+            image: "images/kabupaten/Gowa/Gowa.jpg",
+            logo: "images/kabupaten/Gowa/New_Coat_of_Arms_of_Gowa.png",
+          },
+          {
+            name: "Luwu",
+            image: "images/kabupaten/Luwu/istana_luwu.jpg",
+            logo: "images/kabupaten/Luwu/Luwu_Regency_Logo.png",
+          },
+          {
+            name: "Luwu Timur",
+            image: "images/kabupaten/Luwu Timur/Luwu timur.jpg",
+            logo: "images/kabupaten/Luwu Timur/Lambang_Kabupaten_Luwu_Timur.png",
+          },
+          {
+            name: "Luwu Utara",
+            image: "images/kabupaten/Luwu utara/Masamba.jpg",
+            logo: "images/kabupaten/Luwu utara/Luwu_Utara_Logo_(North_Luwu).png",
+          },
+          {
+            name: "Makassar",
+            image: "images/kabupaten/Makassar/makassar-landscape.jpg",
+            logo: "images/kabupaten/Makassar/makassar-logo.jpg",
+          },
+          {
+            name: "Maros",
+            image: "images/kabupaten/MAros/maros.jpg",
+            logo: "images/kabupaten/MAros/Maros_Regency_Official_Logo.png",
+          },
+          {
+            name: "Sidrap",
+            image:
+              "images/kabupaten/WhatsApp Image 2024-09-06 at 20.04.13_a2872389.jpg",
+            logo: "images/kabupaten/Sidrap/WhatsApp Image 2024-09-06 at 20.04.14_480550a2.jpg",
+          },
+          {
+            name: "Pangkep",
+            image:
+              "images/kabupaten/WhatsApp Image 2024-09-06 at 20.03.49_3f53f197.jpg",
+            logo: "images/kabupaten/Pangkep/WhatsApp Image 2024-09-06 at 20.04.13_4612d42c.jpg",
+          },
+          {
+            name: "Parepare",
+            image: "images/kabupaten/Parepare/parepare_landscape.jpg",
+            logo: "images/kabupaten/Parepare/WhatsApp Image 2024-09-06 at 20.03.49_8c99ee54.jpg",
+          },
+          {
+            name: "Selayar",
+            image: "images/kabupaten/Selayar/selayar.jpg",
+            logo: "images/kabupaten/Selayar/Logo_Kabupaten_Kepulauan_Selayar.png",
+          },
+          {
+            name: "Soppeng",
+            image: "images/kabupaten/Soppeng/soppeng_landscape.jpg",
+            logo: "images/kabupaten/Soppeng/Logo_Kabupaten_Soppeng.jpg",
+          },
+        ];
+
+        const gridItemsContainer = document.getElementById("kabs");
+        const kabs = kabupatenData.map((kabupaten) => {
+          return `
+	<div class="grid-item">
+	  <div class="position-relative">
+		<img src="${kabupaten.image}" class="card-img" alt="${kabupaten.name}" />
+		<div class="card-body">
+		  <img src="${kabupaten.logo}" alt="${kabupaten.name}" width="30px" height="30px" />
+		  <p class="text-white fw-bold m-0">${kabupaten.name}</p>
+		</div>
+	  </div>
+	</div>
+  `;
+        });
+
+        gridItemsContainer.innerHTML += kabs.join("");
+      };
+      renderKabupatens();
+
+      var renderMasonry = function () {
+        var grid = document.querySelector(".grid");
+        var msnry;
+        var gridItems = [...document.querySelectorAll(".grid-item")];
+        var spreadButton = document.querySelector("#spreadkabupaten");
+
+        imagesLoaded(grid, function () {
+          msnry = new Masonry(grid, {
+            columnWidth: 160,
+            itemSelector: ".grid-item",
+            gutter: 0,
+          });
+        });
+
+        spreadButton.addEventListener("click", function () {
+          var gutterIsZero = msnry.options.gutter === 0;
+
+          this.style.rotate = gutterIsZero ? "45deg" : "0deg";
+          this.style.scale = gutterIsZero ? "1.3" : "1";
+          msnry.options.gutter = gutterIsZero ? 20 : 0;
+
+          gridItems.forEach((item) => {
+            item.style.marginBottom = gutterIsZero
+              ? `${msnry.options.gutter}px`
+              : "0";
+          });
+
+          msnry.layout();
+        });
+      };
+
+      renderMasonry();
+    </script>
   </body>
 </html>

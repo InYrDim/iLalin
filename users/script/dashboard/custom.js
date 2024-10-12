@@ -25,8 +25,10 @@ function setSpanDate() {
   updateDateTime();
   setInterval(updateDateTime, 1000);
 }
+
 document
   .getElementById("showCurrentPositionBtn")
+
   .addEventListener("click", function () {
     this.classList.add("animate");
     setTimeout(
@@ -51,9 +53,8 @@ function startRouting() {
 
   routeBtn.addEventListener("click", function (e) {
     const greetContent = document.getElementById("greet");
-    const mapContainer = document.getElementById("map");
+    const mapContainer = document.getElementById("ilalinMap");
     const rountingForm = document.getElementById("routingForm");
-    const cancelRouting = document.getElementById("cancelRouting");
 
     const cardElContainer = document.createElement("div");
 
@@ -65,13 +66,12 @@ function startRouting() {
     cardElContainer.innerHTML = cardHtml;
     mapContainer.appendChild(cardElContainer);
 
+    const cancelRouting = document.getElementById("cancelRouting");
     cancelRouting.addEventListener("click", function (e) {
       cardElContainer.remove();
       greetContent.style.marginTop = "0";
       rountingForm.style.bottom = "-100%";
     });
-
-    console.log(e);
   });
 }
 
