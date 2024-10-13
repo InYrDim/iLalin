@@ -1,10 +1,14 @@
-<!-- /*
-* Bootstrap 5
-* Template Name: Furni
-* Template Author: Untree.co
-* Template URI: https://untree.co/
-* License: https://creativecommons.org/licenses/by/3.0/
-*/ -->
+<?php
+session_start();
+
+/**
+ * use for  detect If the user aleready logged in
+ * for now just redirect to the login page
+*/
+
+header("Location: ../auth/login.php")
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
