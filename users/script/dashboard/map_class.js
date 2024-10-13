@@ -117,16 +117,22 @@ class Routing extends LeafletMap {
       "></i>`,
     });
 
-    this.startingPoint = new MapPoint("Starting Point", 0, 0, startIcon);
-    this.finishingPoint = new MapPoint("Finishing Point", 0, 0, finishIcon);
+    this.startingPoint = new MapPoint("Starting Point", 0, 0);
+    this.finishingPoint = new MapPoint("Finishing Point", 0, 0);
 
     /**
      * Clearing Marker from Default Routing Machine
      **/
     this.routing = L.Routing.control({
       show: false,
-      createMarker: function () {
-        return null;
+      createMarker: function (i, wp, n) {
+        let marker_icon = null;
+        if (i == 0) {
+          marker_icon = startIcon;
+        } else if (i == n - 1) {
+          marker_icon = finishIcon;
+        }
+        return L.marker(wp.latLng, { draggable: true, icon: marker_icon });
       },
     }).addTo(this.map);
 
@@ -156,6 +162,20 @@ class Routing extends LeafletMap {
     ) {
       const startLatLng = L.latLng(startLat, startLng);
       const finisihLatLng = L.latLng(endLat, endLng);
+
+      const routingStreetEl = document.getElementById("streetIdContainer");
+      if (routingStreetEl.style.display == "none") {
+        routingStreetEl.style.display = "block";
+      }
+      this.routing.on("routesfound", function (e) {
+        var routes = e.routes;
+        var summary = routes[0].summary;
+
+        const distance = summary.totalDistance / 1000;
+
+        document.getElementById("routingDistanceId").innerHTML =
+          distance + "km";
+      });
 
       // Update koordinat startingPoint dan finishingPoint
       this.startingPoint.updateCoordinates(startLatLng);
@@ -208,6 +228,7 @@ class Routing extends LeafletMap {
 
   createOptionsContainer(inputId) {
     const container = createElement("div", [
+      "search-results-container",
       "flex",
       "flex-column",
       "border-1",
@@ -272,14 +293,20 @@ class Routing extends LeafletMap {
       if (input.id === "inputTitikAwal") {
         this.startingPoint.updateCoordinates(latllng);
         this.inputMarkers[input.id] = this.startingPoint;
+
+        const startPoint = document.getElementById("startpoint");
+        startPoint.children[0].innerHTML = place.name;
+        startPoint.children[1].innerHTML = place.formatted_address;
       } else if (input.id === "inputTitikAkhir") {
         this.finishingPoint.updateCoordinates(latllng);
         this.inputMarkers[input.id] = this.finishingPoint;
+
+        const startPoint = document.getElementById("endpoint");
+        startPoint.children[0].innerHTML = place.name;
+        startPoint.children[1].innerHTML = place.formatted_address;
       }
 
-      this.map.panTo(latllng);
-
-      this.inputMarkers[input.id].marker.addTo(this.map);
+      // this.map.panTo(latllng);
 
       this.checkAndStartRouting();
     });

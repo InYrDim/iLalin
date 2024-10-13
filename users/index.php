@@ -46,6 +46,11 @@ if(isset($email)) {
         margin-bottom: 1rem;
     }
 
+    .search-results-container {
+        max-height: 120px;
+        overflow-y: scroll;
+    }
+
     #routingForm .placeOption:hover {
         background-color: var(--primary-color-name);
         color: white;
@@ -175,24 +180,31 @@ if(isset($email)) {
 
                     </div>
 
-                    <div class="pt-2 pb-4 px-4 border border-1 border-primary rounded rounded-5 w-100">
-                        <div class="py-2 text-primary ">
-                            <div id="startpoint" class="fw-bold">
-                                <div style="line-height: 1rem; font-size:1rem;   font-weight:600; ">Pinrang</div>
-                                <span style="font-weight:300;opacity: .7; font-size:1rem;">JL. Lembu, Kabupaten
-                                    Pinrang</span>
+                    <div class="pt-4 pb-4 px-4 border border-1 border-primary rounded rounded-5 w-100">
+                        <div id="streetIdContainer" style="display: none;">
+                            <div class="pb-2 text-primary ">
+                                <div id="startpoint" class="fw-bold">
+                                    <div
+                                        style="line-height: 1rem; font-size:1rem;   font-weight:600; margin-bottom: 1rem; ">
+                                    </div>
+                                    <span
+                                        style="font-weight:300;opacity: .7; font-size:1rem; line-height: 1.2rem; display:inline-block;"></span>
+                                </div>
+                                <div class="divider border border-1 border-secondary my-3"></div>
+                                <div id="endpoint" class="fw-bold">
+                                    <div
+                                        style="line-height: 1rem; font-size:1rem;   font-weight:600; margin-bottom: 1rem; ">
+                                    </div>
+                                    <span
+                                        style="font-weight:300;opacity: .7; font-size:1rem; line-height: 1.2rem; display:inline-block;;">Jl.
+                                    </span>
+                                </div>
                             </div>
-                            <div class="divider border border-1 border-secondary my-3"></div>
-                            <div id="endpoint" class="fw-bold">
-                                <div style="line-height: 1rem; font-size:1rem;   font-weight:600; ">Makassar</div>
-                                <span style="font-weight:300;opacity: .7; font-size:1rem;">Jl. DG. Tata Lama
-                                    No.23</span>
+                            <div class="form-floating mt-4 mb-4 d-flex justify-content-between align-items-center py-2 px-3"
+                                style="border-radius: .6rem; background-color: white; background-color: white; filter: drop-shadow(0px 00px 5.5px #0000001f);">
+                                <div style="font-size: 1rem;" class="text-primary">Jarak</div>
+                                <span id="routingDistanceId">200M</span>
                             </div>
-                        </div>
-                        <div class="form-floating mt-4 mb-4 d-flex justify-content-between align-items-center py-2 px-3"
-                            style="border-radius: .6rem; background-color: white; background-color: white; filter: drop-shadow(0px 00px 5.5px #0000001f);">
-                            <div style="font-size: 1rem;" class="text-primary">Jarak</div>
-                            <span id="distance_container">200M</span>
                         </div>
                         <div class="d-flex gap-2">
                             <a class="flex-grow-1 btn btn-outline-primary rounded rounded-5" id="cancelRouting">Batal

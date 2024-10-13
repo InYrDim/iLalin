@@ -55,6 +55,7 @@ function startRouting() {
     const greetContent = document.getElementById("greet");
     const mapContainer = document.getElementById("ilalinMap");
     const rountingForm = document.getElementById("routingForm");
+    const routingStreetEl = document.getElementById("streetIdContainer");
 
     const cardElContainer = document.createElement("div");
 
@@ -68,6 +69,9 @@ function startRouting() {
 
     const cancelRouting = document.getElementById("cancelRouting");
     cancelRouting.addEventListener("click", function (e) {
+      if (routingStreetEl.style.display == "block") {
+        routingStreetEl.style.display = "none";
+      }
       cardElContainer.remove();
       greetContent.style.marginTop = "0";
       rountingForm.style.bottom = "-100%";
