@@ -209,7 +209,8 @@ if(isset($email)) {
                         <div class="d-flex gap-2">
                             <a class="flex-grow-1 btn btn-outline-primary rounded rounded-5" id="cancelRouting">Batal
                             </a>
-                            <a class="flex-grow-1 btn btn-primary rounded rounded-5" id="processRouting">Proses</a>
+                            <a href="pemesanan.php" class="flex-grow-1 btn btn-primary rounded rounded-5"
+                                id="processRouting">Proses</a>
                         </div>
                     </div>
                 </div>

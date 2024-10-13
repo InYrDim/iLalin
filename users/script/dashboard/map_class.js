@@ -356,7 +356,7 @@ class Routing extends LeafletMap {
       method: "GET",
       headers: {
         "x-rapidapi-host": "map-places.p.rapidapi.com",
-        "x-rapidapi-key": "5f9f3ef246msh62120fc2d9b85e5p10e3cdjsnf5d1040f6404",
+        "x-rapidapi-key": "17e50710a7msh578cc29d00b60afp1683e8jsnf5c52cf9d775",
       },
     });
 
