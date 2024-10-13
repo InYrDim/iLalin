@@ -576,12 +576,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 /* div icon */
-
 .leaflet-div-icon {
-  /* background: #fff;
-	border: 1px solid #666; */
-  width: auto !important;
-  height: auto !important;
+  background: none;
+  border: none;
+  margin-left: -16px;
+  margin-top: -16px;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  outline-style: none;
 }
 
 /* Tooltip */

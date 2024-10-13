@@ -61,8 +61,9 @@ class LeafletMap {
     const { latitude: lat, longitude: lng } = position.coords;
 
     const icon = L.divIcon({
-      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-danger
+      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);position: absolute;bottom: 100%;left: 0;right: 0;" class="ri-map-pin-user-fill fs-2 text-danger
       "></i>`,
+      iconSize: [32, 32],
     });
 
     const marker = L.marker([lat, lng], { icon: icon });
@@ -108,22 +109,30 @@ class Routing extends LeafletMap {
   constructor(mapId) {
     super(mapId);
 
-    const finishIcon = L.divIcon({
-      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-primary
-      "></i>`,
-    });
-    const startIcon = L.divIcon({
-      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);" class="ri-map-pin-user-fill fs-2 text-secondary
-      "></i>`,
-    });
-
     this.startingPoint = new MapPoint("Starting Point", 0, 0);
     this.finishingPoint = new MapPoint("Finishing Point", 0, 0);
 
     /**
-     * Clearing Marker from Default Routing Machine
+     * Clearing Marker from Default Routing Machine (?), mybe not
      **/
-    this.routing = L.Routing.control({
+    this.routing = this.initRouting();
+
+    this.inputMarkers = {};
+  }
+
+  initRouting() {
+    const finishIcon = L.divIcon({
+      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);position: absolute;bottom: 100%;left: 0;right: 0;" class="ri-map-pin-user-fill fs-2 text-primary
+      "></i>`,
+      iconSize: [32, 32],
+    });
+    const startIcon = L.divIcon({
+      html: `<i style="filter: drop-shadow(3px 3px 2px #0000006e);position: absolute;bottom: 100%;left: 0;right: 0;" class="ri-map-pin-user-fill fs-2 text-secondary
+      "></i>`,
+      iconSize: [32, 32],
+    });
+
+    return L.Routing.control({
       show: false,
       createMarker: function (i, wp, n) {
         let marker_icon = null;
@@ -132,11 +141,21 @@ class Routing extends LeafletMap {
         } else if (i == n - 1) {
           marker_icon = finishIcon;
         }
-        return L.marker(wp.latLng, { draggable: true, icon: marker_icon });
+        return L.marker(wp.latLng, { icon: marker_icon });
       },
     }).addTo(this.map);
+  }
 
-    this.inputMarkers = {};
+  cancelRouting() {
+    if (this.routing != null) {
+      this.map.removeControl(this.routing);
+      this.routing = null;
+      this.inputs.forEach((input) => {
+        input.value = "";
+        input.dataset.lat = "";
+        input.dataset.lng = "";
+      });
+    }
   }
 
   startRouting(startPoint, endPoint) {
@@ -171,7 +190,7 @@ class Routing extends LeafletMap {
         var routes = e.routes;
         var summary = routes[0].summary;
 
-        const distance = summary.totalDistance / 1000;
+        const distance = Math.round(summary.totalDistance / 1000);
 
         document.getElementById("routingDistanceId").innerHTML =
           distance + "km";
@@ -285,7 +304,7 @@ class Routing extends LeafletMap {
         place.geometry.location.lng,
       ]);
 
-      input.value = place.formatted_address;
+      input.value = place.name;
 
       input.dataset.lat = latllng.lat;
       input.dataset.lng = latllng.lng;
@@ -353,3 +372,8 @@ const inputTitikAwal = document.getElementById("inputTitikAwal");
 const inputTitikAkhir = document.getElementById("inputTitikAkhir");
 
 routingMap.initSearch([inputTitikAwal, inputTitikAkhir]);
+
+const cancelRouting = document.getElementById("cancelRouting");
+cancelRouting.addEventListener("click", (e) => {
+  routingMap.cancelRouting(e);
+});
