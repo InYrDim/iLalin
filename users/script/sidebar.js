@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         // show navbar
         nav.classList.toggle("show-sidenav");
         // change icon
-        toggle.classList.toggle("bx-x");
+        toggle.classList.toggle("ri-menu-unfold-4-fill");
         // add padding to body
         bodypd.classList.toggle("body-pd");
         // add padding to header

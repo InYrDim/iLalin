@@ -135,8 +135,9 @@ if(isset($email)) {
 
                     <div class="d-flex align-items-end text-white p-4 " id="weather-group">
                         <div class="">
-                            <div class="weather_temp display-5 fw-bold d-flex">
-                                34 <span class="degree "><i class="ri-circle-line fs-6"></i></span>
+                            <div class="weather_temp display-5 fw-bold d-flex ">
+                                <span>34</span>
+                                <i class="degree ri-circle-line fs-6"></i>
                             </div>
                             <div class="weatber_location">Makssar</div>
                         </div>
