@@ -84,9 +84,7 @@ if(isset($email)) {
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div id="croppieContaier">
-
-                            </div>
+                            <div id="croppieContaier"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cropBtnDismis"
@@ -116,24 +114,61 @@ if(isset($email)) {
                 </div>
                 <div style="margin-top:20px;">
                     <div style="display:flex; gap:90px;border-bottom:3px solid #3B5D50; padding-bottom: 2px;">
-                        <a href="profile.php">Profile</a>
-                        <a href="keamanan.php">Password</a>
-                        <a href= "pembayaran.php" style="color:black; font-weight:400;">Pembayaran</a>
+                        <a href= "profile.php" style="color:black; font-weight:400;">Profile</a>
+                        <a href= "keamanan.php">Password</a>
+                        <a href= "pembayaran.php">Pembayaran</a>
                     </div>
-
                     <div style="display:flex; justify-content: space-between; margin-top:20px;  gap:30px; color:black; padding-left: 30px;">
                         
-                    <div>Metode Pembayaran Default</div>
-                    <div style="color:#2E2E2E">Cash</div>
+                        <div>Metode Pembayaran Default</div>
+                        <div class="mb-3">
+                            <select class="form-select" id="metodepembayaran" name="metodepembayaran" style="background-color:#D9D9D9"required>
+                                <option value="">Pilih Metode Pembayaran</option>
+                                <option value="COD">COD</option>
+                                <option value="BCA">BCA</option>
+                                <option value="BNI">BNI</option>
+                                <option value="BRI">BRI</option>
+                                <option value="Mandiri">Mandiri</option>
+                                <option value="OVO">OVO</option>
+                                <option value="Dana">Dana</option>
+                                <option value="Gopay">Gopay</option>
+                            </select>
+                        </div>
+
+                    
                     </div>
-                    <div style="display:flex; justify-content: end; margin-top: 200px;">
-                        <a href= "pembayaran_edit.php" style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Ubah Pembayaran</a>
+                    <div style="display:flex; justify-content: end; margin-top: 200px;gap: 5px;">
+                        <a href="pembayaran.php" style="background-color:red; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Batal</a>
+                        <a style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</a>
                     </div>
                 </div>
             </div>
 
             <div class="row gutters-sm pt-5">
-                
+                <!-- <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
+                                    alt="User" id="profileImage">
+                                <div class="mt-3">
+
+                                    <h4><?= $profile['nama'] ?></h4>
+                                    <p class="text-secondary mb-1"><?= $profile['email'] ?></p>
+                                    <p class="text-muted font-size-sm">Sulawesi Selatan, Indonesia</p>
+                                    <button class="btn btn-primary"
+                                        onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
+                                        data-bs-target="#cropImage"><i class="ri-edit-box-line"></i> Edit Foto</button>
+                                    <input type="file" id="fileInput" style="display: none;"
+                                        onchange="changePhoto(event)">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+        
             </div>
 
 

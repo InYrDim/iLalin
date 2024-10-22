@@ -3,28 +3,66 @@ session_start();
 
 $active_page = "users";
 
-include '../controller/php/database.php';
+include '../controller/php/database.php'  ;
 
 $email = $_SESSION['email'];
 
 if(isset($email)) {
     
     
+    
     $db = new Database();
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Checkcropper.toStringf the file is uploaded
-        $json_data = json_decode(file_get_contents('php://input'), true);
 
-        $imageString = $json_data['image'];
+        if (isset($_POST["ubah_profile"])) {
+            // Sanitize and validate input data
+            $nama_lengkap = filter_input(INPUT_POST, 'nama_lengkap', FILTER_SANITIZE_STRING);
+            $nama_pengguna = filter_input(INPUT_POST, 'nama_pengguna', FILTER_SANITIZE_STRING);
+            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+            $nomor_telepon = filter_input(INPUT_POST, 'nomor_telepon', FILTER_SANITIZE_STRING);
+            $alamat = filter_input(INPUT_POST, 'alamat', FILTER_SANITIZE_STRING);
         
-        $updateDb = $db->update('users', [
-            'profile_image' => $imageString,
-        ], 'email = ?', [$email] );
+            $id_pengguna = $_SESSION['user_id'];
+
+            // Check if email is valid
+            if ($email === false) {
+                echo "Email is not valid.";
+            } else {
+                $updateDb = $db->update('users', [
+                    'nama' => $nama_lengkap,
+                    'username' => $nama_pengguna,
+                    'email' => $email,
+                    'nomor_telepon' => $nomor_telepon,
+                    'alamat' => $alamat,
+                ], 'id_pengguna = ?', [$id_pengguna]);
+                
+                if ($updateDb) {
+                    echo "Profile updated successfully.";
+                    
+                    $_SESSION['email'] = $email;
+
+                    header("Location: profile.php");
+                } else {
+                    echo "Failed to update profile.";
+                }
+            }
+        }
+        else {
+            $json_data = json_decode(file_get_contents('php://input'), true);
+            $imageString = $json_data['image'];
+            $updateDb = $db->update('users', [
+                'profile_image' => $imageString,
+            ], 'email = ?', [$email] );
+        }
+        
+   
             
     }
 
     $profile = $db->fetch('users', "*", 'email = ?', [$email]);
+
 ?>
 
 <!DOCTYPE html>
@@ -116,35 +154,38 @@ if(isset($email)) {
                 <div style="margin-top:20px;">
                     <div style="display:flex; gap:90px;border-bottom:3px solid #3B5D50; padding-bottom: 2px;">
                         <a href="profile.php" style="color:black; font-weight:400;">Profile</a>
-                        <a href="keamanan.php" >Password</a>
-                        <a href="pembayaran.php" >Pembayaran</a>
+                        <a href="keamanan.php">Password</a>
+                        <a href="pembayaran.php">Pembayaran</a>
                     </div>
-                    <div style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
-                            <div style="font-weight:500;">Nama Lengkap</div>
-                            <div><?= $profile["nama"] ?></div>
-                        </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
-                            <div style="font-weight:500;">Nama Pengguna</div>
-                            <div><?= $profile["username"] ?></div>
-                        </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
-                            <div style="font-weight:500;">Email</div>
-                            <div><?= $profile["email"] ?></div>
-                        </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
-                            <div style="font-weight:500;">Nomor Telepon</div>
-                            <div><?= $profile["nomor_telepon"] ?></div>
-                        </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
-                            <div style="font-weight:500;">Alamat</div>
-                            <div><?= $profile["alamat"] ?></div>
-                        </div>
+                    <form action="" method="POST" >
+                        <div style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
+                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                                <div style="font-weight:500;">Nama Lengkap</div>
+                                <input name="nama_lengkap" type="text" value="<?= $profile["nama"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                            </div>
+                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                                <div style="font-weight:500;">Nama Pengguna</div>
+                                <input name="nama_pengguna"type="text" value="<?= $profile["username"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                            </div>
+                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                                <div style="font-weight:500;">Email</div>
+                                <input name="email" type="email" value="<?= $profile["email"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                            </div>
+                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                                <div style="font-weight:500;">Nomor Telepon</div>
+                                <input name="nomor_telepon" type="text" value="<?= $profile["nomor_telepon"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                            </div>
+                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                                <div style="font-weight:500;">Alamat</div>
+                                <input name="alamat" type="text" value="<?= $profile["alamat"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                            </div>
 
-                    </div>
-                    <div style="display:flex; justify-content: end; margin-top: 20px;">
-                        <a href="profile_edit.php" style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Edit Profile</a>
-                    </div>
+                        </div>
+                        <div style="display:flex; justify-content: end; margin-top: 20px;gap: 5px;">
+                            <a href="profile.php" style="background-color:red; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Batal</a>
+                            <button type="submit" name="ubah_profile" style="outline:none; border:none; background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

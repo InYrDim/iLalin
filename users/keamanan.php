@@ -9,18 +9,56 @@ $email = $_SESSION['email'];
 
 if(isset($email)) {
     
-    
     $db = new Database();
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Checkcropper.toStringf the file is uploaded
-        $json_data = json_decode(file_get_contents('php://input'), true);
-
-        $imageString = $json_data['image'];
+        if (isset($_POST["ubah_password"])) {
+            // Password Handling
+            $password_saat_ini = filter_input(INPUT_POST, 'password_saat_ini', FILTER_SANITIZE_STRING);
+            $password_baru = filter_input(INPUT_POST, 'password_baru', FILTER_SANITIZE_STRING);
+            $konfirmasi_password_baru = filter_input(INPUT_POST, 'konfirmasi_password_baru', FILTER_SANITIZE_STRING);
         
-        $updateDb = $db->update('users', [
-            'profile_image' => $imageString,
-        ], 'email = ?', [$email] );
+            // Validate email
+            if ($email === false) {
+                echo "Email is not valid.";
+            } else {
+                // Check current password
+                $user = $db->fetch('users', "password", 'email = ?', [$email]);
+                
+                if ($user && password_verify($password_saat_ini, $user['password'])) {
+                    
+                    // Check if new password matches confirmation
+                    if ($password_baru === $konfirmasi_password_baru) {
+                    
+                        // Hash the new password
+                        $hashedPassword = password_hash($password_baru, PASSWORD_DEFAULT);
+                        
+                        // Prepare the update query
+                        $updateDb = $db->update('users', [
+                            'password' => $hashedPassword,
+                        ], 'email = ?', [$email]);
+        
+                        if ($updateDb) {
+                            echo "<script>alert('Update Password Succesfuly')</script>";
+                        } else {
+                            echo "<script>alert('Failed to update profile.')</script>";
+                        }
+                    } else {
+                        echo "<script>alert('New password and confirmation do not match.')</script>";
+                    }
+                } else {
+                    echo "<script>alert('Current password is incorrect.')</script>";
+                }
+            }
+        }
+        else {
+            $json_data = json_decode(file_get_contents('php://input'), true);
+            $imageString = $json_data['image'];
+            $updateDb = $db->update('users', [
+                'profile_image' => $imageString,
+            ], 'email = ?', [$email] );
+        }
             
     }
 
@@ -117,23 +155,58 @@ if(isset($email)) {
                 <div style="margin-top:20px;">
                     <div style="display:flex; gap:90px;border-bottom:3px solid #3B5D50; padding-bottom: 2px;">
                         <a href="profile.php">Profile</a>
-                        <a href="keamanan.php">Password</a>
-                        <a href= "pembayaran.php" style="color:black; font-weight:400;">Pembayaran</a>
+                        <a href="keamanan.php" style="color:black; font-weight:400;">Password</a>
+                        <a href="pembayaran.php">Pembayaran</a>
                     </div>
+                    <form action="" method="POST" >
+                        <div style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
+                            <div style="display:flex; justify-content: space-between; padding-bottom: 10px;">
+                                <div style="font-weight:500;">Password Saat Ini</div>
+                                <input name="password_saat_ini" type="password">
+                            </div>
+                            <div style="display:flex; justify-content: space-between;  padding-bottom: 10px;">
+                                <div style="font-weight:500;">Password Baru</div>
+                                <input name="password baru" type="password">
+                            </div>
+                            <div style="display:flex; justify-content: space-between;  padding-bottom: 10px;">
+                                <div style="font-weight:500;">Konfirmasi Password Baru</div>
+                                <input name="konfirmasi password baru" type="password">
+                            </div>
+                            
 
-                    <div style="display:flex; justify-content: space-between; margin-top:20px;  gap:30px; color:black; padding-left: 30px;">
-                        
-                    <div>Metode Pembayaran Default</div>
-                    <div style="color:#2E2E2E">Cash</div>
-                    </div>
-                    <div style="display:flex; justify-content: end; margin-top: 200px;">
-                        <a href= "pembayaran_edit.php" style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Ubah Pembayaran</a>
-                    </div>
+                        </div>
+                        <div style="display:flex; justify-content: end; margin-top: 20px;">
+                            <button type="submit" name="ubah_password" style="outline:none; border:none; background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
             <div class="row gutters-sm pt-5">
-                
+                <!-- <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
+                                    alt="User" id="profileImage">
+                                <div class="mt-3">
+
+                                    <h4><?= $profile['nama'] ?></h4>
+                                    <p class="text-secondary mb-1"><?= $profile['email'] ?></p>
+                                    <p class="text-muted font-size-sm">Sulawesi Selatan, Indonesia</p>
+                                    <button class="btn btn-primary"
+                                        onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
+                                        data-bs-target="#cropImage"><i class="ri-edit-box-line"></i> Edit Foto</button>
+                                    <input type="file" id="fileInput" style="display: none;"
+                                        onchange="changePhoto(event)">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+        
             </div>
 
 

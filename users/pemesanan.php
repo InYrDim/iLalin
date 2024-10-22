@@ -1,134 +1,146 @@
+<?php
+session_start();
+$active_page = "dashboard";
+
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the JSON data from the request
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    // Check if the data is set
+    if (isset($data["routeData"])) {
+        // Return a response
+        $_SESSION['routeData'] = $data["routeData"];
+        echo json_encode(['status' => 'success', 'message' => 'Data stored in session']);
+        exit();
+    } else {
+        // Return an error response
+        echo json_encode(['status' => 'error', 'message' => 'Invalid data']);
+        exit();
+    }
+}
+
+if($_SERVER['REQUEST_METHOD'] === 'GET') {
+    
+   
+    include '../controller/php/database.php';
+    $email = $_SESSION['email'];
+
+    if(isset($email)) {
+        $db = new Database();
+        $profile = $db->fetch('users', '*', 'email = ?',[$email]);
+        $avaiable_driver = $db->fetch('users', '*', 'peran = ?', ["pengemudi"]);
+
+        echo "<br>route: ";
+        var_dump($_SESSION['routeData']);
+        
+        echo "<br><br>pengguna: ";
+        var_dump($profile);
+
+        echo "<br>avaiable driver: ";
+        var_dump($avaiable_driver);
+?>
+
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemesanan Perjalanan</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="">
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+
+    <!-- Vendor -->
+    <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <script src="../assets/vendor/tailwind/tailwindcss" defer></script>
+
+    <!-- Leafet -->
+    <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.css" />
+
+    <!-- Bootstrap CSS -->
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="../assets/css/tiny-slider.css" rel="stylesheet" />
+    <link href="../assets/css/style.css" rel="stylesheet" />
+    <link href="./css/sidebar.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/vendor/leaflet-geocoder/Control.Geocoder.css" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="./css/dashboard/custom.css">
     <style>
-        body {
-           
-            background-size: cover;
-        }
-        .overlay {
-            background-color: rgba(255 255 255);
-            height: 100vh;
-            padding: 50px;
-        }
-        .form-container {
-            background-color: rgba(104 172 120);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(17 133 37);
-        }
-        .btn-primary {
-            background-color: #3498db;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
+    .inputRouteContainer {
+        margin-bottom: 1rem;
+    }
+
+    .search-results-container {
+        max-height: 120px;
+        overflow-y: scroll;
+    }
+
+    #routingForm .placeOption:hover {
+        background-color: var(--primary-color-name);
+        color: white;
+    }
+
+    .custom-input-icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .start-icon {
+        left: 10px;
+    }
+
+    .end-icon {
+        right: 10px;
+    }
     </style>
+    <title>iLalin</title>
 </head>
 <body>
 
-<div class="overlay">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="form-container">
-                    <h2 class="text-center text-dark mb-4">Proses Pemesanan</h2>
-                    <form action="pembayaran.php" method="post">
-                        <!-- Tujuan -->
-                        <div class="mb-3">
-                            <label for="tujuan" class="form-label">Perjalanan</label>
-                            <input type="text" class="form-control" id="tujuan" name="tujuan" required>
-                        </div>
 
-                        <!-- Tanggal dan Waktu -->
-                        <div class="mb-3">
-                            <label for="tanggal" class="form-label">Tanggal Perjalanan</label>
-                            <input type="date" class="form-control" id="tanggal" name="tanggal" required>
-                        </div>
+<div id="body-pd">
 
-                        <div class="mb-3">
-                            <label for="waktu" class="form-label">Waktu Perjalanan</label>
-                            <input type="time" class="form-control" id="waktu" name="waktu" required>
-                        </div>
+<?php include_once './components/header.php'; ?>
 
-                        <!-- Opsi Transportasi -->
-                        <div class="justify-content-center">
-                            <div class="mb-3 form-control d-flex align-items-center">
-                                <img src="../images/mobil/avanza_merah.png" alt="" width="50px" height="50px" class="me-3">
-                                <div class="info">
-                                    <span id="nama">Ahmad Dahlan</span>
-                                    <br>
-                                    <span id="nohp">081234567890</span>
-                                    <br>
-                                    <span id="nokendaraan">DD1945KL</span>
-                                    <br>
-                                    <div class=" bg-success p-2 text-white bg-opacity-75">
-                                        <span id="jumlahpembayaran">Rp 125.000</span>
-                                    </div>
-                                </div>
-                                <input type="radio" name="pilihan" id="pilihan1" class="ms-auto">
-                                <label for="pilihan1" class="ms-2">Pilih</label>
-                            </div>
-                        </div>
-
-                        <div class="justify-content-center">
-                            <div class="mb-3 form-control d-flex align-items-center">
-                                <img src="../images/mobil/avanza_silver.jpg" alt="" width="50px" height="50px" class="me-3">
-                                <div class="info">
-                                    <span id="nama">Suprianto</span>
-                                    <br>
-                                    <span id="nohp">0859036488</span>
-                                    <br>
-                                    <span id="nokendaraan">DD2018AF</span>
-                                    <br>
-                                    <div class=" bg-success p-2 text-white bg-opacity-75">
-                                        <span id="jumlahpembayaran">Rp 130.000</span>
-                                    </div>
-                                </div>
-                                <input type="radio" name="pilihan" id="pilihan2" class="ms-auto">
-                                <label for="pilihan2" class="ms-2">Pilih</label>
-                            </div>
-                        </div>
-
-                        <div class="justify-content-center">
-                            <div class="mb-3 form-control d-flex align-items-center">
-                                <img src="../images/mobil/avanza_biru.png" alt="" width="50px" height="50px" class="me-3">
-                                <div class="info">
-                                    <span id="nama">Dahlan</span>
-                                    <br>
-                                    <span id="nohp">08254897659</span>
-                                    <br>
-                                    <span id="nokendaraan">DP5784NR</span>
-                                    <br>
-                                    <div class=" bg-success p-2 text-white bg-opacity-75">
-                                        <span id="jumlahpembayaran">Rp 128.000</span>
-                                    </div>
-                                </div>
-                                <input type="radio" name="pilihan" id="pilihan3" class="ms-auto">
-                                <label for="pilihan3" class="ms-2">Pilih</label>
-                            </div>
-                        </div>
-                        
-
-                        <!-- ... (rest of the code remains the same) ... -->
-
-                    <!-- Tombol Kirim -->
-                    <button type="submit" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">Pesan Sekarang</button>
-
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+<h1>Session Data</h1>
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae ad necessitatibus explicabo excepturi sint ut nihil, sed illum aliquam unde provident facere placeat reiciendis, quibusdam fuga consequuntur, quas fugiat voluptatum!
+
+
+    <!-- Custom Script -->
+    <script src="script/dashboard/custom.js"></script>
+    <script src="script/dashboard/weather.js"></script>
+    <script src="script/sidebar.js"></script>
+
+    <script>
+
+    </script>
+
+    <!-- Leafet -->
+    <script src="../assets/vendor/leaflet/leaflet.js"></script>
+    <script src="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.min.js"></script>
+    <script src="../assets/vendor/leaflet-geocoder/Control.Geocoder.js"></script>
+
+    <!-- MAP for Leafet -->
+    <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
+    <script src="script/dashboard/map_class.js"></script>
+
 
 </body>
 </html>
+
+
+<?php 
+    } else {
+        header("Location: ../auth/login.php");
+        exit();
+    }
+
+}
+?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include '../php/database.php'  ;
+include '../controller/php/database.php'  ;
 
 $email = $_SESSION['email'];
 

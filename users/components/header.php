@@ -3,7 +3,7 @@
         <i class="ri-menu-fold-4-line" id="header-toggle"></i>
     </div>
     <div class="d-flex flex gap-3 align-items-center">
-        <span class="ts-uppper text-primary fw-bold"><?= $profile['nama'] ?></span>
+        <span class="ts-uppper text-primary fw-bold"><?= $profile['username'] ?></span>
         <div class="header_img">
             <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
                 alt="<?= $profile["nama"] ?>">
@@ -32,7 +32,7 @@
                     <i class="ri-message-2-line nav_icon"></i>
                     <span class="nav_name">Messages</span>
                 </a>
-                <a href="#" class="nav_link <?= $active_page == "settings" ? "active" : "" ?>">
+                <a href="user_settings.php" class="nav_link <?= $active_page == "user_settings" ? "active" : "" ?>">
                     <i class="ri-settings-5-line nav_icon"></i>
                     <span class="nav_name">Settings</span>
                 </a>
@@ -43,7 +43,7 @@
         </div>
 
         <div>
-            <a href="../php/utils/session.destroy.php?home=../../../auth/login.php" class="nav_link">
+            <a href="../controller/php/utils/session.destroy.php?home=../../../auth/login.php" class="nav_link">
                 <i class="ri-switch-line nav_icon"></i>
                 <span class="nav_name">Switch Role</span>
             </a>

@@ -90,7 +90,7 @@ if(isset($email)) {
                 <div class="col-lg-8 p-0 ">
                     <div class="bg-ilalin text-white  p-5 shadow" style="border-radius: 1.5rem;">
                         <div class="d-flex gap-1 fs-4" style="color: var(--secondary-color-name);">
-                            Halo <p class="ts-uppper fw-bold"><?= $_SESSION['username'] ?></p>
+                            Halo <p class="ts-uppper fw-bold"><?= $profile['username'] ?></p>
                         </div>
                         <div class="meta">
                             <div class="display-6 d-block fw-bold mb-4">Mau Ke Mana Hari Ini?</div>
@@ -210,7 +210,7 @@ if(isset($email)) {
                         <div class="d-flex gap-2">
                             <a class="flex-grow-1 btn btn-outline-primary rounded rounded-5" id="cancelRouting">Batal
                             </a>
-                            <a href="pemesanan.php" class="flex-grow-1 btn btn-primary rounded rounded-5"
+                            <a href="action/gateway.php" class="flex-grow-1 btn btn-primary rounded rounded-5"
                                 id="processRouting">Proses</a>
                         </div>
                     </div>
@@ -238,7 +238,7 @@ if(isset($email)) {
 
     <!-- MAP for Leafet -->
     <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
-    <script src="script/dashboard/map_class.js"></script>
+    <script src="./script/map_class.js"></script>
 
 </body>
 
