@@ -1,14 +1,12 @@
-<?php
-session_start();
-
-$active_page = "dashboard";
-include '../controller/php/database.php';
-$email = $_SESSION['email'];
-
-if(isset($email)) {
-    $db = new Database();
-    $profile = $db->fetch('users', '*', 'email = ?',[$email]);
-?>
+<?php session_start(); 
+$active_page="dashboard" ; 
+$email=$_SESSION['email'];
+    include_once '../controller/php/ilalin.php' ; 
+    if(isset($email)) { 
+        $ilalin=new IlalinApp(); 
+        $userProfile=$ilalin->getUserProfile($email);
+        $profile = $userProfile;
+    ?>
 
 <!DOCTYPE html>
 
@@ -21,7 +19,6 @@ if(isset($email)) {
     <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
 
     <meta name="description" content="" />
-    <meta name="keywords" content="bootstrap, bootstrap4" />
 
     <!-- Vendor -->
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
@@ -90,7 +87,7 @@ if(isset($email)) {
                 <div class="col-lg-8 p-0 ">
                     <div class="bg-ilalin text-white  p-5 shadow" style="border-radius: 1.5rem;">
                         <div class="d-flex gap-1 fs-4" style="color: var(--secondary-color-name);">
-                            Halo <p class="ts-uppper fw-bold"><?= $profile['username'] ?></p>
+                            Halo <p class="ts-uppper fw-bold"><?= $userProfile['username'] ?></p>
                         </div>
                         <div class="meta">
                             <div class="display-6 d-block fw-bold mb-4">Mau Ke Mana Hari Ini?</div>
@@ -160,6 +157,12 @@ if(isset($email)) {
                             <div class="mb-2 position-relative">
                                 <input type="text" class="form-control ps-5 pe-5" placeholder="Titik awal"
                                     id="inputTitikAwal">
+                                <span class="lds-ring loading-indicator">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </span>
                                 <i class="ri-map-pin-line custom-input-icon start-icon text-warning"
                                     style="font-size: 1.5em;"></i>
                             </div>
@@ -172,6 +175,12 @@ if(isset($email)) {
                             <div class="mb-3 position-relative">
                                 <input type="text" class="form-control ps-5 pe-5" placeholder="Tujuan"
                                     id="inputTitikAkhir">
+                                <span class="lds-ring loading-indicator">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </span>
                                 <i class="ri-map-pin-fill custom-input-icon start-icon text-success"
                                     style="font-size: 1.5em;"></i>
                             </div>
@@ -211,7 +220,8 @@ if(isset($email)) {
                             <a class="flex-grow-1 btn btn-outline-primary rounded rounded-5" id="cancelRouting">Batal
                             </a>
                             <a href="action/gateway.php" class="flex-grow-1 btn btn-primary rounded rounded-5"
-                                id="processRouting">Proses</a>
+                                id="processRouting" disabled>Proses</a>
+
                         </div>
                     </div>
                 </div>
@@ -226,6 +236,11 @@ if(isset($email)) {
         </div>
     </div>
 
+    <!-- Metadata -->
+    <input type="hidden" name="id_pengguna" value="<?= $userProfile['id_pengguna'] ?>">
+    <input type="hidden" name="email" value="<?= $userProfile['email'] ?>">
+    <input type="hidden" name="username" value="<?= $userProfile['username'] ?>">
+
     <!-- Custom Script -->
     <script src="script/dashboard/custom.js"></script>
     <script src="script/dashboard/weather.js"></script>
@@ -238,7 +253,7 @@ if(isset($email)) {
 
     <!-- MAP for Leafet -->
     <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
-    <script src="./script/map_class.js"></script>
+    <script src="./script/__TEMP_map_class.js"></script>
 
 </body>
 

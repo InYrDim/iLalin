@@ -3,28 +3,27 @@ session_start();
 
 $active_page = "users";
 
-include '../controller/php/database.php';
+// include '../controller/php/database.php';
+include '../controller/php/ilalin.php';
 
 $email = $_SESSION['email'];
 
 if(isset($email)) {
     
-    
-    $db = new Database();
+    $ilalin = new IlalinApp();
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Checkcropper.toStringf the file is uploaded
         $json_data = json_decode(file_get_contents('php://input'), true);
-
         $imageString = $json_data['image'];
         
-        $updateDb = $db->update('users', [
-            'profile_image' => $imageString,
-        ], 'email = ?', [$email] );
-            
+        // update/replace image
+        $ilalin->replaceImage($email, $imageString)    ;
+        
     }
-
-    $profile = $db->fetch('users', "*", 'email = ?', [$email]);
+    
+    $userProfile = $ilalin->getUserProfile($email);
+    $profile = $userProfile;
 ?>
 
 <!DOCTYPE html>
@@ -97,9 +96,13 @@ if(isset($email)) {
             </div>
 
             <div style="">
-                <div style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;"></div>
+                <div
+                    style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;">
+                </div>
                 <div style="margin-top: 200px;">
-                    <img id="profileImage" src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>" style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
+                    <img id="profileImage"
+                        src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
+                        style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-top:30px;">
                     <div>
@@ -107,43 +110,52 @@ if(isset($email)) {
                         <span><?= $profile["email"] ?></span>
                     </div>
                     <div>
-                        <input type="file" id="fileInput" style="display: none;"
-                        onchange="changePhoto(event)">
+                        <input type="file" id="fileInput" style="display: none;" onchange="changePhoto(event)">
                         <a onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                        data-bs-target="#cropImage" style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit Foto</a>
+                            data-bs-target="#cropImage"
+                            style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit
+                            Foto</a>
                     </div>
                 </div>
                 <div style="margin-top:20px;">
                     <div style="display:flex; gap:90px;border-bottom:3px solid #3B5D50; padding-bottom: 2px;">
                         <a href="profile.php" style="color:black; font-weight:400;">Profile</a>
-                        <a href="keamanan.php" >Password</a>
-                        <a href="pembayaran.php" >Pembayaran</a>
+                        <a href="keamanan.php">Password</a>
+                        <a href="pembayaran.php">Pembayaran</a>
                     </div>
-                    <div style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                    <div
+                        style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
+                        <div
+                            style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                             <div style="font-weight:500;">Nama Lengkap</div>
                             <div><?= $profile["nama"] ?></div>
                         </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                        <div
+                            style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                             <div style="font-weight:500;">Nama Pengguna</div>
                             <div><?= $profile["username"] ?></div>
                         </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                        <div
+                            style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                             <div style="font-weight:500;">Email</div>
                             <div><?= $profile["email"] ?></div>
                         </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                        <div
+                            style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                             <div style="font-weight:500;">Nomor Telepon</div>
                             <div><?= $profile["nomor_telepon"] ?></div>
                         </div>
-                        <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                        <div
+                            style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                             <div style="font-weight:500;">Alamat</div>
                             <div><?= $profile["alamat"] ?></div>
                         </div>
 
                     </div>
                     <div style="display:flex; justify-content: end; margin-top: 20px;">
-                        <a href="profile_edit.php" style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Edit Profile</a>
+                        <a href="profile_edit.php"
+                            style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Edit
+                            Profile</a>
                     </div>
                 </div>
             </div>
@@ -172,25 +184,30 @@ if(isset($email)) {
                     </div>
                 </div> -->
 
-        
+
             </div>
 
 
         </div>
     </div>
 
+
+    <!-- Metadata -->
+    <input type="hidden" name="id_pengguna" value="<?= $userProfile['id_pengguna'] ?>">
+    <input type="hidden" name="email" value="<?= $userProfile['email'] ?>">
+    <input type="hidden" name="username" value="<?= $userProfile['username'] ?>">
     <!-- vendor -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-        <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
         integrity="sha256-noEeBltqVSH78NQZV6+oF9BnLEtCY7cKc0U90dQVF6c=" crossorigin="anonymous">
-        </script>
-        <!-- Sidebar -->
-        <script src="script/sidebar.js"></script>
+    </script>
+    <!-- Sidebar -->
+    <script src="script/sidebar.js"></script>
 
-        <!-- Custom -->
-        <script src="./script/profile/custom.js"></script>
+    <!-- Custom -->
+    <script src="./script/profile/custom.js"></script>
 </body>
 
 </html>

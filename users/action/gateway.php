@@ -1,34 +1,113 @@
 <?php
 session_start();
 
-include '../../controller/php/database.php';
-$email = $_SESSION['email'];
+$email=$_SESSION['email'];
 
-if(isset($email)) {
-    $db = new Database();
-    $profile = $db->fetch('users', '*', 'email = ?',[$email]);
+include_once '../../controller/php/ilalin.php' ; 
 
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
+if(isset($email)) { 
+
+    $ilalin = new IlalinApp(); 
+    $userProfile=$ilalin->getUserProfile($email);
+    $profile = $userProfile;
+
+    function prosesJumlahPembayaran($data) {
+        // Here you can access the data from the request
+        header("Content-Type: application/json");
     
-        function prosesJumlahPembayaran() {
+        // Create an instance of IlalinApp
+        $app = new IlalinApp();
+    
+        // Attempt to add the trip
+        try {
+            $app->addTrip($data);
+            
+            // If addTrip is successful, return success response
+            http_response_code(200); // Set HTTP response status to 200 OK
+            
+            
+        } catch (Exception $e) {
+            // Handle errors from addTrip
+            http_response_code(400); // Set HTTP response status to 400 Bad Request
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Failed to add trip: ' . $e->getMessage()
+            ]);
         }
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if(!isset($_POST['trip_id'])) {
+            header("Content-Type: application/json"); // Ensure the response is JSON formatted
+
+            try {
+                // Read the raw input data from the request body
+                $rawData = file_get_contents("php://input");
+            
+                
+                // Decode JSON into an associative array
+                $data = json_decode($rawData, true);
+                
+                // Validate JSON decoding
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new Exception("Invalid JSON format.");
+                }
+            
+                // Append email from session if available
+                if (isset($_SESSION['email'])) {
+                    $data['email'] = $_SESSION['email']; // Add the email to the data array
+                } else {
+                    throw new Exception("Email not found in session.");
+                }
+            
+                // Ensure all required fields are present
+                $requiredFields = ['name', 'time', 'distance', 'startPoint', 'finishingPoint', 'status'];
+                foreach ($requiredFields as $field) {
+                    if (!isset($data[$field])) {
+                        throw new Exception("Missing required field: $field");
+                    }
+                }
+                
+                // If validation passes, add the trip
+                $tripId = $ilalin->addTrip($data);
+               
+                
+                // Return a success response
+                http_response_code(200); // 200 OK
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Trip added successfully',
+                    'id' => $tripId
+                ]);
+            
+            } catch (Exception $e) {
+                // Handle errors and return a meaningful response
+                http_response_code(400); // 400 Bad Request
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to add trip: ' . $e->getMessage()
+                ]);
+            } finally {
+                exit(); // Ensure script execution is terminated after response
+            }
+        }
+
         
-    }
-    
-    if($_SERVER['REQUEST_METHOD'] === 'GET') {
-        // Should Destroy the session
-        if(isset($_SESSION['snapToken']) && isset($_GET['token'])) {
-            $snapToken = $_SESSION['snapToken'];
-            $_SESSION['snapToken'] = null;
-    
-            echo $snapToken;
-            exit();
-        } else if (isset($_GET['order_id'])) {
-            exit();
-        }
-    
-    }
-?>
+
+
+        if (isset($_POST['trip_id'])) {
+            $trips = $ilalin->getTrips($_POST['trip_id']);
+            $il_util = new IlalinUtils();
+            echo json_encode($trips);
+
+            $total_payment = $il_util->formatCurrency($trips['total_payment']);
+            
+            $starting_point = json_decode($trips['start_point'], true);
+            $finishing_point = json_decode($trips['finishing_point'], true);
+            
+
+            
+            ?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -92,15 +171,17 @@ if(isset($email)) {
                 <div
                     style="width: 50%; line-height: 0.7; border: 1px solid black; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; border-radius: 10px;">
                     <p class="info-row"><span class="info-label"><strong>Nama:</strong></span> <span class="info-value"
-                            data-user="fullname">Muh. Dimas Januardi Nur</span></p>
+                            data-user="fullname"><?= $userProfile['nama'] ?></span></p>
                     <p class="info-row"><span class="info-label"><strong>Nomor Telepon:</strong></span> <span
-                            class="info-value" data-user="no_telepon">081524606995</span></p>
+                            class="info-value" data-user="no_telepon"><?= $userProfile['nomor_telepon'] ?></span></p>
                     <p class="info-row"><span class="info-label"><strong>Titik Jemput:</strong></span> <span
-                            class="info-value" data-user="start_point">Makassar</span></p>
+                            class="info-value"
+                            data-user="start_point"><?= $starting_point['formatted_address'] ?></span></p>
                     <p class="info-row"><span class="info-label"><strong>Tujuan:</strong></span> <span
-                            class="info-value" data-user="end_point">Pinrang</span></p>
+                            class="info-value" data-user="end_point"><?= $finishing_point['formatted_address'] ?></span>
+                    </p>
                     <p class="info-row"><span class="info-label"><strong>Jarak:</strong></span> <span class="info-value"
-                            data-user="length">180km</span></p>
+                            data-user="length"><?= $trips['distance'] ?> Km</span></p>
                 </div>
 
                 <!-- Bagian kanan -->
@@ -127,7 +208,8 @@ if(isset($email)) {
                 style="border: 1px solid black; border-radius: 10px; margin-top: 40px; padding: 10px;">
                 <div>
                     <h3>Total Pembayaran</h3>
-                    <p class="total-payment" id="payment_amount">Rp. 180.000</p> <!-- Ukuran font diperbesar -->
+                    <p class="total-payment" id="payment_amount"><?= $total_payment ?></p>
+                    <!-- Ukuran font diperbesar -->
                 </div>
             </div>
 
@@ -230,6 +312,28 @@ if(isset($email)) {
 </body>
 
 </html>
+
+<?php
+        }
+        
+    }
+       
+    
+    if($_SERVER['REQUEST_METHOD'] === 'GET') {
+        // Should Destroy the session
+        if(isset($_SESSION['snapToken']) && isset($_GET['token'])) {
+            $snapToken = $_SESSION['snapToken'];
+            $_SESSION['snapToken'] = null;
+    
+            echo $snapToken;
+            exit();
+        } else if (isset($_GET['order_id'])) {
+            exit();
+        }
+    
+    }
+?>
+
 
 <?php 
 } else {

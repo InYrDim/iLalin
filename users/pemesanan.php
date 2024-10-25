@@ -43,8 +43,9 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="author" content="Untree.co" />
     <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
@@ -101,16 +102,18 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
     </style>
     <title>iLalin</title>
 </head>
+
 <body>
 
 
-<div id="body-pd">
+    <div id="body-pd">
 
-<?php include_once './components/header.php'; ?>
+        <?php include_once './components/header.php'; ?>
 
-</div>
-<h1>Session Data</h1>
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae ad necessitatibus explicabo excepturi sint ut nihil, sed illum aliquam unde provident facere placeat reiciendis, quibusdam fuga consequuntur, quas fugiat voluptatum!
+    </div>
+    <h1>Session Data</h1>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae ad necessitatibus explicabo excepturi sint ut nihil,
+    sed illum aliquam unde provident facere placeat reiciendis, quibusdam fuga consequuntur, quas fugiat voluptatum!
 
 
     <!-- Custom Script -->
@@ -133,6 +136,7 @@ Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae ad necessitatibu
 
 
 </body>
+
 </html>
 
 

@@ -402,7 +402,7 @@ const routingMap = new Routing("ilalinMap");
 // Set up search inputs.
 const inputTitikAwal = document.getElementById("inputTitikAwal");
 const inputTitikAkhir = document.getElementById("inputTitikAkhir");
-const processRoutingBtn = document.getElementById("processRouting");
+// const processRoutingBtn = document.getElementById("processRouting");
 
 routingMap.initSearch([inputTitikAwal, inputTitikAkhir]);
 
@@ -410,109 +410,249 @@ const cancelRouting = document.getElementById("cancelRouting");
 cancelRouting.addEventListener("click", (e) => {
   routingMap.cancelRouting(e);
 });
-function preventDefaultHandler(e) {
-  e.preventDefault();
-  const data = {
-    name: "Jalan Poros Jeneponto Bantaeng, Jalan Poros Provinsi",
-    time: 140,
-    distance: 190,
-    startPoint: {
-      place_id: "ChIJcUZs2Snjvi0RsHD3yvsLAwM",
-      name: "Makassar",
-      formatted_address: "Makassar, Makassar City, South Sulawesi, Indonesia",
-      address: {
-        plus_code: "",
-        kelurahan_desa: "",
-        kecamatan: "Makassar",
-        kabupaten_kota: "Makassar City",
-        provinsi: "South Sulawesi",
-        kode_pos: "",
-        negara: "Indonesia",
-      },
-      lat: -5.1615828,
-      lng: 119.4359281,
-    },
-    finishingPoint: {
-      place_id: "ChIJNxwvnvrzuy0RajsHwzXLF2I",
-      name: "Tanjung Bira Beach",
-      formatted_address: "Tanjung Bira Beach, South Sulawesi, Indonesia",
-      address: {
-        plus_code: "",
-        kelurahan_desa: "",
-        kecamatan: "",
-        kabupaten_kota: "Tanjung Bira Beach",
-        provinsi: "South Sulawesi",
-        kode_pos: "",
-        negara: "Indonesia",
-      },
-      lat: -5.6091375,
-      lng: 120.4498131,
-    },
-    status: "pending",
-  };
 
-  fetch("action/gateway.php", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-}
-if (processRoutingBtn.hasAttribute("disabled")) {
-  // processRoutingBtn.removeAttribute("href");
-  processRoutingBtn.addEventListener("click", preventDefaultHandler);
-}
+// TESTNG================================
 
-routingMap.routing.on("routesfound", function (e) {
-  console.log(e);
+const tripsData = {
+  name: "Jalan Poros Jeneponto Bantaeng, Jalan Poros Provinsi",
+  time: 140,
+  distance: 190,
+  startPoint: {
+    place_id: "ChIJcUZs2Snjvi0RsHD3yvsLAwM",
+    name: "Makassar",
+    formatted_address: "Makassar, Makassar City, South Sulawesi, Indonesia",
+    address: {
+      plus_code: "",
+      kelurahan_desa: "",
+      kecamatan: "Makassar",
+      kabupaten_kota: "Makassar City",
+      provinsi: "South Sulawesi",
+      kode_pos: "",
+      negara: "Indonesia",
+    },
+    lat: -5.1615828,
+    lng: 119.4359281,
+  },
+  finishingPoint: {
+    place_id: "ChIJNxwvnvrzuy0RajsHwzXLF2I",
+    name: "Tanjung Bira Beach",
+    formatted_address: "Tanjung Bira Beach, South Sulawesi, Indonesia",
+    address: {
+      plus_code: "",
+      kelurahan_desa: "",
+      kecamatan: "",
+      kabupaten_kota: "Tanjung Bira Beach",
+      provinsi: "South Sulawesi",
+      kode_pos: "",
+      negara: "Indonesia",
+    },
+    lat: -5.6091375,
+    lng: 120.4498131,
+  },
+  status: "pending",
+};
+
+function processRouting() {
+  const processRoutingBtn = document.getElementById("processRouting");
+
+  function preventDefaultHandler(e) {
+    e.preventDefault();
+    sendData(tripsData).then((result) => {
+      if (
+        result.status === "success" &&
+        result.message === "Trip added successfully"
+      ) {
+        console.log("Redirecting to gateway...");
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "action/gateway.php";
+
+        const tripIdInput = document.createElement("input");
+        tripIdInput.type = "hidden";
+        tripIdInput.name = "trip_id";
+        tripIdInput.value = result.id;
+        form.appendChild(tripIdInput);
+
+        document.body.appendChild(form);
+
+        form.submit();
+      } else {
+        console.error("Error from server:", result.message);
+        alert("Failed to add trip: " + result.message);
+      }
+    });
+  }
+  if (processRoutingBtn.hasAttribute("disabled")) {
+    // processRoutingBtn.removeAttribute("href");
+    processRoutingBtn.addEventListener("click", preventDefaultHandler);
+  }
+  // Function to send data to the server
+  async function sendData(data) {
+    try {
+      const response = await fetch("action/gateway.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Error sending data:", error);
+      alert("Failed to send data. Please try again.");
+    }
+  }
+
+  // Helper: Parse an address into components
   function parseAddress(formatted_address) {
     const parts = formatted_address.split(", ");
-    const address = {
+    return {
       plus_code: parts.length === 6 ? parts[0] : "",
-      kelurahan_desa: parts.length >= 5 ? parts[parts.length - 5] : "",
-      kecamatan: parts.length >= 4 ? parts[parts.length - 4] : "",
-      kabupaten_kota: parts.length >= 3 ? parts[parts.length - 3] : "",
-      provinsi:
-        parts.length >= 2
-          ? parts[parts.length - 2].replace(/\d+/, "").trim()
-          : "",
-      kode_pos: /\d+/.test(parts[parts.length - 2])
-        ? parts[parts.length - 2].match(/\d+/)[0]
-        : "",
-      negara: parts.length >= 1 ? parts[parts.length - 1] : "",
+      kelurahan_desa: parts[parts.length - 5] || "",
+      kecamatan: parts[parts.length - 4] || "",
+      kabupaten_kota: parts[parts.length - 3] || "",
+      provinsi: (parts[parts.length - 2] || "").replace(/\d+/, "").trim(),
+      kode_pos: (parts[parts.length - 2] || "").match(/\d+/)?.[0] || "",
+      negara: parts[parts.length - 1] || "",
     };
-    return address;
   }
-  processRoutingBtn.removeEventListener("click", preventDefaultHandler);
-  var routes = e.routes;
-  var summary = routes[0].summary;
 
-  const distance = Math.round(summary.totalDistance / 1000);
-  const timeCostInMinute = Math.round(summary.totalTime / 60);
-  processRoutingBtn.removeAttribute("disabled");
-  document.getElementById("routingDistanceId").innerHTML = distance + "km";
+  // Helper: Extract place data with parsed address
+  function getPlaceData(place) {
+    const { place_id, name, formatted_address, geometry } = place;
+    return {
+      place_id,
+      name,
+      formatted_address,
+      address: parseAddress(formatted_address),
+      lat: geometry.location.lat,
+      lng: geometry.location.lng,
+    };
+  }
 
-  //send data ke database
-  const dataToSend = {
-    name: e.routes[0].name,
-    time: timeCostInMinute,
-    distance: distance,
-    startPoint: {
-      place_id: routingMap.startingPoint.place.place_id,
-      name: routingMap.startingPoint.place.name,
-      formatted_address: routingMap.startingPoint.place.formatted_address,
-      address: parseAddress(routingMap.startingPoint.place.formatted_address),
-      lat: routingMap.startingPoint.place.geometry.location.lat,
-      lng: routingMap.startingPoint.place.geometry.location.lng,
-    },
-    finishingPoint: {
-      place_id: routingMap.finishingPoint.place.place_id,
-      name: routingMap.finishingPoint.place.name,
-      formatted_address: routingMap.finishingPoint.place.formatted_address,
-      address: parseAddress(routingMap.finishingPoint.place.formatted_address),
-      lat: routingMap.finishingPoint.place.geometry.location.lat,
-      lng: routingMap.finishingPoint.place.geometry.location.lng,
-    },
-  };
-  console.log(dataToSend);
-  console.log(JSON.stringify(dataToSend));
-  // sendData(dataToSend);
-});
+  // Event listener to process routing and send data
+  routingMap.routing.on("routesfound", function (e) {
+    const route = e.routes[0];
+    const { totalDistance, totalTime } = route.summary;
+
+    const distanceInKm = Math.round(totalDistance / 1000);
+    const timeCostInMinutes = Math.round(totalTime / 60);
+
+    processRoutingBtn.removeEventListener("click", preventDefaultHandler);
+    document.getElementById(
+      "routingDistanceId"
+    ).innerText = `${distanceInKm} km`;
+
+    const dataToSend = {
+      name: route.name,
+      time: timeCostInMinutes,
+      distance: distanceInKm,
+      startPoint: getPlaceData(routingMap.startingPoint.place),
+      finishingPoint: getPlaceData(routingMap.finishingPoint.place),
+      status: "pending",
+    };
+
+    // Enable button only when route found
+    processRoutingBtn.removeAttribute("disabled");
+    processRoutingBtn.removeEventListener("click", preventDefaultHandler);
+    processRoutingBtn.addEventListener("click", async (e) => {
+      try {
+        const result = await sendData(dataToSend);
+
+        if (
+          result.status === "success" &&
+          result.message === "Trip added successfully"
+        ) {
+          console.log("Redirecting to gateway...");
+          // Optionally, redirect to another page or perform another action
+          window.location.href = "gateway.php";
+        } else {
+          console.error("Error from server:", result.message);
+          alert("Failed to add trip: " + result.message);
+        }
+      } catch (error) {
+        console.error("Error sending data:", error);
+        alert("An error occurred: " + error.message);
+      }
+    });
+  });
+}
+
+processRouting();
+// function preventDefaultHandler(e) {
+//   e.preventDefault();
+
+//   fetch("action/gateway.php", {
+//     method: "POST",
+//     body: JSON.stringify(data),
+//   });
+// }
+// if (processRoutingBtn.hasAttribute("disabled")) {
+//   processRoutingBtn.addEventListener("click", preventDefaultHandler);
+// }
+
+// routingMap.routing.on("routesfound", function (e) {
+//   console.log(e);
+
+//   // Helper function to parse an address string into components
+//   function parseAddress(formatted_address) {
+//     const parts = formatted_address.split(", ");
+//     return {
+//       plus_code: parts.length === 6 ? parts[0] : "",
+//       kelurahan_desa: parts[parts.length - 5] || "",
+//       kecamatan: parts[parts.length - 4] || "",
+//       kabupaten_kota: parts[parts.length - 3] || "",
+//       provinsi: (parts[parts.length - 2] || "").replace(/\d+/, "").trim(),
+//       kode_pos: (parts[parts.length - 2] || "").match(/\d+/)?.[0] || "",
+//       negara: parts[parts.length - 1] || "",
+//     };
+//   }
+
+//   // Disable the default button behavior
+//   processRoutingBtn.removeEventListener("click", preventDefaultHandler);
+
+//   // Extract route data
+//   const route = e.routes[0];
+//   const { totalDistance, totalTime } = route.summary;
+
+//   const distanceInKm = Math.round(totalDistance / 1000);
+//   const timeCostInMinutes = Math.round(totalTime / 60);
+
+//   // Enable the process button and update the UI
+//   processRoutingBtn.removeAttribute("disabled");
+//   document.getElementById("routingDistanceId").innerText = `${distanceInKm} km`;
+
+//   // Function to extract place data with parsed address
+//   function getPlaceData(place) {
+//     const { place_id, name, formatted_address, geometry } = place;
+//     return {
+//       place_id,
+//       name,
+//       formatted_address,
+//       address: parseAddress(formatted_address),
+//       lat: geometry.location.lat,
+//       lng: geometry.location.lng,
+//     };
+//   }
+
+//   // Prepare the data to send
+//   const dataToSend = {
+//     name: route.name,
+//     time: timeCostInMinutes,
+//     distance: distanceInKm,
+//     startPoint: getPlaceData(routingMap.startingPoint.place),
+//     finishingPoint: getPlaceData(routingMap.finishingPoint.place),
+//     status: "pending",
+//   };
+
+//   // Log and send data
+//   console.log(dataToSend);
+//   console.log(JSON.stringify(dataToSend));
+//   sendData(dataToSend); // Uncomment to send data to the database
+// });
