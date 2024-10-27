@@ -12,16 +12,39 @@ function showMidtransUsingSnap() {
     \Midtrans\Config::$isSanitized = true;
     // Set 3DS transaction for credit card to true
     \Midtrans\Config::$is3ds = true;
-
+   
 
     $json = file_get_contents("php://input");
-    $params = array(
-        'transaction_details' => array(
-            'order_id' => rand(),
-            'gross_amount' => 10000,
-        ),
-        'customer_details' => json_decode($json, associative: true)['customer_details'],
-    );
+
+    $transaction_details = json_decode($json, associative: true)['transaction_details'];
+    $customer_details = json_decode($json, associative: true)['customer_details'];
+    $passenger_details = $customer_details["passenger_details"];
+    $driver_details = $customer_details["driver_details"];
+    $vehicle_details = $customer_details["vehicle_details"];
+
+    // var_dump($passenger_details);
+    $params = [
+        'transaction_details' => [
+            'order_id' => $transaction_details["order_id"],
+            'gross_amount' => $transaction_details["gross_amount"],
+        ],
+        'customer_details' => [
+            "first_name" => $passenger_details["name"],
+            "phone" => $passenger_details["phone"],
+            "email" => $passenger_details["email"],
+            "address" => $passenger_details["address"],
+        ],
+
+        'item_details' => [
+            [
+                "id" => $vehicle_details["plate_number"],
+                "price" => $transaction_details["gross_amount"],
+                "quantity" => 1,
+                "name" => $vehicle_details["vehicle_name"],
+                "category" => "trip"
+            ]
+        ]
+    ];
     $snapToken;
 
     if(isset($_SESSION['snapToken'])) {

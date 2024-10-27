@@ -20,3 +20,10 @@ Twitter: https://twitter.com/Untree_co
 Facebook: https://web.facebook.com/Untree.co/
 Pinterest: https://pinterest.com/Untree_co/
 ```
+
+---
+
+##### DB Example:
+
+Run using `mysqldump` app to dump the database
+`mysqldump -u root ilalin > db_ilalin.sql`

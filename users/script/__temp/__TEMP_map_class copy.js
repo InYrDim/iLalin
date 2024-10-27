@@ -457,31 +457,31 @@ function processRouting() {
 
   function preventDefaultHandler(e) {
     e.preventDefault();
-    sendData(tripsData).then((result) => {
-      if (
-        result.status === "success" &&
-        result.message === "Trip added successfully"
-      ) {
-        console.log("Redirecting to gateway...");
+    // sendData(tripsData).then((result) => {
+    //   if (
+    //     result.status === "success" &&
+    //     result.message === "Trip added successfully"
+    //   ) {
+    //     console.log("Redirecting to gateway...");
 
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "action/gateway.php";
+    //     const form = document.createElement("form");
+    //     form.method = "POST";
+    //     form.action = "action/gateway.php";
 
-        const tripIdInput = document.createElement("input");
-        tripIdInput.type = "hidden";
-        tripIdInput.name = "trip_id";
-        tripIdInput.value = result.id;
-        form.appendChild(tripIdInput);
+    //     const tripIdInput = document.createElement("input");
+    //     tripIdInput.type = "hidden";
+    //     tripIdInput.name = "trip_id";
+    //     tripIdInput.value = result.id;
+    //     form.appendChild(tripIdInput);
 
-        document.body.appendChild(form);
+    //     document.body.appendChild(form);
 
-        form.submit();
-      } else {
-        console.error("Error from server:", result.message);
-        alert("Failed to add trip: " + result.message);
-      }
-    });
+    //     form.submit();
+    //   } else {
+    //     console.error("Error from server:", result.message);
+    //     alert("Failed to add trip: " + result.message);
+    //   }
+    // });
   }
   if (processRoutingBtn.hasAttribute("disabled")) {
     // processRoutingBtn.removeAttribute("href");
@@ -544,7 +544,6 @@ function processRouting() {
     const distanceInKm = Math.round(totalDistance / 1000);
     const timeCostInMinutes = Math.round(totalTime / 60);
 
-    processRoutingBtn.removeEventListener("click", preventDefaultHandler);
     document.getElementById(
       "routingDistanceId"
     ).innerText = `${distanceInKm} km`;
@@ -559,27 +558,32 @@ function processRouting() {
     };
 
     // Enable button only when route found
-    processRoutingBtn.removeAttribute("disabled");
-    processRoutingBtn.removeEventListener("click", preventDefaultHandler);
     processRoutingBtn.addEventListener("click", async (e) => {
-      try {
-        const result = await sendData(dataToSend);
-
+      sendData(dataToSend).then((result) => {
         if (
           result.status === "success" &&
           result.message === "Trip added successfully"
         ) {
           console.log("Redirecting to gateway...");
-          // Optionally, redirect to another page or perform another action
-          window.location.href = "gateway.php";
+
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = "action/gateway.php";
+
+          const tripIdInput = document.createElement("input");
+          tripIdInput.type = "hidden";
+          tripIdInput.name = "trip_id";
+          tripIdInput.value = result.id;
+          form.appendChild(tripIdInput);
+
+          document.body.appendChild(form);
+
+          form.submit();
         } else {
           console.error("Error from server:", result.message);
           alert("Failed to add trip: " + result.message);
         }
-      } catch (error) {
-        console.error("Error sending data:", error);
-        alert("An error occurred: " + error.message);
-      }
+      });
     });
   });
 }

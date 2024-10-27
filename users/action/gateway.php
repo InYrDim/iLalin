@@ -1,42 +1,22 @@
 <?php
 session_start();
 
-$email=$_SESSION['email'];
+$email = $_SESSION['email'];
 
 include_once '../../controller/php/ilalin.php' ; 
 
 if(isset($email)) { 
 
-    $ilalin = new IlalinApp(); 
-    $userProfile=$ilalin->getUserProfile($email);
+    // $ilalin = new IlalinApp(); 
+    $profileController = new ProfileController(); 
+    $userProfile=$profileController->getUserProfile($email);
     $profile = $userProfile;
 
-    function prosesJumlahPembayaran($data) {
-        // Here you can access the data from the request
-        header("Content-Type: application/json");
-    
-        // Create an instance of IlalinApp
-        $app = new IlalinApp();
-    
-        // Attempt to add the trip
-        try {
-            $app->addTrip($data);
-            
-            // If addTrip is successful, return success response
-            http_response_code(200); // Set HTTP response status to 200 OK
-            
-            
-        } catch (Exception $e) {
-            // Handle errors from addTrip
-            http_response_code(400); // Set HTTP response status to 400 Bad Request
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Failed to add trip: ' . $e->getMessage()
-            ]);
-        }
-    }
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $tripsController = new TripController();
+        
+        // Check if the trip_id is provided in the POST request
+        // If it not then assume user want to create a new trip_id and save to database
         if(!isset($_POST['trip_id'])) {
             header("Content-Type: application/json"); // Ensure the response is JSON formatted
 
@@ -69,9 +49,8 @@ if(isset($email)) {
                 }
                 
                 // If validation passes, add the trip
-                $tripId = $ilalin->addTrip($data);
+                $tripId = $tripsController->addTrip($data);
                
-                
                 // Return a success response
                 http_response_code(200); // 200 OK
                 echo json_encode([
@@ -92,22 +71,44 @@ if(isset($email)) {
             }
         }
 
-        
-
-
+        // Check if the trip_id is provided in the POST request
+        // If it set, assume that user wants to proceed with the trip
         if (isset($_POST['trip_id'])) {
-            $trips = $ilalin->getTrips($_POST['trip_id']);
-            $il_util = new IlalinUtils();
-            echo json_encode($trips);
+            
+            $trips = $tripsController->getTrips($_POST['trip_id']);
+            
+            if ($trips['email'] === $_SESSION['email']) {
 
-            $total_payment = $il_util->formatCurrency($trips['total_payment']);
-            
-            $starting_point = json_decode($trips['start_point'], true);
-            $finishing_point = json_decode($trips['finishing_point'], true);
-            
+                // Process payment information
+                $il_util = new PaymentsUtils();
+                echo json_encode($trips);
 
-            
-            ?>
+                //payment information
+                $paymentId = uniqid('pay_', true);
+
+                $total_payment = $il_util->formatCurrency($trips['total_payment']);
+                
+                $starting_point = json_decode($trips['start_point'], true);
+                $finishing_point = json_decode($trips['finishing_point'], true);
+                
+                $driver = new Driver();
+                $avaiable_driver = $driver->getAvaiableDriver();
+                
+                echo $avaiable_driver['driver_id'];
+
+                $vehicle = new Vehicle();
+                $driver_vehicle = $vehicle->getVehicleType($avaiable_driver['driver_id']);
+      
+
+                // Search for driver
+                // update payment databse, add founded driver when payed
+                // update trip status to 'paid'
+                // add trip_id to user's trip history
+                // add driver's information to user's profile
+
+                //Run HTML Below Only When trip_id is SET and email is equal to current session of user.
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -167,7 +168,7 @@ if(isset($email)) {
             style="display: flex; flex-direction: column; justify-content: center; padding-top: 40px; max-width: 1000px; margin-inline: auto;">
             <h2>Detail Perjalanan Anda</h2>
             <div style="display: flex; justify-content:space-between; gap: 40px; margin-top: 40px;">
-                <!-- Bagian kiri -->
+                <!-- Bagian penumpang -->
                 <div
                     style="width: 50%; line-height: 0.7; border: 1px solid black; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; border-radius: 10px;">
                     <p class="info-row"><span class="info-label"><strong>Nama:</strong></span> <span class="info-value"
@@ -184,14 +185,14 @@ if(isset($email)) {
                             data-user="length"><?= $trips['distance'] ?> Km</span></p>
                 </div>
 
-                <!-- Bagian kanan -->
+                <!-- Bagian Supir -->
                 <div
                     style="width: 50%; line-height: 0.7; border: 1px solid black; display: flex; gap: 1rem; padding: 1rem; border-radius: 10px;">
                     <div style="line-height: 0.5;">
-                        <p style="font-weight: bold;">Supir</p>
+                        <p style="font-weight: bold;">Driver</p>
                         <div style="margin-top: 2rem;">
-                            <p style="font-size: 2em;" data-user="fullname_driver">Ardiansyah</p>
-                            <p data-user="phone_driver">081524606995</p>
+                            <p style="font-size: 2em;" data-user="fullname_driver"><?= $avaiable_driver['name'] ?></p>
+                            <p data-user="phone_driver"><?= $avaiable_driver['phone_number'] ?></p>
                         </div>
                         <div style="margin-top: 2rem;">
                             <p>Avanza</p>
@@ -222,47 +223,81 @@ if(isset($email)) {
         </div>
     </div>
 
+    <input type="hidden" id="order_id" value="<?= $paymentId ?>">
+    <input type="hidden" id="gross_amount" value="<?= $trips['total_payment'] ?>">
+    <input type="hidden" id="passenger_id" value="<?= $userProfile['username'] ?>">
+    <input type="hidden" id="passenger_email" value="<?= $userProfile['email'] ?>">
+    <input type="hidden" id="passenger_fullname" value="<?= $userProfile['nama'] ?>">
+    <input type="hidden" id="passenger_phone" value="<?= $userProfile['nomor_telepon'] ?>">
+    <input type="hidden" id="passenger_address" value="<?= $userProfile['alamat'] ?>">
+    <input type="hidden" id="driver_email" value="<?= $avaiable_driver['email'] ?>">
+    <input type="hidden" id="driver_fullname" value="<?= $avaiable_driver['name'] ?>">
+    <input type="hidden" id="driver_phone" value="<?= $avaiable_driver['phone_number'] ?>">
+    <input type="hidden" id="vehicle_name" value="<?= $driver_vehicle['vehicle_name'] ?>">
+    <input type="hidden" id="vehicle_plate_number" value="<?= $driver_vehicle['plate_number'] ?>">
+
+
+
     <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="SB-Mid-client-75iUAElAx67168zX"></script>
     <script type="text/javascript">
     const payButton = document.getElementById('pay-button');
+    let token = null;
     payButton.addEventListener('click', async function() {
+        if (!token) {
+            const getToken = await fetch('../../controller/php/payment/prosesMidtrans.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "transaction_details": {
+                        "order_id": document.getElementById("order_id").value,
+                        "gross_amount": parseInt(document.getElementById("gross_amount")
+                            .value)
+                    },
+                    "credit_card": {
+                        "secure": true
+                    },
+                    "customer_details": {
+                        "passenger_details": {
+                            "usernames": document.getElementById("passenger_id").value,
+                            "name": document.getElementById("passenger_fullname").value,
+                            "email": document.getElementById("passenger_email").value,
+                            "phone": document.getElementById("passenger_phone").value,
+                            "address": document.getElementById("passenger_address").value,
+                        },
+                        "driver_details": {
+                            "name": document.getElementById("driver_fullname").value,
+                            "email": document.getElementById("driver_email").value,
+                            "phone": document.getElementById("driver_phone").value,
+                        },
+                        "vehicle_details": {
+                            "vehicle_name": document.getElementById("vehicle_name").value,
+                            "plate_number": document.getElementById("vehicle_plate_number")
+                                .value,
+                        }
+                    }
 
-        let parameter = {
-            "transaction_details": {
-                "order_id": "YOUR-ORDERID-123456",
-                "gross_amount": 10000
-            },
-            "credit_card": {
-                "secure": true
-            },
 
-        };
-        console.log(payment_amount);
-        const getToken = await fetch('../../controller/php/payment/prosesMidtrans.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "customer_details": {
-                    "first_name": "ahmad",
-                    "last_name": "pratama",
-                    "email": "budi.pra@example.com",
-                    "phone": "08111222333"
-                }
+                })
             })
-        })
+
+
+            token = await getToken.text();
+        }
         const snapContainer = document.getElementById('snap-container');
         snapContainer.style.display = 'grid';
 
         const cancelBtn = document.getElementById('cancelBtn');
 
-        const token = await getToken.text();
         window.snap.embed(token, {
             embedId: 'snap-container',
             onSuccess: function(result) {
-                fetch("pembayaran.php?token=" + token);
+                token = null;
+                fetch(`gateway.php?token=${token}`).then(function(response) {
+                    window.location.href = "../index.php"
+                })
             },
             onPending: function(result) {
                 const urlParams = new URLSearchParams(result)
@@ -314,6 +349,7 @@ if(isset($email)) {
 </html>
 
 <?php
+            }
         }
         
     }

@@ -253,7 +253,7 @@ $email=$_SESSION['email'];
 
     <!-- MAP for Leafet -->
     <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
-    <script src="./script/__TEMP_map_class.js"></script>
+    <script src="./script/dashboard/map.js"></script>
 
 </body>
 
