@@ -28,9 +28,9 @@
                     <i class="ri-user-line nav_icon"></i>
                     <span class="nav_name">Users</span>
                 </a>
-                <a href="#" class="nav_link <?= $active_page == "messages" ? "active" : "" ?>">
-                    <i class="ri-message-2-line nav_icon"></i>
-                    <span class="nav_name">Messages</span>
+                <a href="statistic.php" class="nav_link <?= $active_page == "statistic" ? "active" : "" ?>">
+                    <i class="ri-bar-chart-grouped-line"></i>
+                    <span class="nav_name">Statistic</span>
                 </a>
                 <a href="user_settings.php" class="nav_link <?= $active_page == "user_settings" ? "active" : "" ?>">
                     <i class="ri-settings-5-line nav_icon"></i>

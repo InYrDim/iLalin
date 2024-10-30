@@ -51,7 +51,7 @@ class Database {
 }
 class IlalinUtils {
     // Constants
-    protected const PAYMENT_PER_KM = 1000; // Rp 1000 per km
+    protected const PAYMENT_PER_KM = 900; // Rp 900 per km
     protected const DRIVER_PROFIT_PERCENTAGE = 0.8333; // 83.33%
 
     /**
@@ -96,60 +96,10 @@ class IlalinApp {
         $this->db = new Database();
         $this->utils = $utils ?? new IlalinUtils(); // Use the provided $utils or create a new instance.
     }    
-    public function addTrip($data) {
-        try {
-            if (!is_array($data) || 
-            !isset($data['name'], $data['time'], $data['distance'], 
-                    $data['startPoint'], $data['finishingPoint'], $data['status'], $data['email'])) {
-                throw new Exception("Invalid trip data.");
-            }
-            $this->db->beginTransaction(); // Start transaction
+
     
-            // Calculate total payment and profits
-            $totalPayment = $this->utils->calculateTotalPayment($data['distance']);
-            $profits = $this->utils->calculateProfits($totalPayment);
-
-            // Generate a unique identifier for the trip
-            $uniqueId = uniqid('trip_', true); // Prefix with 'trip_'
-        
-            // Prepare SQL query
-            $sql = "INSERT INTO trips 
-                    (trip_id, name, email, time, distance, start_point, finishing_point, 
-                    total_payment, driver_profit, company_profit, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-            // JSON encode start and finishing points          
-            $startPoint = json_encode($data['startPoint']);
-            $finishingPoint = json_encode($data['finishingPoint']);
-
-            // Define parameters (with types string)
-            $params = [
-                'ssssissddds', // Type string: string, string, int, string, string, double, double, double, string
-                $uniqueId,
-                $data['name'], 
-                $data['email'], 
-                $data['time'], 
-                $data['distance'], 
-                $startPoint, 
-                $finishingPoint, 
-                $totalPayment, 
-                $profits['driverProfit'], 
-                $profits['companyProfit'], 
-                $data['status']
-            ];
     
-            // Execute query with parameters
-            $this->db->query($sql, $params);
-    
-            $this->db->commit(); // Commit transaction
 
-            return $uniqueId;
-        } catch (Exception $e) {
-            $this->db->rollback(); // Rollback on error
-            echo "Error adding trip: " . $e->getMessage();
-        }
-    }
-   
     public function deleteUser($userId) {
         try {
             $this->db->beginTransaction(); // Start a transaction
@@ -338,21 +288,23 @@ class TripController extends IlalinApp {
 
             // Generate a unique identifier for the trip
             $uniqueId = uniqid('trip_', true); // Prefix with 'trip_'
-        
+            $order_id = uniqid('pay_', true);
+            
             // Prepare SQL query
             $sql = "INSERT INTO trips 
-                    (trip_id, name, email, time, distance, start_point, finishing_point, 
-                    total_payment, driver_profit, company_profit, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+            (trip_id, order_id, name, email, time, distance, start_point, finishing_point, 
+            total_payment, driver_profit, company_profit, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
             // JSON encode start and finishing points          
             $startPoint = json_encode($data['startPoint']);
             $finishingPoint = json_encode($data['finishingPoint']);
 
             // Define parameters (with types string)
             $params = [
-                'ssssissddds', // Type string: string, string, int, string, string, double, double, double, string
+                'sssssissddds', // Type string: string, string, int, string, string, double, double, double, string
                 $uniqueId,
+                $order_id,
                 $data['name'], 
                 $data['email'], 
                 $data['time'], 
@@ -383,6 +335,24 @@ class TripController extends IlalinApp {
                 ['s', $tripId]
             );
             $trip = $stmt->get_result()->fetch_assoc();
+            
+    
+            if ($trip) {
+                return $trip; // Return user data if found
+            } else {
+                return null;
+            }
+        }catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
+    public function getAllTripsById($tripId) {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Trips WHERE trip_id = ?',
+                ['s', $tripId]
+            );
+            $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     
             if ($trip) {
                 return $trip; // Return user data if found
@@ -392,6 +362,81 @@ class TripController extends IlalinApp {
         }catch (Exception $e) {
             echo "Failed to get user profile: " . $e->getMessage();
         }
+    }
+    public function getAllTrips() {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Trips'
+            );
+            $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    
+            if ($trip) {
+                return $trip; // Return user data if found
+            } else {
+                return "User not found";
+            }
+        }catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
+    public function getTripsFilterByStatus( $status) {
+        try {
+            // Prepare and execute query to fetch trips with status = 'ongoing'
+            $stmt = $this->db->query(
+                'SELECT * FROM Trips WHERE status = ?', ['s', $status]
+            );
+        
+            $trip = $stmt->get_result()->fetch_assoc();
+        
+            // Check if any trip was found
+            if ($trip) {
+                return $trip; // Return trip data if found
+            } else {
+                return "No ". $status . " trips status found.";
+            }
+        } catch (Exception $e) {
+            // Handle any exceptions
+            echo "Failed to get trip status ". $status . " data: " . $e->getMessage();
+        }
+        // Fetch all as associative array
+    }
+    public function getTripsByEmail($email) {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Trips WHERE email = ?',
+                ['s', $email]
+            );
+            $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            
+          
+            if ($trip) {
+                return $trip; // Return user data if found
+            } else {
+                return "User not found";
+            }
+        }catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
+    public function updateTripStatus($tripId, $status) {
+        try {
+            $this->db->query(
+                'UPDATE Trips SET status = ? WHERE trip_id = ?',
+                ['ss', $status, $tripId]
+            );
+        } catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        } 
+    }
+    public function updateTripDriver($tripId, $driver_id) {
+        try {
+            $this->db->query(
+                'UPDATE Trips SET driver_id = ? WHERE trip_id = ?',
+                ['ss', $driver_id , $tripId]
+            );
+        } catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        } 
     }
 }
 class Driver extends ProfileController {
@@ -413,6 +458,23 @@ class Driver extends ProfileController {
         }
     }
     
+    public function getDriverById($driverId) {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Drivers WHERE driver_id = ?',
+                ['i', $driverId]
+            );
+            $driver = $stmt->get_result()->fetch_assoc();
+        
+            if ($driver) {
+                return $driver;
+            } else {
+                return "No drivers by that id";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get drivers: " . $e->getMessage();
+        }
+    }
 
     public function getTripsWithPassengerLocation() {
         try {

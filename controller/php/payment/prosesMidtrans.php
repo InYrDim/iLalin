@@ -99,8 +99,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 if($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if(isset($_GET['order_id']) && $_GET['order_id']) {
-        // Replace with your actual order ID
-        // Assuming you're sending the order ID from JavaScript
         
         $order_id = $_GET['order_id']; // Use $_GET since you're passing it as a query parameter
         cancelOrder($order_id);

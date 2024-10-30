@@ -22,7 +22,8 @@ $email=$_SESSION['email'];
 
     <!-- Vendor -->
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
-    <script src="../assets/vendor/tailwind/tailwindcss" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../tailwind.config.js"></script>
 
     <!-- Leafet -->
     <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css" />
@@ -99,8 +100,8 @@ $email=$_SESSION['email'];
                                 </div>
                                 <div class="d-flex gap-2">
                                     <!-- Get Position -->
-                                    <a style="cursor:pointer;" class="getCurrentLocationBtn" id="showCurrentPositionBtn"
-                                        title="Lihat Lokasi Sekarang">
+                                    <a style="cursor:pointer; display: none;" class="getCurrentLocationBtn"
+                                        id="showCurrentPositionBtn" title="Lihat Lokasi Sekarang">
                                         <svg width="39" height="39" viewBox="0 0 39 39" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -167,7 +168,7 @@ $email=$_SESSION['email'];
                                     style="font-size: 1.5em;"></i>
                             </div>
 
-                            <a onClick="showCurrentPosition();" class="getCurrentLocationBtn">
+                            <a onClick="showCurrentPosition();" class="getCurrentLocationBtn" style="display:none;">
                                 <i class="ri-focus-3-line fs-3"></i>
                             </a>
                         </div>
@@ -184,7 +185,7 @@ $email=$_SESSION['email'];
                                 <i class="ri-map-pin-fill custom-input-icon start-icon text-success"
                                     style="font-size: 1.5em;"></i>
                             </div>
-                            <i class="ri-arrow-up-down-line fs-3"></i>
+                            <i class="ri-arrow-up-down-line fs-3" style="display:none;"></i>
                         </div>
 
 
@@ -226,6 +227,7 @@ $email=$_SESSION['email'];
                     </div>
                 </div>
             </div>
+
 
             <!-- Maps -->
             <div id="ilalinMap" class="shadow position-fixed top-0" style=" inset: 0; transition: 1s all; ">

@@ -339,7 +339,7 @@ class Routing extends LeafletMap {
 
   async searchPlaces({ input }) {
     const MAPS_API_URL = "https://google-map-places.p.rapidapi.com";
-    const RAPID_API_KEY = "5f9f3ef246msh62120fc2d9b85e5p10e3cdjsnf5d1040f6404";
+    const RAPID_API_KEY = "b106634ee0msh33f5f53acc4e8a2p1f47cbjsnc4181518ee21";
     const RAPID_API_HOST = "google-map-places.p.rapidapi.com";
 
     const client = new RapidAPIClient(
@@ -457,36 +457,8 @@ function processRouting() {
 
   function preventDefaultHandler(e) {
     e.preventDefault();
-    // sendData(tripsData).then((result) => {
-    //   if (
-    //     result.status === "success" &&
-    //     result.message === "Trip added successfully"
-    //   ) {
-    //     console.log("Redirecting to gateway...");
-
-    //     const form = document.createElement("form");
-    //     form.method = "POST";
-    //     form.action = "action/gateway.php";
-
-    //     const tripIdInput = document.createElement("input");
-    //     tripIdInput.type = "hidden";
-    //     tripIdInput.name = "trip_id";
-    //     tripIdInput.value = result.id;
-    //     form.appendChild(tripIdInput);
-
-    //     document.body.appendChild(form);
-
-    //     form.submit();
-    //   } else {
-    //     console.error("Error from server:", result.message);
-    //     alert("Failed to add trip: " + result.message);
-    //   }
-    // });
   }
-  if (processRoutingBtn.hasAttribute("disabled")) {
-    // processRoutingBtn.removeAttribute("href");
-    processRoutingBtn.addEventListener("click", preventDefaultHandler);
-  }
+
   // Function to send data to the server
   async function sendData(data) {
     try {
@@ -534,6 +506,11 @@ function processRouting() {
       lat: geometry.location.lat,
       lng: geometry.location.lng,
     };
+  }
+
+  if (processRoutingBtn.hasAttribute("disabled")) {
+    // processRoutingBtn.removeAttribute("href");
+    processRoutingBtn.addEventListener("click", preventDefaultHandler);
   }
 
   // Event listener to process routing and send data

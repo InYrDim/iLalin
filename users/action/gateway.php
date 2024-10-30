@@ -6,7 +6,7 @@ $email = $_SESSION['email'];
 include_once '../../controller/php/ilalin.php' ; 
 
 if(isset($email)) { 
-
+    
     // $ilalin = new IlalinApp(); 
     $profileController = new ProfileController(); 
     $userProfile=$profileController->getUserProfile($email);
@@ -14,6 +14,19 @@ if(isset($email)) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tripsController = new TripController();
+        $rawData = file_get_contents("php://input");
+        // Decode JSON into an associative array
+        $data = json_decode($rawData, true);
+        //update status payment
+        if(isset($data['trip_id']) && isset($data['status'])) {
+
+            $tripsController->updateTripStatus($data['trip_id'], $data['status']);
+            $tripsController->updateTripDriver($data['trip_id'], $data['driver_id']);
+
+            echo json_encode(['status' => 'success', 'message' => 'Status pembayaran berhasil diubah']);
+
+            exit();
+        }
         
         // Check if the trip_id is provided in the POST request
         // If it not then assume user want to create a new trip_id and save to database
@@ -81,10 +94,9 @@ if(isset($email)) {
 
                 // Process payment information
                 $il_util = new PaymentsUtils();
-                echo json_encode($trips);
-
+                
+           
                 //payment information
-                $paymentId = uniqid('pay_', true);
 
                 $total_payment = $il_util->formatCurrency($trips['total_payment']);
                 
@@ -94,12 +106,9 @@ if(isset($email)) {
                 $driver = new Driver();
                 $avaiable_driver = $driver->getAvaiableDriver();
                 
-                echo $avaiable_driver['driver_id'];
-
                 $vehicle = new Vehicle();
                 $driver_vehicle = $vehicle->getVehicleType($avaiable_driver['driver_id']);
       
-
                 // Search for driver
                 // update payment databse, add founded driver when payed
                 // update trip status to 'paid'
@@ -124,22 +133,21 @@ if(isset($email)) {
     <!-- Vendor -->
     <link href="../../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <style>
+    @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../tailwind.config.js"></script>
 
-    <link href="../../assets/css/style.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/profile.css">
     <title>iLalin</title>
-
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+    </style>
     <title>Pembayaran</title>
 
 </head>
@@ -147,11 +155,11 @@ if(isset($email)) {
 <body>
     <div id="">
         <header>
-            <div class="d-flex justify-content-between bg-white p-3">
+            <div class="flex justify-between w-full bg-white p-3 border-b-2 border-black">
                 <a href="" class="nav_logo">
-                    <span class="nav_logo-name fw-bold fs-3">iLalin</span>
+                    <span class="nav_logo-name fw-bold text-3xl text-primary font-bold">iLalin</span>
                 </a>
-                <div class="d-flex flex gap-3 align-items-center">
+                <div class="flex gap-3 items-center">
                     <span class="text-primary fw-bold "><?= $profile['nama'] ?></span>
                     <div class="header_img">
                         <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
@@ -166,70 +174,128 @@ if(isset($email)) {
         </div>
         <div
             style="display: flex; flex-direction: column; justify-content: center; padding-top: 40px; max-width: 1000px; margin-inline: auto;">
-            <h2>Detail Perjalanan Anda</h2>
-            <div style="display: flex; justify-content:space-between; gap: 40px; margin-top: 40px;">
+            <h2 class="text-5xl font-bold ">Detail Perjalanan Anda</h2>
+            <div class="flex w-full justify-between gap-8 mt-8">
                 <!-- Bagian penumpang -->
-                <div
-                    style="width: 50%; line-height: 0.7; border: 1px solid black; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; border-radius: 10px;">
-                    <p class="info-row"><span class="info-label"><strong>Nama:</strong></span> <span class="info-value"
-                            data-user="fullname"><?= $userProfile['nama'] ?></span></p>
-                    <p class="info-row"><span class="info-label"><strong>Nomor Telepon:</strong></span> <span
-                            class="info-value" data-user="no_telepon"><?= $userProfile['nomor_telepon'] ?></span></p>
-                    <p class="info-row"><span class="info-label"><strong>Titik Jemput:</strong></span> <span
-                            class="info-value"
-                            data-user="start_point"><?= $starting_point['formatted_address'] ?></span></p>
-                    <p class="info-row"><span class="info-label"><strong>Tujuan:</strong></span> <span
-                            class="info-value" data-user="end_point"><?= $finishing_point['formatted_address'] ?></span>
-                    </p>
-                    <p class="info-row"><span class="info-label"><strong>Jarak:</strong></span> <span class="info-value"
-                            data-user="length"><?= $trips['distance'] ?> Km</span></p>
+                <div class="flex flex-col gap-4 flex-1">
+                    <div class="border-2 border-black py-2 px-4 flex justify-between items-center rounded">
+                        <span class="info-label"><strong class="font-light">Nama</strong></span>
+                        <span class="info-value" data-user="fullname"><?= $userProfile['nama'] ?></span>
+                    </div>
+                    <div class="border-2 border-black py-2 px-4 flex justify-between items-center rounded">
+                        <span class="info-label"><strong class="font-light">Nomor Telepon</strong></span>
+                        <span class="info-value" data-user="fullname"><?= $userProfile['nomor_telepon'] ?></span>
+                    </div>
+
+                    <div class="border-2 border-black flex flex-col py-3 pl-8 pr-2 rounded gap-1 relative">
+                        <span class="bg-yellow-500 absolute top-0 bottom-0 w-4 left-0 block"></span>
+                        <span class="info-label"><strong class="font-light text-black/80">Titik Jemput</strong></span>
+                        <span class="text-xl"><?= $starting_point['name'] ?></span>
+                        <span class="text-black/80"
+                            data-user="start_point text-sm"><?= $starting_point['formatted_address'] ?></span>
+                    </div>
+                    <div class="border-2 border-black flex flex-col py-3 pl-8 pr-2 rounded gap-1 relative">
+                        <span class="bg-primary absolute top-0 bottom-0 w-4 left-0 block"></span>
+                        <span class="info-label"><strong class="font-light text-black/80">Tujuan</strong></span>
+                        <span class="text-xl"><?= $finishing_point['name'] ?></span>
+                        <span class="text-black/80 text-sm"
+                            data-user="end_point"><?= $finishing_point['formatted_address'] ?></span>
+                    </div>
+                    <div class="flex justify-end gap-6">
+                        <div class="flex justify-center items-center flex-col">
+                            <div>
+                                <i class="ri-pin-distance-line"></i>
+                                <span class="info-label"><strong class="font-normal">Jarak</strong></span>
+                            </div>
+                            <span class="mt-1 text-xl font-bold" data-user="length"><?= $trips['distance'] ?> Km</span>
+                        </div>
+                        <div class="flex justify-center items-center flex-col">
+                            <div class="">
+                                <i class="ri-timer-line"></i>
+                                <span class="info-label"><strong class="font-normal">Durasi</strong></span>
+                            </div>
+                            <span class="mt-1 text-xl font-bold" data-user="length"><?= $trips['time'] ?>min</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Bagian Supir -->
-                <div
-                    style="width: 50%; line-height: 0.7; border: 1px solid black; display: flex; gap: 1rem; padding: 1rem; border-radius: 10px;">
-                    <div style="line-height: 0.5;">
-                        <p style="font-weight: bold;">Driver</p>
-                        <div style="margin-top: 2rem;">
-                            <p style="font-size: 2em;" data-user="fullname_driver"><?= $avaiable_driver['name'] ?></p>
-                            <p data-user="phone_driver"><?= $avaiable_driver['phone_number'] ?></p>
+                <div class="flex flex-col gap-4 flex-1">
+                    <div class=" flex justify-between rounded">
+                        <div class="flex flex-col gap-4 py-3 px-5 border-2 border-black flex-1 bg-emerald-300 rounded">
+                            <p class="px-2 bg-slate-200 text-primary text-md w-fit rounded">Driver</p>
+                            <div class="">
+                                <p class="font-bold text-3xl" data-user="fullname_driver">
+                                    <?= $avaiable_driver['name'] ?>
+                                </p>
+                                <a target="_blank"
+                                    href="https://wa.me/<?= $avaiable_driver['phone_number']?>?text=Saya%20ingin%20melakukan%20perjalanan"
+                                    data-user="phone_driver" class="mt-1 font-medium text-primary">
+
+                                    <i class="ri-whatsapp-line mr-1"> </i><?= $avaiable_driver['phone_number'] ?>
+                                </a>
+                            </div>
+                            <div class="">
+                                <p class="font-light text-xl text-emerald-800"><?= $driver_vehicle['vehicle_name'] ?>
+                                </p>
+                                <p class="font-bold text-xl text-primary">
+                                    <?= $driver_vehicle['plate_number'] ?>
+                                </p>
+                            </div>
                         </div>
-                        <div style="margin-top: 2rem;">
-                            <p>Avanza</p>
-                            <p>DD 1234 LL</p>
+                        <div class="aspect-square h-full ">
+                            <img src="../../admin/assets/img/messages-2.jpg" alt="Foto Sopir"
+                                class="h-full aspect-square">
                         </div>
                     </div>
-                    <div style="">
-                        <img src="../../admin/assets/img/messages-2.jpg" alt="Foto Sopir" class="driver-photo">
+                    <div class="border-black border-2 pb-2 pr-4 flex justify-between  rounded">
+                        <div class="flex flex-col justify-end p-4">
+                            <div class="flex items-center gap-2 text-primary">
+                                <i class="ri-wallet-line"></i>
+                                <span>Status</span>
+                            </div>
+                            <span
+                                class="text-xl text-yellow-500 bg-slate-200 rounded py-1 font-semibold px-4 mt-1"><?=$trips['status']?></span>
+                        </div>
+                        <div class="min-h-[100px] flex flex-col items-end justify-end mb-3">
+                            <h3 class="text-xl font-normal text-black/80">Total Pembayaran</h3>
+                            <p class="total-payment text-4xl text-primary font-bold mt-2" id="payment_amount">
+                                <?= $total_payment ?></p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 w-full justify-end">
+                        <?php if($trips['status'] === 'ongoing'): ?>
+                        <button type="button"
+                            class="py-2 px-5 bg-rose-500 text-white hover:bg-rose-300 hover:text-rose-600 rounded"
+                            id="cancelBtn" data-order_id>Batal</button>
+                        <?php else: ?>
+                        <button type="button"
+                            class="py-2 px-5 bg-rose-500 text-white hover:bg-rose-300 hover:text-rose-600 rounded"
+                            id="cancelBtn" data-order_id>Batal</button>
+                        <button type="button"
+                            class="py-2 px-5 bg-primary text-white hover:bg-emerald-300 hover:text-emerald-600 rounded"
+                            id="pay-button">Bayar</button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
 
-            <div class="payment-section d-flex justify-content-between align-items-center"
-                style="border: 1px solid black; border-radius: 10px; margin-top: 40px; padding: 10px;">
-                <div>
-                    <h3>Total Pembayaran</h3>
-                    <p class="total-payment" id="payment_amount"><?= $total_payment ?></p>
-                    <!-- Ukuran font diperbesar -->
-                </div>
-            </div>
 
-            <div class="btn-container d-flex justify-content-end mt-3 gap-2">
-                <button type="button" class="btn btn-danger" style="border-radius: 10px;" id="cancelBtn" data-order_id
-                    disabled>Batal</button>
-                <button type="button" class="btn btn-success" style="border-radius: 10px;"
-                    id="pay-button">Bayar</button>
-            </div>
+
+
         </div>
     </div>
 
-    <input type="hidden" id="order_id" value="<?= $paymentId ?>">
+    <input type="hidden" id="trip_id" value="<?= $_POST['trip_id'] ?>">
+    <input type="hidden" id="order_id" value="<?= $trips['order_id'] ?>">
     <input type="hidden" id="gross_amount" value="<?= $trips['total_payment'] ?>">
     <input type="hidden" id="passenger_id" value="<?= $userProfile['username'] ?>">
     <input type="hidden" id="passenger_email" value="<?= $userProfile['email'] ?>">
     <input type="hidden" id="passenger_fullname" value="<?= $userProfile['nama'] ?>">
     <input type="hidden" id="passenger_phone" value="<?= $userProfile['nomor_telepon'] ?>">
     <input type="hidden" id="passenger_address" value="<?= $userProfile['alamat'] ?>">
+    <input type="hidden" id="driver_id" value="<?= $avaiable_driver['driver_id'] ?>">
     <input type="hidden" id="driver_email" value="<?= $avaiable_driver['email'] ?>">
     <input type="hidden" id="driver_fullname" value="<?= $avaiable_driver['name'] ?>">
     <input type="hidden" id="driver_phone" value="<?= $avaiable_driver['phone_number'] ?>">
@@ -237,13 +303,28 @@ if(isset($email)) {
     <input type="hidden" id="vehicle_plate_number" value="<?= $driver_vehicle['plate_number'] ?>">
 
 
+    <!-- PopUp Alert -->
+
 
     <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="SB-Mid-client-75iUAElAx67168zX"></script>
     <script type="text/javascript">
     const payButton = document.getElementById('pay-button');
+
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    function initialCancelBtn(e) {
+        window.location.href =
+            "../index.php"
+        console.log("awd")
+    }
+    cancelBtn.addEventListener("click", initialCancelBtn)
+
     let token = null;
-    payButton.addEventListener('click', async function() {
+    async function handlePayment() {
+        //check if current user is already had pending payment or not
+
+
         if (!token) {
             const getToken = await fetch('../../controller/php/payment/prosesMidtrans.php', {
                 method: 'POST',
@@ -265,7 +346,8 @@ if(isset($email)) {
                             "name": document.getElementById("passenger_fullname").value,
                             "email": document.getElementById("passenger_email").value,
                             "phone": document.getElementById("passenger_phone").value,
-                            "address": document.getElementById("passenger_address").value,
+                            "address": document.getElementById("passenger_address")
+                                .value,
                         },
                         "driver_details": {
                             "name": document.getElementById("driver_fullname").value,
@@ -273,8 +355,10 @@ if(isset($email)) {
                             "phone": document.getElementById("driver_phone").value,
                         },
                         "vehicle_details": {
-                            "vehicle_name": document.getElementById("vehicle_name").value,
-                            "plate_number": document.getElementById("vehicle_plate_number")
+                            "vehicle_name": document.getElementById("vehicle_name")
+                                .value,
+                            "plate_number": document.getElementById(
+                                    "vehicle_plate_number")
                                 .value,
                         }
                     }
@@ -289,15 +373,122 @@ if(isset($email)) {
         const snapContainer = document.getElementById('snap-container');
         snapContainer.style.display = 'grid';
 
-        const cancelBtn = document.getElementById('cancelBtn');
+        function enableCancelPayment(result) {
+
+            async function handleCancelPayment() {
+                const response = await fetch(
+                    `../../controller/php/payment/prosesMidtrans.php?order_id=${result.order_id}`
+                )
+                if (response.ok) {
+                    const data = await response
+                        .json(); // Use json() since the response is a JSON object
+
+                    if (data.status_code === '200') {
+                        fetch("gateway.php?token=" + token).then(async function(
+                            response) {
+                            const trip_id = document.getElementById(
+                                "trip_id").value
+                            const updatePaymentStatus = await fetch(
+                                `gateway.php`, {
+                                    method: 'POST',
+                                    body: JSON.stringify({
+                                        trip_id: trip_id,
+                                        status: "cancelled",
+                                        driver_id: document
+                                            .getElementById(
+                                                "driver_id"
+                                            )
+                                            .value
+                                    })
+                                })
+
+                            const paymentStatusRespons =
+                                await updatePaymentStatus
+                                .json()
+
+                            if (paymentStatusRespons.status ==
+                                'success') {
+
+
+                                document.body.innerHTML += `
+                                    <div class="bg-red-50 border-s-4 border-red-500 p-4 dark:bg-red-800/30 fixed bottom-0 mb-4 ml-4" role="alert"
+                                        tabindex="-1" aria-labelledby="hs-bordered-red-style-label">
+                                        <div class="flex">
+                                            <div class="shrink-0">
+                                                <!-- Icon -->
+                                                <span
+                                                    class="inline-flex justify-center items-center size-8 rounded-full border-4 border-red-100 bg-red-200 text-red-800 dark:border-red-900 dark:bg-red-800 dark:text-red-400">
+                                                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round">
+                                                        <path d="M18 6 6 18"></path>
+                                                        <path d="m6 6 12 12"></path>
+                                                    </svg>
+                                                </span>
+                                                <!-- End Icon -->
+                                            </div>
+                                            <div class="ms-3">
+                                                <h3 id="hs-bordered-red-style-label" class="text-gray-800 font-semibold dark:text-white">
+                                                    Berhasil!
+                                                </h3>
+                                                <p class="text-sm text-gray-700 dark:text-neutral-400">
+                                                    Proses Pembayaran Dibatalkan.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>                      
+                                    `
+
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "../index.php"
+                                }, 3000)
+                            }
+                        })
+                    }
+                } else {
+                    console.error('HTTP Error:', response.statusText);
+                }
+                cancelBtn.setAttribute('disabled', true);
+            }
+
+            cancelBtn.removeEventListener("click", initialCancelBtn)
+
+            cancelBtn.innerText = "Batalkan Perjalanan"
+            cancelBtn.dataset.order_id = result.order_id;
+            cancelBtn.addEventListener('click', handleCancelPayment)
+
+        }
 
         window.snap.embed(token, {
             embedId: 'snap-container',
-            onSuccess: function(result) {
+            onSuccess: async function(result) {
                 token = null;
-                fetch(`gateway.php?token=${token}`).then(function(response) {
-                    window.location.href = "../index.php"
-                })
+                //Clear previous payments using token
+                const clearToken = await fetch(`gateway.php?token=${token}action=clear`)
+                if (clearToken.status == 200) {
+                    const trip_id = document.getElementById("trip_id").value
+
+                    // Update database by adding driver information
+                    const updatePaymentStatus = await fetch(
+                        `gateway.php`, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                trip_id: trip_id,
+                                status: "ongoing",
+                                driver_id: document.getElementById("driver_id")
+                                    .value
+                            })
+                        })
+
+                    const paymentStatusRespons = await updatePaymentStatus.json()
+
+                    console.log(paymentStatusRespons)
+                    if (paymentStatusRespons.status == 'success') {
+                        window.location.href = "../index.php"
+                    }
+
+                }
             },
             onPending: function(result) {
                 const urlParams = new URLSearchParams(result)
@@ -306,40 +497,23 @@ if(isset($email)) {
 
                 snapContainer.style.display = 'none';
 
-                cancelBtn.removeAttribute('disabled')
-                cancelBtn.dataset.order_id = result.order_id;
-                cancelBtn.addEventListener('click', async function() {
-                    const response = await fetch(
-                        `../../controller/php/payment/prosesMidtrans.php?order_id=${result.order_id}`
-                    )
-                    if (response.ok) {
-                        const data = await response
-                            .json(); // Use json() since the response is a JSON object
+                enableCancelPayment(result)
 
-                        console.log(data);
-                        if (data.status_code === '200') {
-                            alert("Payment cancelled!");
-                            fetch("gateway.php?token=" + token).then(function(
-                                response) {
-                                window.location.href = "../index.php";
-                            })
-                        }
-                    } else {
-                        console.error('HTTP Error:', response.statusText);
-                    }
-                    cancelBtn.setAttribute('disabled', true);
-                })
             },
             onError: function(result) {
                 alert("payment failed!");
-                console.log(result);
+                alert(result);
+                window.location.href =
+                    "../index.php"
             },
             onClose: function(e) {
+                console.log("close")
                 fetch("gateway.php?token=" + token);
                 snapContainer.style.display = 'none';
             }
         });
-    });
+    }
+    payButton.addEventListener('click', handlePayment);
     </script>
 
 
@@ -356,6 +530,21 @@ if(isset($email)) {
        
     
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+        if(isset($_GET['action']) && isset($_GET['token'])) {
+            switch ($_GET['action']) {
+                case 'clear':
+                    $_SESSION['snapToken'] = null;
+                    break;
+                case 'set_token':
+                    $_SESSION['snapToken'] = null;
+                    break;
+                default:
+                    echo 'Failed to call action: ' . $_GET['action'] ;
+                    break;
+            }
+            exit();
+        }
         // Should Destroy the session
         if(isset($_SESSION['snapToken']) && isset($_GET['token'])) {
             $snapToken = $_SESSION['snapToken'];
