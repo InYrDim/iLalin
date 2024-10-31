@@ -334,14 +334,14 @@ $email=$_SESSION['email'];
                                                             `../controller/php/paymentHandler.php`, {
                                                                 method: 'POST',
                                                                 body: JSON.stringify({
-                                                                    action: 'refundPayment',
+                                                                    action: 'cancelPayment',
                                                                     order_id: order_id,
                                                                 })
                                                             }
                                                         )
 
                                                         if (cancelPaymentResponse.ok) {
-                                                            const data = await response.json();
+                                                            const data = await cancelPaymentResponse.json();
 
                                                             // if clearing the transaction on midtrans is successful, next canceling on databse
                                                             if (data.status_code === '200') {

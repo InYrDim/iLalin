@@ -14,7 +14,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $trip = new TripController();
 
     $lookForStatus = $status;
-    $tripData = $trip->getTripsFilterByStatus($lookForStatus);
+    $tripData = $trip->getTripsFilterByStatus($lookForStatus, $_SESSION['email']);
 
     if(isset($tripData['status']) && $tripData['status'] === $lookForStatus) {
         header('Content-Type: application/json');

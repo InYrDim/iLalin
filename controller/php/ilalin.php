@@ -558,11 +558,11 @@ class TripController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         }
     }
-    public function getTripsFilterByStatus( $status) {
+    public function getTripsFilterByStatus( $status, $email) {
         try {
             // Prepare and execute query to fetch trips with status = 'ongoing'
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE status = ?', ['s', $status]
+                'SELECT * FROM Trips WHERE status = ? AND email = ?', ['ss', $status, $email]
             );
         
             $trip = $stmt->get_result()->fetch_assoc();
