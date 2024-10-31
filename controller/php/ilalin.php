@@ -88,6 +88,41 @@ class IlalinUtils {
         };
     }
 }
+class PaymentsUtils extends IlalinUtils {
+    /**
+     * Calculates the total payment for a trip based on distance.
+     */
+    public function calculateTotalPayment(int $distance): float {
+        if ($distance < 0) {
+            throw new InvalidArgumentException("Distance must be non-negative.");
+        }
+        return self::PAYMENT_PER_KM * $distance;
+    }
+
+    /**
+     * Calculates both driver and company profits from the total payment.
+     */
+    public function calculateProfits(float $totalPayment): array {
+        $driverProfit = round($totalPayment * self::DRIVER_PROFIT_PERCENTAGE, 2);
+        $companyProfit = round($totalPayment - $driverProfit, 2);
+
+        return [
+            'driverProfit' => $driverProfit,
+            'companyProfit' => $companyProfit
+        ];
+    }
+
+    /**
+     * Formats a given amount according to the country's currency format.
+     */
+    public function formatCurrency(float $amount, string $country = 'ID'): string {
+        return match (strtoupper($country)) {
+            'ID' => 'Rp. ' . number_format($amount, 2, ',', '.'), // Indonesia (Rp)
+            'US' => '$' . number_format($amount, 2, '.', ','),   // US Dollar ($)
+            default => number_format($amount, 2), // Default formatting
+        };
+    }
+}
 class IlalinApp {
     protected $db;
     protected $utils;
@@ -167,41 +202,84 @@ class IlalinApp {
     }
     
 }
-class PaymentsUtils extends IlalinUtils {
-    /**
-     * Calculates the total payment for a trip based on distance.
-     */
-    public function calculateTotalPayment(int $distance): float {
-        if ($distance < 0) {
-            throw new InvalidArgumentException("Distance must be non-negative.");
+class Auth extends IlalinApp {
+    protected $userType;
+
+    public function __construct($userType = 'user', IlalinUtils $utils = null) {
+        parent::__construct($utils);
+        $this->userType = $userType;
+    }
+
+    // Determine table based on user type
+    private function getTableName() {
+        return $this->userType === 'admin' ? 'Admins' : 'Users';
+    }
+
+    // Register a new user or admin
+    public function register($username, $email, $password) {
+        try {
+            $table = $this->getTableName();
+            $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
+            
+            if ($stmt->get_result()->num_rows > 0) {
+                return "Email already registered!";
+            }
+
+            // Hash the password
+            $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+
+            // Insert the new user or admin
+            $this->db->query(
+                "INSERT INTO $table (username, email, password_hash) VALUES (?, ?, ?)",
+                ['sss', $username, $email, $passwordHash]
+            );
+
+            return "User registered successfully!";
+        } catch (Exception $e) {
+            return "Failed to register user: " . $e->getMessage();
         }
-        return self::PAYMENT_PER_KM * $distance;
     }
 
-    /**
-     * Calculates both driver and company profits from the total payment.
-     */
-    public function calculateProfits(float $totalPayment): array {
-        $driverProfit = round($totalPayment * self::DRIVER_PROFIT_PERCENTAGE, 2);
-        $companyProfit = round($totalPayment - $driverProfit, 2);
+    // Log in a user or admin
+    public function login($email, $password) {
+        try {
+            $table = $this->getTableName();
+            $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
+            $user = $stmt->get_result()->fetch_assoc();
 
-        return [
-            'driverProfit' => $driverProfit,
-            'companyProfit' => $companyProfit
-        ];
+
+            if ($user && password_verify($password, $user['password'])) {
+                session_start();
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['id_admin'];
+                $_SESSION['nama'] = $user['nama'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['profile_image'] = $user['profile_image'];
+                $_SESSION['user_type'] = $this->userType;
+                $_SESSION['logged_in'] = true;
+                return "Logged in successfully!";
+            } else {
+                return "Invalid email or password.";
+            }
+        } catch (Exception $e) {
+            return "Failed to log in: " . $e->getMessage();
+        }
     }
 
-    /**
-     * Formats a given amount according to the country's currency format.
-     */
-    public function formatCurrency(float $amount, string $country = 'ID'): string {
-        return match (strtoupper($country)) {
-            'ID' => 'Rp. ' . number_format($amount, 2, ',', '.'), // Indonesia (Rp)
-            'US' => '$' . number_format($amount, 2, '.', ','),   // US Dollar ($)
-            default => number_format($amount, 2), // Default formatting
-        };
+    // Check if a user or admin is logged in
+    public function isLoggedIn() {
+        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'];
+    }
+
+    // Log out the user or admin
+    public function logout() {
+        session_unset();
+        session_destroy();
+        return "User logged out successfully!";
     }
 }
+
 class ProfileController extends IlalinApp {
     
     public function deleteUser($userId) {
@@ -270,7 +348,6 @@ class ProfileController extends IlalinApp {
         }
     }
 }
-
 class TripController extends IlalinApp {
     
     public function addTrip($data) {
@@ -475,6 +552,42 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
+    public function getDriversGroupedByCreationDate() {
+        try {
+            $stmt = $this->db->query(
+                'SELECT DATE(created_at) as created_date, COUNT(*) as driver_count 
+                    FROM drivers 
+                    GROUP BY created_date 
+                    ORDER BY created_date ASC'
+            );
+            $drivers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+            if ($drivers) {
+                return $drivers;
+            } else {
+                return "No drivers with that status";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get drivers: ". $e->getMessage();
+        }
+    }
+
+    public function getAllDrivers() {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Drivers'
+            );
+            $drivers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+            if ($drivers) {
+                return $drivers;
+            } else {
+                return "No drivers found";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get drivers: " . $e->getMessage();
+        }
+    }
 
     public function getTripsWithPassengerLocation() {
         try {
@@ -495,6 +608,46 @@ class Driver extends ProfileController {
         }
     }
 }
+class Passenger extends IlalinApp {
+    
+    public function getAllPassengers() {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM users WHERE peran = "penumpang"'
+            );
+            $passengers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+            if ($passengers) {
+                return $passengers;
+            } else {
+                return "No passengers found";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get passengers: " . $e->getMessage();
+        }
+    }
+}
+class Admins extends IlalinApp {
+    
+    public function getAllAdmins() {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Admins'
+            );
+            $admins = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+            if ($admins) {
+                return $admins;
+            } else {
+                return "No admins found";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get admins: " . $e->getMessage();
+        }
+    }
+}
+
+
 class Vehicle extends IlalinApp {
     
     public function getVehicleType($driver_id ) {

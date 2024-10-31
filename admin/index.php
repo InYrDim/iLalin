@@ -1,604 +1,293 @@
 <?php
-include '../controller/php/middleware.php';
-include '../controller/php/connection.php';
+session_start();
+
+include_once '../controller/php/ilalin.php';
+
+$auth = new Auth();
+
+if (!$auth->isLoggedIn()) {
+    
+    header('Location:/ilalin/auth/admin-login.php');
+    exit();
+    
+}
+
 ?>
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="../images/logo/logo-ilalin.ico" />
 
-    <title>Dashboard - Ilalin</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
 
-    <!-- Favicons -->
-    <link href="../images/logo/logo-ilalin.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <!-- Vendor -->
+    <!-- 1. Remix Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.4.0/remixicon.min.css"
+        integrity="sha512-6sfYTBLNjOZhwJ5g/J0529qHqIdXxO1BycUHd1LIJjEzVCzX8cHtoXDgd+ylrqCl/OZM/RMDgkn2Dd41lJsJjw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- 2. TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 3. Flowbite -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
 
-    <!-- Vendor CSS Files -->
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
-    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-    <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <!-- Mine -->
+    <link href="../assets/css/global.css" rel="stylesheet" />
+    <script src="../tailwind.config.js"></script>
 
-    <!-- Template Main CSS File -->
-    <link href="assets/css/style.css" rel="stylesheet">
-
-    <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Updated: Apr 20 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    <title>Admin - iLalin</title>
 </head>
 
-<body>
-
-    <?php include_once './components/header.php' ?>
-
-    <main id="main" class="main">
-
-        <div class="pagetitle">
-            <h1>Dashboard</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                    <li class="breadcrumb-item active">Dashboard</li>
-                </ol>
-            </nav>
-        </div><!-- End Page Title -->
-
-        <section class="section dashboard">
-            <div class="row">
-
-                <!-- Left side columns -->
-                <div class="col-lg-8">
-                    <div class="row">
-
-                        <!-- Sales Card -->
-                        <div class="col-xxl-4 col-md-6">
-                            <div class="card info-card sales-card">
-
-                                <div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body">
-                                    <h5 class="card-title">Penumpang <span>| Hari Ini</span></h5>
-
-                                    <div class="d-flex align-items-center">
-                                        <div
-                                            class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-person-up"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6>145</h6>
-                                            <span class="text-success small pt-1 fw-bold">12%</span> <span
-                                                class="text-muted small pt-2 ps-1">increase</span>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div><!-- End Sales Card -->
-
-                        <!-- Revenue Card -->
-                        <div class="col-xxl-4 col-md-6">
-                            <div class="card info-card revenue-card">
-
-                                <div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body">
-                                    <h5 class="card-title">Pemasukan <span>| Bulan Ini</span></h5>
-
-                                    <div class="d-flex align-items-center">
-                                        <div
-                                            class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-currency-dollar"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6>$3,264</h6>
-                                            <span class="text-success small pt-1 fw-bold">8%</span> <span
-                                                class="text-muted small pt-2 ps-1">increase</span>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div><!-- End Revenue Card -->
-
-                        <!-- Customers Card -->
-                        <div class="col-xxl-4 col-xl-12">
-
-                            <div class="card info-card customers-card">
-
-                                <div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body">
-                                    <h5 class="card-title">Trips <span>| Hari Ini</span></h5>
-
-                                    <div class="d-flex align-items-center">
-                                        <div
-                                            class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class='bx bx-trip'></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6>1244</h6>
-                                            <span class="text-danger small pt-1 fw-bold">12%</span> <span
-                                                class="text-muted small pt-2 ps-1">decrease</span>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div><!-- End Customers Card -->
-
-                        <!-- Reports -->
-                        <div class="col-12">
-                            <div class="card">
-
-                                <div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body">
-                                    <h5 class="card-title">Laporan <span>| Hari Ini</span></h5>
-
-                                    <!-- Line Chart -->
-                                    <div id="reportsChart"></div>
-
-                                    <script>
-                                    document.addEventListener("DOMContentLoaded", () => {
-                                        new ApexCharts(document.querySelector("#reportsChart"), {
-                                            series: [{
-                                                name: 'Pemasukan',
-                                                data: [31, 40, 28, 51, 42, 82, 56],
-                                            }, {
-                                                name: 'Trip',
-                                                data: [11, 32, 45, 32, 34, 52, 41]
-                                            }, {
-                                                name: 'Penumpang',
-                                                data: [15, 11, 32, 18, 9, 24, 11]
-                                            }],
-                                            chart: {
-                                                height: 350,
-                                                type: 'area',
-                                                toolbar: {
-                                                    show: false
-                                                },
-                                            },
-                                            markers: {
-                                                size: 4
-                                            },
-                                            //colors: ['#4154f1', '#2eca6a', '#ff771d'],
-                                            fill: {
-                                                type: "gradient",
-                                                gradient: {
-                                                    shadeIntensity: 1,
-                                                    opacityFrom: 0.3,
-                                                    opacityTo: 0.4,
-                                                    stops: [0, 90, 100]
-                                                }
-                                            },
-                                            dataLabels: {
-                                                enabled: false
-                                            },
-                                            stroke: {
-                                                curve: 'smooth',
-                                                width: 2
-                                            },
-                                            xaxis: {
-                                                type: 'datetime',
-                                                categories: ["2018-09-19T00:00:00.000Z",
-                                                    "2018-09-19T01:30:00.000Z",
-                                                    "2018-09-19T02:30:00.000Z",
-                                                    "2018-09-19T03:30:00.000Z",
-                                                    "2018-09-19T04:30:00.000Z",
-                                                    "2018-09-19T05:30:00.000Z",
-                                                    "2018-09-19T06:30:00.000Z"
-                                                ]
-                                            },
-                                            tooltip: {
-                                                x: {
-                                                    format: 'dd/MM/yy HH:mm'
-                                                },
-                                            }
-                                        }).render();
-                                    });
-                                    </script>
-                                    <!-- End Line Chart -->
-
-                                </div>
-
-                            </div>
-                        </div><!-- End Reports -->
-
-                        <!-- Recent Sales -->
-                        <div class="col-12">
-                            <div class="card recent-sales overflow-auto">
-
-                                <div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body">
-                                    <h5 class="card-title">Trip Berlangsung <span>| Hari Ini</span></h5>
-
-                                    <table class="table table-borderless datatable">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Supir</th>
-                                                <th scope="col">Rute</th>
-                                                <th scope="col">Price</th>
-                                                <th scope="col">Waktu Berangkat</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php 
-                      
-                      $sql = "SELECT * FROM `detailperjalananberlangsung`;";
-                      $result = $conn->query($sql);
-
-                      if ($result->num_rows > 0) {
-                        // Output data dari setiap baris
-                        while($row = $result->fetch_assoc()) {
-                          echo <<<TEXT
-                          <tr>
-                            <th scope="row"><a href="#">{$row["id_perjalanan"]}</a></th>
-                            <td>{$row["pengemudi"]}</td>
-                            <td><a href="#" class="text-primary">{$row["rute"]}</a></td>
-                            <td>Rp.{$row["harga"]}</td>
-                            <td><span class="badge bg-success">{$row["waktu_berangkat"]}</span></td>
-                          </tr>
-                          TEXT;
-                        }
-                    }
-
-                      ?>
-
-                                        </tbody>
-                                    </table>
-
-                                </div>
-
-                            </div>
-                        </div><!-- End Recent Sales -->
-
-                        <!-- Top Selling -->
-                        <div class="col-12">
-                            <div class="card top-selling overflow-auto">
-
-                                <div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body pb-0">
-                                    <h5 class="card-title lh-1 fs-4">Top Kabupaten <span>| Hari Ini</span></h5>
-                                    <p class="text-secondary">Kabupaten yang paling sering dikunjungi</p>
-                                    <table class="table table-borderless">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Preview</th>
-                                                <th scope="col">Nama Kabupaten</th>
-                                                <th scope="col">Total Kunjungan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php 
-                      
-                      $sql = "SELECT * FROM `kabupatenterkunjungi` LIMIT 5";
-                      $result = $conn->query($sql);
-
-                      if ($result->num_rows > 0) {
-                        // Output data dari setiap baris
-                        while($row = $result->fetch_assoc()) {
-                          $base64_image = base64_encode($row['logo_image']);
-                          echo <<<TEXT
-                          <tr>
-                              <th scope="row">
-                                  <a href="#">
-                                      <img src="data:image/jpeg;base64,{$base64_image}" alt="{$row['nama_kabupaten']}">
-                                  </a>
-                              </th>
-                              <td>
-                                  <a href="#" class="text-primary fw-bold">{$row['nama_kabupaten']}</a>
-                              </td>
-                              <td>{$row['jumlah_kunjungan']}</td>
-                          </tr>
-                          TEXT;
-                          
-                        }
-                    }
-
-                      ?>
-
-                                        </tbody>
-                                    </table>
-
-                                </div>
-
-                            </div>
-                        </div><!-- End Top Selling -->
-
-                    </div>
-                </div><!-- End Left side columns -->
-
-                <!-- Right side columns -->
-                <div class="col-lg-4">
-
-                    <!-- Recent Activity -->
-                    <div class="card">
-                        <div class="filter">
-                            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Filter</h6>
-                                </li>
-
-                                <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="card-body">
-                            <h5 class="card-title">Laporan Pengguna</h5>
-
-                            <div class="activity">
-                                <?php 
-                      
-                      $sql = "SELECT * FROM reviews ORDER BY tanggal DESC, waktu DESC LIMIT 10;";
-                      $result = $conn->query($sql);
-
-                      if ($result->num_rows > 0) {
-                        // Output data dari setiap baris
-                    
-
-                        while($row = $result->fetch_assoc()) {
-                          $rating = $row['rating'] < "4" ? "text-warning" : "text-success";
-                          echo <<<TEXT
-                          <div class="activity-item d-flex">
-                            <div class="activite-label">{$row['waktu']}</div>
-                            <i class='bi bi-circle-fill activity-badge {$rating} align-self-start'></i>
-                            <div class="activity-content">{$row['komentar']}</div>
-                          </div><!-- End activity item-->
-                          TEXT;
-                        }
-                    }
-
-                  ?>
-                            </div>
-
-                        </div>
-                    </div><!-- End Recent Activity -->
-
-
-
-                    <!-- Website Traffic -->
-                    <div class="card">
-                        <div class="filter">
-                            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Filter</h6>
-                                </li>
-
-                                <li><a class="dropdown-item" href="#">Hari Ini</a></li>
-                                <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                                <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="card-body pb-0">
-                            <h5 class="card-title">Website Traffic <span>| Hari Ini</span></h5>
-
-                            <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
-
-                            <script>
-                            document.addEventListener("DOMContentLoaded", () => {
-                                echarts.init(document.querySelector("#trafficChart")).setOption({
-                                    tooltip: {
-                                        trigger: 'item'
-                                    },
-                                    legend: {
-                                        top: '5%',
-                                        left: 'center'
-                                    },
-                                    series: [{
-                                        name: 'Access From',
-                                        type: 'pie',
-                                        radius: ['40%', '70%'],
-                                        avoidLabelOverlap: false,
-                                        label: {
-                                            show: false,
-                                            position: 'center'
-                                        },
-                                        emphasis: {
-                                            label: {
-                                                show: true,
-                                                fontSize: '18',
-                                                fontWeight: 'bold'
-                                            }
-                                        },
-                                        labelLine: {
-                                            show: false
-                                        },
-                                        data: [{
-                                                value: 1048,
-                                                name: 'Penumpang'
-                                            },
-                                            {
-                                                value: 735,
-                                                name: 'Supir'
-                                            },
-                                            {
-                                                value: 580,
-                                                name: 'Kendaraan'
-                                            },
-                                            {
-                                                value: 484,
-                                                name: 'Trip'
-                                            },
-                                            {
-                                                value: 300,
-                                                name: 'Booking'
-                                            }
-                                        ]
-                                    }]
-                                });
-                            });
-                            </script>
-
-                        </div>
-                    </div><!-- End Website Traffic -->
-
-                    <!-- News & Updates Traffic -->
-                    <div class="card">
-                        <div class="card-body pb-0">
-                            <h5 class="card-title">Blogs</span></h5>
-
-                            <div class="news">
-                                <div class="post-item clearfix">
-                                    <img src="../images/blogs/blogs-1.jpg" alt="">
-                                    <h4><a href="#">Masa Depan Transportasi di Sulawesi Selatan</a></h4>
-                                    <p>Jelajahi tren dan inovasi terbaru yang membentuk masa depan transportasi di
-                                        Sulawesi Selatan...</p>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="../images/blogs/blogs-2.jpg" alt="">
-                                    <h4><a href="#">Panduan Lengkap untuk Memesan Perjalanan Secara Online</a></h4>
-                                    <p>Pelajari cara menavigasi sistem pemesanan online dengan mudah. Panduan ini
-                                        mencakup semuanya, mulai dari memilih...</p>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="../images/blogs/blogs-3.jpg" alt="">
-                                    <h4><a href="#">5 Destinasi Wisata Terbaik untuk Dikunjungi di Sulawesi Selatan</a>
-                                    </h4>
-                                    <p>Temukan lima destinasi yang wajib dikunjungi di Sulawesi Selatan. Apakah Anda
-                                        tertarik dengan...</p>
-                                </div>
-                            </div><!-- End sidebar recent posts-->
-
-                        </div>
-                    </div><!-- End News & Updates -->
-
-                </div><!-- End Right side columns -->
-
+<body class="font-outfit ">
+
+    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+        type="button"
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        <span class="sr-only ">Open sidebar</span>
+        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" fill-rule="evenodd"
+                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
+            </path>
+        </svg>
+    </button>
+
+    <aside id="logo-sidebar"
+        class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-mineral-green-500 "
+        aria-label="Sidebar">
+        <div class="h-full pt-4 overflow-y-auto bg-como-500 dark:bg-gray-800 flex flex-col justify-between">
+            <div class=" px-3">
+                <a href="" class="flex items-center ps-2.5 mb-5 border-b-2 border-como-700">
+                    <img src="../assets/images/logo/logo-ilalin.png" class="h-6 me-3 sm:h-12" alt="Ilalin Logo" />
+                    <span
+                        class="self-center text-xl font-semibold whitespace-nowrap text-como-100 dark:text-como-100">Ilalin
+                        Admin</span>
+                </a>
+                <ul class="space-y-2 font-medium">
+                    <li>
+                        <a href="index.php"
+                            class="flex items-center p-2 text-como-50 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            <i class="ri-dashboard-fill text-xl"></i>
+                            <span class="ms-3">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.php"
+                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            <i class="ri-group-fill text-xl"></i>
+                            <span class="ms-3">Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="trips.php"
+                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            <i class="ri-steering-2-line text-xl"></i>
+                            <span class="ms-3">Trips</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="analytics.php"
+                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            <i class="ri-bubble-chart-fill text-xl"></i>
+                            <span class="ms-3">Analytics</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </section>
+            <div class="bg-como-700 px-3 py-5">
+                <div class="flex items-center gap-2">
+                    <div class="relative aspect-square w-8 rounded-full overflow-hidden"><img class="inset-0 absolute "
+                            src="data:image/jpeg;base64,<?php echo base64_encode($_SESSION['profile_image'])?>"
+                            alt="Profile <?php echo $_SESSION['nama']; ?>" class="rounded-circle"></div>
+                    <span class="text-como-100"><?php echo $_SESSION['nama']; ?></span>
 
-    </main><!-- End #main -->
-
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+                </div>
+                <a href="../controller/php/utils/session.destroy.php?home=../../../auth/admin-login.php"
+                    class="mt-2 flex items-center p-2 text-como-50 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span class="ms-3">Logout</span>
+                </a>
+            </div>
         </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </aside>
+
+    <!-- Content Wrapper -->
+    <div class="sm:ml-64 p-4 h-screen ">
+        <div class="rounded h-full p-4 bg-como-100 border-2 border-como-600  overflow-scroll ">
+            <!-- Content Main -->
+            <div class="grid grid-cols-12 auto-rows-auto gap-4">
+
+                <!-- Heading -->
+                <div class="col-span-8">
+                    <h1 class=" text-4xl font-bold text-como-900">Dashboard</h1>
+
+                    <!-- Breadcrumb Nav -->
+                    <nav class="flex mt-4" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                            <li class="inline-flex items-center">
+                                <a href=""
+                                    class="inline-flex items-center text-sm font-medium text-como-300 hover:text-orange-peel-600 dark:text-como-400 dark:hover:text-white">
+                                    iLalin Admin
+                                </a>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="rtl:rotate-180 w-3 h-3 text-como-400 mx-1" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m1 9 4-4-4-4" />
+                                    </svg>
+                                    <a href=""
+                                        class="ms-1 text-sm text-como-700 hover:text-orange-peel-600 md:ms-2 dark:text-como-400 dark:hover:text-white">Dashboard</a>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Data Total Content -->
+                <div class="col-span-8 row-start-2 flex gap-4 ">
+                    <div
+                        class="flex flex-col flex-1 min-h-24 border-2 border-como-500 p-4 rounded-lg transition-all bg-como-50 hover:shadow-[5px_5px_0px_0px_#3b5d50]">
+                        <h3 class="text-como-600 text-xl">Total Perjalanan</h3>
+                        <span class="text-orange-peel-500 font-bold text-4xl mt-2">189</span>
+                        <div class="text-como-600 mt-4"><span>18%</span> Peningkatan</div>
+                    </div>
+                    <div
+                        class="flex flex-col flex-1 min-h-24 border-2 border-como-500 p-4 rounded-lg transition-all bg-como-50 hover:shadow-[5px_5px_0px_0px_#3b5d50]">
+                        <h3 class="text-como-600 text-xl">Total Driver</h3>
+                        <span class="text-orange-peel-500 font-bold text-4xl mt-2">86</span>
+                        <div class="text-como-600 mt-4"><span>18%</span> Peningkatan</div>
+                    </div>
+                </div>
+
+                <!-- Admins -->
+                <div
+                    class="col-span-4 row-span-2 col-start-9 border-2 border-como-500 p-4 rounded-lg transition-all bg-como-50 hover:shadow-[5px_5px_0px_0px_#3b5d50]">
+                    <h2 class="text-como-600 font-normal text-lg ">Admins</h2>
+                    <div class="mt-2">
+                        <?php
+                            $adminsObj = new Admins();
+                            $allAdmins = $adminsObj->getAllAdmins();
+                            ?>
+                        <?php if(is_array($allAdmins)):?>
+                        <?php foreach($allAdmins as $admin):?>
+                        <div class="mt-4 flex items-center gap-2 group">
+                            <div class="relative aspect-square w-8 rounded-full overflow-hidden"><img
+                                    class="inset-0 absolute "
+                                    src="data:image/jpeg;base64,<?php echo base64_encode($admin['profile_image'])?>"
+                                    alt="Profile <?php echo $admin['nama']; ?>" class="rounded-circle"></div>
+                            <span
+                                class="<?= $admin['nama'] == $_SESSION['nama'] ? 'text-orange-peel-500' : 'text-como-500'?> group-hover:text-orange-peel-400"><?php echo $admin['nama']; ?>
+                            </span>
+                        </div>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div
+                    class="col-span-12 row-start-3  border-2 border-como-500 p-4 rounded-lg transition-all bg-como-50 hover:shadow-[5px_5px_0px_0px_#3b5d50]">
+                    <div class="container mx-auto px-4 py-8 mt-16">
+                        <!-- Draw driver chart base on time it creating account with total in that time -->
+                        <canvas id="driverCreatingChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer><!-- End Footer -->
+    </div>
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Vendor JS Files -->
-    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/chart.js/chart.umd.js"></script>
-    <script src="assets/vendor/echarts/echarts.min.js"></script>
-    <script src="assets/vendor/quill/quill.js"></script>
-    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-    <script src="assets/vendor/php-email-form/validate.js"></script>
 
-    <!-- Template Main JS File -->
-    <script src="assets/js/main.js"></script>
+    <!-- Vendor -->
+    <!-- 1. Flowbite -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+    <!-- 2. Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Customize Chart JS -->
+    <script>
+    // Fetch data from PHP and render chart
+    async function drawDriverCreatingChart() {
+        try {
+            const driverDataResponse = await fetch('../controller/php/driversHandler.php', {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'getDriversGroupedByCreationDate'
+                })
+            })
+
+            const driverData = await driverDataResponse.json();
+
+            const labels = driverData.map(entry => entry.created_date);
+            const driverCounts = driverData.map(entry => entry.driver_count);
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Drivers Registered',
+                    data: driverCounts,
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4 // Smooths the line
+                }]
+            };
+
+            const config = {
+                type: 'line', // Use 'bar' for a bar chart
+                data: chartData,
+                maintainAspectRatio: false,
+                responsive: true,
+                options: {
+                    onResize: function(myChart) {},
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date of Registration'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Total Drivers'
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Total: ${context.raw}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(document.getElementById('driverCreatingChart'), config);
+
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+    drawDriverCreatingChart();
+    </script>
+
 
 </body>
 

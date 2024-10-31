@@ -7,12 +7,11 @@
 */ -->
 
 <?php
-include '../controller/php/middleware.php';
-
+// include '../controller/php/middleware.php';
+session_start();
 // Check if there is a message in the session
-if (isset($_SESSION['message'])) {
-    echo "<div class='alert alert-info'>" . $_SESSION['message'] . "</div>";
-    unset($_SESSION['message']); // Clear the message after displaying it
+if (isset($_SESSION['logged_in'])){
+    header('Location: ../admin/index.php');
 }
 
 ?>
@@ -91,7 +90,9 @@ if (isset($_SESSION['message'])) {
                             </div>
 
                             <!-- Login Form -->
-                            <form method="POST" action="../controller/php/admin/action_admin_login.php">
+                            <form method="POST" action="../controller/php/authHandler.php">
+                                <input type="hidden" name="action" value="adminLogin" />
+                                <input type="hidden" name="type" value="admin" />
                                 <div class="row gy-3 gy-md-4 overflow-hidden">
                                     <div class="col-12">
                                         <label for="email" class="form-label">Email <span
