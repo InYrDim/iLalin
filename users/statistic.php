@@ -223,6 +223,11 @@ $email=$_SESSION['email'];
                                                     <!-- Script for above button -->
                                                     <script>
                                                     async function cancelProcessingTrip(order_id, trip_id, driver_id) {
+
+                                                        const userConfirm = confirm(
+                                                            'Yakin membatalkan perjalanan?');
+                                                        if (!userConfirm) return;
+
                                                         // 1. Get The Transaction First
                                                         // 2. Refunding the Transaction using transaction id that was previously get from transaction
                                                         // 3. Update the Transaction status on database
@@ -321,17 +326,24 @@ $email=$_SESSION['email'];
                                                     <!-- Script for above button -->
                                                     <script>
                                                     async function cancelProcessingTrip(order_id, trip_id, driver_id) {
-
+                                                        const userConfirm = confirm(
+                                                            'Yakin membatalkan perjalanan?');
+                                                        if (!userConfirm) return;
                                                         // clearing the transaction on midtrans
-                                                        const response = await fetch(
-                                                            `../controller/php/payment/prosesMidtrans.php?order_id=${order_id}`
+                                                        const cancelPaymentResponse = await fetch(
+                                                            `../controller/php/paymentHandler.php`, {
+                                                                method: 'POST',
+                                                                body: JSON.stringify({
+                                                                    action: 'refundPayment',
+                                                                    order_id: order_id,
+                                                                })
+                                                            }
                                                         )
 
-                                                        if (response.ok) {
-                                                            const data = await response
-                                                                .json(); // Use json() since the response is a JSON object
+                                                        if (cancelPaymentResponse.ok) {
+                                                            const data = await response.json();
 
-                                                            // if clearing the transaction on midtras is successful, next canceling on databse
+                                                            // if clearing the transaction on midtrans is successful, next canceling on databse
                                                             if (data.status_code === '200') {
                                                                 const updatePaymentStatus = fetch(
                                                                         `../controller/php/tripsHandler.php`, {
@@ -373,22 +385,6 @@ $email=$_SESSION['email'];
                                                             console.error('HTTP Error:', response.statusText);
                                                         }
                                                     }
-
-                                                    function continueProcessingTrip(trip_id) {
-                                                        const form = document.createElement("form");
-                                                        form.method = "POST";
-                                                        form.action = "action/gateway.php";
-
-                                                        const tripIdInput = document.createElement("input");
-                                                        tripIdInput.type = "hidden";
-                                                        tripIdInput.name = "trip_id";
-                                                        tripIdInput.value = trip_id;
-                                                        form.appendChild(tripIdInput);
-
-                                                        document.body.appendChild(form);
-
-                                                        form.submit();
-                                                    }
                                                     </script>
 
                                                     <?php else: ?>
@@ -400,6 +396,11 @@ $email=$_SESSION['email'];
                                                     <script>
                                                     // cancel button for processing in datbase not in midtrans function
                                                     function cancelProcessingTrip(trip_id) {
+                                                        const userConfirm = confirm(
+                                                            'Yakin membatalkan perjalanan?');
+
+                                                        if (!userConfirm) return;
+
                                                         const updatePaymentStatus = fetch(
                                                                 `../controller/php/tripsHandler.php`, {
                                                                     method: 'POST',
@@ -407,6 +408,7 @@ $email=$_SESSION['email'];
                                                                         action: 'updateTripStatus',
                                                                         trip_id: trip_id,
                                                                         status: "cancelled",
+                                                                        clearToken: "yes"
                                                                     })
                                                                 })
                                                             .then(resp => resp.json())
@@ -435,22 +437,6 @@ $email=$_SESSION['email'];
                                                                 }, 3000)
                                                             })
 
-                                                    }
-                                                    // continue processing trip function
-                                                    function continueProcessingTrip(trip_id) {
-                                                        const form = document.createElement("form");
-                                                        form.method = "POST";
-                                                        form.action = "action/gateway.php";
-
-                                                        const tripIdInput = document.createElement("input");
-                                                        tripIdInput.type = "hidden";
-                                                        tripIdInput.name = "trip_id";
-                                                        tripIdInput.value = trip_id;
-                                                        form.appendChild(tripIdInput);
-
-                                                        document.body.appendChild(form);
-
-                                                        form.submit();
                                                     }
                                                     </script>
                                                     <?php endif; ?>
@@ -499,6 +485,23 @@ $email=$_SESSION['email'];
 
     <!-- Custom Script -->
     <script src="script/sidebar.js"></script>
+    <script>
+    function continueProcessingTrip(trip_id) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "action/gateway.php";
+
+        const tripIdInput = document.createElement("input");
+        tripIdInput.type = "hidden";
+        tripIdInput.name = "trip_id";
+        tripIdInput.value = trip_id;
+        form.appendChild(tripIdInput);
+
+        document.body.appendChild(form);
+
+        form.submit();
+    }
+    </script>
 
 
 

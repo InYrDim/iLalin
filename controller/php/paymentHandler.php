@@ -41,6 +41,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo $refundStatus;
                 break;
                 
+            case 'cancelPayment':
+                $refundStatus = $midtrans->cancelPaymentByOrderId($order_id);
+                header('Content-Type: application/json');
+                echo $refundStatus;
+                break;
+                
             default:
                 echo json_encode([
                     'status' =>'failed',

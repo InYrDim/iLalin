@@ -37,7 +37,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Call the appropriate function based on the 'action' parameter in the POST data
                 $trip->updateTripStatus($tripId, $tripStatus);
                 
-                if($postJson['clearToken'] == 'yes') {
+                if(isset($postJson['clearToken']) && $postJson['clearToken'] == 'yes') {
                     session_start();
                     $_SESSION['snapToken'] = null;
                 }
