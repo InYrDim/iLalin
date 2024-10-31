@@ -3,6 +3,17 @@ session_start();
 
 include_once '../controller/php/ilalin.php';
 
+$auth = new Auth();
+
+if (!$auth->isLoggedIn()) {
+    
+    header('Location:/ilalin/auth/admin-login.php');
+    exit();
+    
+}
+
+include_once '../controller/php/ilalin.php';
+
 if(isset($_SESSION['email'])) {
     $driverObj = new Driver();
     $allDriver = $driverObj->getAllDrivers();
@@ -105,7 +116,7 @@ if(isset($_SESSION['email'])) {
                     <span class="text-como-100"><?php echo $_SESSION['nama']; ?></span>
 
                 </div>
-                <a href="index.php"
+                <a href="../controller/php/utils/session.destroy.php?home=../../../auth/admin-login.php"
                     class="mt-2 flex items-center p-2 text-como-50 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
                     <i class="ri-logout-box-r-line"></i>
                     <span class="ms-3">Logout</span>
@@ -217,9 +228,9 @@ if(isset($_SESSION['email'])) {
                                     <td class="px-6 py-4">
                                         <?= $driver['created_at'] ?>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <a href="#"
-                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                    <td class="px-6 py-4" onClick="editUser(this)">
+                                        <span
+                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -286,9 +297,9 @@ if(isset($_SESSION['email'])) {
                                     <td class="px-6 py-4">
                                         <?= $passenger['nomor_telepon'] ?>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <a href="#"
-                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                    <td class="px-6 py-4" onClick="editUser(this)">
+                                        <span
+                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -308,6 +319,45 @@ if(isset($_SESSION['email'])) {
     <!-- 1. Flowbite -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 
+    <!-- Custom -->
+    <script>
+    function editUser(el) {
+        const thisElement = el;
+
+        const parentElement = thisElement.parentElement;
+
+
+        const dataset = parentElement.dataset
+
+        // Check if it passenger or user
+        if (dataset.hasOwnProperty('passengerId')) {
+            const id = dataset.passengerId;
+
+
+        } else if (dataset.hasOwnProperty('driverId')) {
+            const id = dataset.driverId;
+
+
+            fetch("../controller/php/driversHandler.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        action: "deleteDriverById",
+                        driver_id: id
+                    }),
+                }).then(response => response.json())
+                .then(data => {
+                    alert(`${data.message}`)
+                    location.reload();
+                })
+
+        } else {
+            console.log("Unknown type");
+        }
+    }
+    </script>
 </body>
 
 </html>

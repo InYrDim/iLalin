@@ -231,7 +231,7 @@ if (!$auth->isLoggedIn()) {
             const chartData = {
                 labels: labels,
                 datasets: [{
-                    label: 'Total Drivers Registered',
+                    label: 'Total Pengemudi Terdaftar',
                     data: driverCounts,
                     backgroundColor: 'rgba(255, 159, 64, 0.2)',
                     borderColor: 'rgba(255, 159, 64, 1)',
@@ -252,13 +252,13 @@ if (!$auth->isLoggedIn()) {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Date of Registration'
+                                text: 'Waktu Registrasi'
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Total Drivers'
+                                text: 'Jumlah Pengemudi'
                             },
                             beginAtZero: true
                         }
