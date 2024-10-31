@@ -759,7 +759,6 @@ class Admins extends IlalinApp {
     }
 }
 
-
 class Vehicle extends IlalinApp {
     
     public function getVehicleType($driver_id ) {
