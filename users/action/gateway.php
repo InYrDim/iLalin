@@ -268,11 +268,11 @@ if(isset($email)) {
                         <?php if($trips['status'] === 'ongoing'): ?>
                         <button type="button"
                             class="py-2 px-5 bg-rose-500 text-white hover:bg-rose-300 hover:text-rose-600 rounded"
-                            id="cancelBtn" data-order_id>Batal</button>
+                            id="cancelBtn" data-order_id>Kembali</button>
                         <?php else: ?>
                         <button type="button"
                             class="py-2 px-5 bg-rose-500 text-white hover:bg-rose-300 hover:text-rose-600 rounded"
-                            id="cancelBtn" data-order_id>Batal</button>
+                            id="cancelBtn" data-order_id>Kembali</button>
                         <button type="button"
                             class="py-2 px-5 bg-primary text-white hover:bg-emerald-300 hover:text-emerald-600 rounded"
                             id="pay-button">Bayar</button>

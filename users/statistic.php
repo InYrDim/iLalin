@@ -223,56 +223,31 @@ $email=$_SESSION['email'];
                                                     <!-- Script for above button -->
                                                     <script>
                                                     async function cancelProcessingTrip(order_id, trip_id, driver_id) {
-                                                        //need parameter:
-                                                        /*
-                                                        - Transaction ID for refunding transaction
-                                                        */
+                                                        // 1. Get The Transaction First
+                                                        // 2. Refunding the Transaction using transaction id that was previously get from transaction
+                                                        // 3. Update the Transaction status on database
+                                                        try {
 
-                                                        // first check status of transaction
-                                                        const response = await fetch(
-                                                            `../controller/php/payment/getPaymentStatus.php?order_id=${order_id}`
-                                                        )
+                                                            const refundResponse = await fetch(
+                                                                `../controller/php/paymentHandler.php`, {
+                                                                    method: 'POST',
+                                                                    body: JSON.stringify({
+                                                                        action: 'refundPayment',
+                                                                        order_id: order_id,
+                                                                    })
+                                                                }
+                                                            )
+                                                            const refundData = await refundResponse.json();
+                                                            console.log(refundResponse);
 
-                                                        alert("Belum Tersedia")
-                                                    }
-                                                    </script>
+                                                            // using || refundResponse.status == "200" to hanlder just for sanbox midtrans
+                                                            // for production, remove it
+                                                            if (refundData.status_code === '200' || refundResponse
+                                                                .status == "200") {
+                                                                // refund successful
+                                                                alert('Pembatalan trip berhasil');
 
-                                                    <!-- Pending status:
-                                                    - User can process the payment, moving it to payment gateway page 
-                                                    - or canceling payment:
-                                                      *> canceling process had two possible scenarios:
-                                                       - When payment gateway is set
-                                                       - When payment gateway is not set
-                                                    -->
-                                                    <?php elseif ($trip['status'] === 'pending'):?>
-                                                    <?php 
-                                                        include_once '../controller/php/payment/getPaymentStatus.php';
-                                                        $getPaymentStatusFromMidtrans = paymentStatus($trip['order_id']);
-                                                        $getPaymentStatusFromMidtrans = json_decode($getPaymentStatusFromMidtrans, true);
-                                                        ?>
-
-                                                    <?php if(isset($getPaymentStatusFromMidtrans['transaction_status']) && $getPaymentStatusFromMidtrans['transaction_status'] ==='pending'): ?>
-                                                    <!-- if payment status is getting any value that mean payment gateway is set on midtrans -->
-                                                    <button
-                                                        onclick="cancelProcessingTrip('<?= $trip['order_id']?>', '<?= $trip['trip_id']?>', '<?= $trip['driver_id']?>')"
-                                                        class="text-red-100 px-3 py-1 bg-red-500 rounded">Batal</button>
-                                                    <button onclick="continueProcessingTrip('<?= $trip['trip_id']?>')"
-                                                        class="bg-emerald-500 px-3 py-1 rounded text-white">Proses</button>
-                                                    <!-- Script for above button -->
-                                                    <script>
-                                                    async function cancelProcessingTrip(order_id, trip_id, driver_id) {
-
-                                                        // clearing the transaction on midtrans
-                                                        const response = await fetch(
-                                                            `../controller/php/payment/prosesMidtrans.php?order_id=${order_id}`
-                                                        )
-
-                                                        if (response.ok) {
-                                                            const data = await response
-                                                                .json(); // Use json() since the response is a JSON object
-
-                                                            // if clearing the transaction on midtras is successful, next canceling on databse
-                                                            if (data.status_code === '200') {
+                                                                // Update canceling on databse then update trip status in database
                                                                 const updatePaymentStatus = fetch(
                                                                         `../controller/php/tripsHandler.php`, {
                                                                             method: 'POST',
@@ -308,6 +283,91 @@ $email=$_SESSION['email'];
                                                                             location.reload();
                                                                         }, 3000)
                                                                     })
+
+                                                            } else {
+                                                                // refund failed
+                                                                alert('Pembatalan trip gagal');
+                                                            }
+                                                        } catch (error) {
+                                                            console.log(error)
+                                                        }
+
+                                                    }
+                                                    </script>
+
+                                                    <!-- Pending status:
+                                                    - User can process the payment, moving it to payment gateway page 
+                                                    - or canceling payment:
+                                                      *> canceling process had two possible scenarios:
+                                                       - When payment gateway is set
+                                                       - When payment gateway is not set
+                                                    -->
+                                                    <?php elseif ($trip['status'] === 'pending'):
+                                               
+                                                        include_once '../controller/php/payment/getPaymentStatus.php';
+                                                        $getPaymentStatusFromMidtrans = paymentStatus($trip['order_id']);
+                                                        $getPaymentStatusFromMidtrans = json_decode($getPaymentStatusFromMidtrans, true);
+                                                     
+
+                                                    if(isset($getPaymentStatusFromMidtrans['transaction_status']) &&
+                                                    $getPaymentStatusFromMidtrans['transaction_status'] ==='pending'):
+                                                    ?>
+                                                    <!-- if payment status is getting any value that mean payment gateway is set on midtrans -->
+                                                    <button
+                                                        onclick="cancelProcessingTrip('<?= $trip['order_id']?>', '<?= $trip['trip_id']?>', '<?= $trip['driver_id']?>')"
+                                                        class="text-red-100 px-3 py-1 bg-red-500 rounded">Batal</button>
+                                                    <button onclick="continueProcessingTrip('<?= $trip['trip_id']?>')"
+                                                        class="bg-emerald-500 px-3 py-1 rounded text-white">Proses</button>
+                                                    <!-- Script for above button -->
+                                                    <script>
+                                                    async function cancelProcessingTrip(order_id, trip_id, driver_id) {
+
+                                                        // clearing the transaction on midtrans
+                                                        const response = await fetch(
+                                                            `../controller/php/payment/prosesMidtrans.php?order_id=${order_id}`
+                                                        )
+
+                                                        if (response.ok) {
+                                                            const data = await response
+                                                                .json(); // Use json() since the response is a JSON object
+
+                                                            // if clearing the transaction on midtras is successful, next canceling on databse
+                                                            if (data.status_code === '200') {
+                                                                const updatePaymentStatus = fetch(
+                                                                        `../controller/php/tripsHandler.php`, {
+                                                                            method: 'POST',
+                                                                            body: JSON.stringify({
+                                                                                action: 'updateTripStatus',
+                                                                                trip_id: trip_id,
+                                                                                status: "cancelled",
+                                                                                clearToken: "yes"
+                                                                            })
+                                                                        })
+                                                                    .then(resp => resp.json())
+                                                                    .then(data => {
+
+                                                                        document.body.innerHTML += `    <!-- Cancel Alert Componet -->
+                                                    <div id="alert-modal" tabindex="-1"
+                                                        class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bottom-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur">
+                                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                                            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                                                <div class="py-10 text-center">
+                                                                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                                    </svg>
+                                                                    <h3 class="text-lg font-normal text-gray-500 dark:text-gray-400">Trip Cancelled Succesfully
+                                                                    </h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>`
+
+                                                                        setTimeout(() => {
+                                                                            location.reload();
+                                                                        }, 3000)
+                                                                    })
                                                             }
                                                         } else {
                                                             console.error('HTTP Error:', response.statusText);
@@ -337,7 +397,6 @@ $email=$_SESSION['email'];
                                                         class="bg-rose-500 px-3 py-1 rounded text-white">Batal</button>
                                                     <button onclick="continueProcessingTrip('<?= $trip['trip_id']?>')"
                                                         class="bg-emerald-500 px-3 py-1 rounded text-white">Proses</button>
-
                                                     <script>
                                                     // cancel button for processing in datbase not in midtrans function
                                                     function cancelProcessingTrip(trip_id) {
@@ -354,22 +413,22 @@ $email=$_SESSION['email'];
                                                             .then(data => {
 
                                                                 document.body.innerHTML += `    <!-- Cancel Alert Componet -->
-    <div id="alert-modal" tabindex="-1"
-        class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bottom-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <div class="py-10 text-center">
-                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <h3 class="text-lg font-normal text-gray-500 dark:text-gray-400">Trip Cancelled Succesfully
-                    </h3>
-                </div>
-            </div>
-        </div>
-    </div>`
+                                                    <div id="alert-modal" tabindex="-1"
+                                                        class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bottom-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur">
+                                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                                            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                                                <div class="py-10 text-center">
+                                                                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                                    </svg>
+                                                                    <h3 class="text-lg font-normal text-gray-500 dark:text-gray-400">Trip Cancelled Succesfully
+                                                                    </h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>`
 
                                                                 setTimeout(() => {
                                                                     location.reload();
@@ -440,6 +499,7 @@ $email=$_SESSION['email'];
 
     <!-- Custom Script -->
     <script src="script/sidebar.js"></script>
+
 
 
 
