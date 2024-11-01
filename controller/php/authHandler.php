@@ -45,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo "<script>alert('$loginResult'); window.location.href = '$referer'</script>";
                     exit();
                 }
-
+                
+            
             case 'logout':
                 // Logout Action
                 $logoutResult = $auth->logout();

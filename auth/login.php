@@ -24,11 +24,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
         $email = $_POST['email'];
         $password = $_POST['password'];
+        $role = $_POST['role'];
 
-        // Prepare and execute SQL query to fetch the admin record
-        $stmt = $conn->prepare("SELECT id_pengguna, nama, email, nomor_telepon, password, peran, profile_image FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
+
+        
+        if($role == "pengemudi") {
+            
+            $stmt = $conn->prepare("SELECT * FROM drivers WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();    
+            $user = $stmt->get_result()->fetch_assoc();
+            var_dump($_POST);
+            if ($user && password_verify($password, $user['password_hash'])) {
+                session_regenerate_id(true);
+                $_SESSION['driver_id'] = $user['driver_id'];
+                $_SESSION['nama'] = $user['name'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['user_type'] = 'driver';
+                $_SESSION['logged_in'] = true;
+                header("Location:../driver/idx.php"); // Redirect to a protected page
+                echo "Logged in successfully!";
+                exit();
+            } else {
+                echo "Failed in successfully!";
+                exit();
+            }
+        }
+
+                // Prepare and execute SQL query to fetch the admin record
+        $stmt = $conn->prepare("SELECT id_pengguna, nama, email, nomor_telepon, password, peran, profile_image FROM users WHERE email = ? AND peran = ?");
+        $stmt->bind_param("ss", $email, $role);
+        $stmt->execute();     
         $stmt->store_result();
 
         // Validate Password
@@ -42,6 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $id_pengguna;
                 $_SESSION['email'] = $email;
 
+                $_SESSION['logged_in'] = true;
                 // username as name from the 'name' fields
                 $_SESSION['username'] = $nama;
                 $_SESSION['profile_image'] = $profileImage;
@@ -51,6 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['profile_image'] = $profileImage;
                 
                 header("Location: ../users/index.php"); // Redirect to a protected page
+
+                echo "aw";
                 exit();
             } else {
 
@@ -184,6 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
                         <form action="" method="POST">
+
                             <div class="row gy-2">
 
                                 <!-- Email -->
@@ -203,6 +233,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <label for="password" class="form-label">Password</label>
                                     </div>
                                 </div>
+                                <!-- Type -->
+                                <div class="col-12 ">
+                                    <div class="form-floating mb-1">
+                                        <select class="form-control" id="floatingSelect" name="role"
+                                            aria-label="Floating label select example" required>
+                                            <option value="penumpang">Penumpang</option>
+                                            <option value="pengemudi">Pengemudi</option>
+                                        </select>
+                                        <label for="floatingSelect">Masuk sebagai: </label>
+                                    </div>
+                                </div>
+
 
 
                                 <!-- Keep Login -->

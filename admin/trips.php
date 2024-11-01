@@ -364,7 +364,7 @@ include_once '../controller/php/ilalin.php';
                                                         ?>
                                                         <div>
                                                             <div class="mb-2">
-                                                                <h4><span class="text-como-500">Tujuan:
+                                                                <h4><span class="text-como-500">Titik Awal:
                                                                     </span><?=$name?></h4>
                                                                 <p
                                                                     class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
@@ -385,7 +385,7 @@ include_once '../controller/php/ilalin.php';
                                                         ?>
                                                         <div>
                                                             <div class="mb-2">
-                                                                <h4><span class="text-como-500">Titik Awal:
+                                                                <h4><span class="text-como-500">Tujuan:
                                                                     </span><?=$name?></h4>
                                                                 <p
                                                                     class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">

@@ -215,6 +215,7 @@ class Auth extends IlalinApp {
         return $this->userType === 'admin' ? 'Admins' : 'Users';
     }
 
+
     // Register a new user or admin
     public function register($username, $email, $password) {
         try {
@@ -617,6 +618,26 @@ class TripController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         } 
     }
+
+    public function getTripsByDriverID($driverId)  {
+        try {
+            $stmt = $this->db->query(
+                "SELECT `users`.*, `trips`.`status`, `trips`.*, `trips`.`driver_id`
+                FROM `users` 
+                    LEFT JOIN `trips` ON `trips`.`email` = `users`.`email`
+                WHERE `trips`.`status` = 'ongoing' AND `trips`.`driver_id` = ?",
+                ['s', $driverId]
+            );
+            $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            if ($trip) {
+                return $trip; // Return user data if found
+            } else {
+                return "User not found";
+            }
+        }catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
 }
 class Driver extends ProfileController {
     
@@ -636,7 +657,36 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
-    
+    public function updateDriverStatus($driverId, $status) {
+        try {
+            $drivers = $this->db->query(
+                'UPDATE Drivers SET status = ? WHERE driver_id = ?',
+                ['si', $status, $driverId]
+            );
+            if ($drivers) {
+                return $drivers;
+            } else {
+                return "No drivers available";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get user profile: ". $e->getMessage();
+        }
+    }
+    public function updateDriverPosition($driverId, $latitude, $longitude) {
+        try {
+            $drivers = $this->db->query(
+                'UPDATE Drivers SET latitude =?, longitude =? WHERE driver_id =?',
+                ['ddi', $latitude, $longitude, $driverId]
+            );
+            if ($drivers) {
+                return $drivers;
+            } else {
+                return "No drivers available";
+            }
+        } catch (Exception $e) {
+            echo "Failed to update driver positiob: ". $e->getMessage();
+        }
+    }
     public function getDriverById($driverId) {
         try {
             $stmt = $this->db->query(
@@ -700,7 +750,6 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
-
     public function getTripsWithPassengerLocation() {
         try {
             $stmt = $this->db->query(
