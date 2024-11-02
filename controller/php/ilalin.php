@@ -618,7 +618,7 @@ class TripController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         } 
     }
-
+    
     public function getTripsByDriverID($driverId)  {
         try {
             $stmt = $this->db->query(
@@ -627,6 +627,33 @@ class TripController extends IlalinApp {
                     LEFT JOIN `trips` ON `trips`.`email` = `users`.`email`
                 WHERE `trips`.`status` = 'ongoing' AND `trips`.`driver_id` = ?",
                 ['s', $driverId]
+            );
+            $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            if ($trip) {
+                return $trip; // Return user data if found
+            } else {
+                return "User not found";
+            }
+        }catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
+    public function updateTripsByDriverWithIsAccepted($driverId, $isAccepted) {
+        try {
+            $update = $this->db->query(
+                'UPDATE Trips SET is_accepted = ? WHERE driver_id =?',
+                ['ss', $isAccepted, $driverId]
+            );
+            return $update;
+        } catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
+    public function getTripsByDriverIdWithIsAccepted($driverId, $isAccepted = 'accepted')  {
+        try {
+            $stmt = $this->db->query(
+                "SELECT `users`.*, `trips`.*, `trips`.`status`, `trips`.`driver_id`, `trips`.`is_accepted` FROM `users` LEFT JOIN `trips` ON `trips`.`email` = `users`.`email` WHERE `trips`.`status` = 'ongoing' AND `trips`.`driver_id` = ? AND `trips`.`is_accepted` = ? ",
+                ['ss', $driverId, $isAccepted]
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             if ($trip) {
@@ -807,6 +834,32 @@ class Passenger extends IlalinApp {
             echo "Failed to get passengers: " . $e->getMessage();
         }
     }
+
+    public function deletePassengerByEmail($userEmail) {
+        try {
+            $this->db->beginTransaction(); // Start a transaction
+            
+            
+            // Find related trips
+            $trips = $this->db->query(
+                'SELECT * FROM Trips WHERE email = ? ', 
+                ['s', $userEmail]
+            )->get_result()->fetch_all(MYSQLI_ASSOC);
+    
+            // Delete Trip Is FOund Where Email
+            if(is_array($trips)) {
+            $this->db->query('DELETE FROM trips WHERE email = ?', ['s', $userEmail]);
+            }
+            // Remove user record
+            $this->db->query('DELETE FROM users WHERE email = ?', ['s', $userEmail]);
+    
+            $this->db->commit(); // Commit the transaction
+        } catch (Exception $e) {
+            $this->db->rollback(); // Rollback the transaction if something fails
+            echo "Failed to delete user: " . $e->getMessage();
+        }
+    }
+    
 }
 class Admins extends IlalinApp {
     

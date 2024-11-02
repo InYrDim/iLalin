@@ -45,8 +45,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "Logged in successfully!";
                 exit();
             } else {
-                echo "Failed in successfully!";
-                exit();
+                ?>
+<!-- Popup Invalid Credential -->
+<div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true"
+    style="position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);">
+    <div class="toast-header  ">
+        <strong class="me-auto" style="color: var(rgb(--primary-color)) !important;">Error! Invalid Credential</strong>
+        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        Masukkan Email/Password yang benar.
+    </div>
+</div>
+<?php
+                // exit();
             }
         }
 

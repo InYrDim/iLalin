@@ -165,10 +165,8 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
                                 // Get Trips by This Driver
                                 $tripObj = new TripController();
                                 $utils = new IlalinUtils();
-
                                 
-
-                                $tripsData = $tripObj->getTripsByDriverID($driverData["driver_id"]);
+                                $tripsData = $tripObj->getTripsByDriverIdWithIsAccepted($driverData["driver_id"]);
                                 
                                 if($tripsData != "User not found"):
                                     foreach ($tripsData as $trip) :
@@ -188,8 +186,151 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
                                         <?= $utils->formatCurrency($trip['driver_profit']) ?>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <a href="#" class="font-medium text-blue-600 hover:underline">Handle</a>
+                                        <a href="#" class="font-medium text-blue-600 hover:underline"
+                                            data-modal-target="<?= $trip['trip_id'] ?>"
+                                            data-modal-toggle="<?= $trip['trip_id'] ?>">Handle</a>
                                     </td>
+
+                                    <div id="<?= $trip['trip_id'] ?>" data-modal-backdrop="static" tabindex="-1"
+                                        aria-hidden="true"
+                                        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full z-[9999]">
+                                        <div class="fixed z-[9999] inset-0 backdrop-blur"></div>
+                                        <div class="relative p-4 w-full max-w-2xl max-h-full z-[99999]">
+                                            <!-- Modal content -->
+                                            <div class="relative bg-white border-2 border-como-500 rounded-lg shadow 
+                                            ">
+                                                <!-- Modal header -->
+                                                <div
+                                                    class="flex items-center justify-between p-4 md:p-5 border-b rounded-t gap-2">
+                                                    <i class="ri-route-line text-3xl text-orange-peel-500"></i>
+                                                    <div>
+                                                        <h3 class="text-xl font-semibold text-como-90"
+                                                            id=" <?= $trip['name'] ?>">
+                                                            <?= $trip['name'] ?>
+                                                        </h3>
+                                                        <span class="inline-block text-como-300 text-sm italic">TripID:
+                                                            <?= $trip['trip_id'] ?></span>
+                                                    </div>
+
+                                                    <button type="button"
+                                                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center "
+                                                        data-modal-hide="<?= $trip['trip_id'] ?>">
+                                                        <svg class="w-3 h-3" aria-hidden="true"
+                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 14 14">
+                                                            <path stroke="currentColor" stroke-linecap="round"
+                                                                stroke-linejoin="round" stroke-width="2"
+                                                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                                        </svg>
+                                                        <span class="sr-only">Close modal</span>
+                                                    </button>
+                                                </div>
+                                                <!-- Modal body -->
+                                                <div class="p-4 md:p-5 space-y-4">
+                                                    <?php if($trip['status'] == 'cancelled'){ ?>
+                                                    <div
+                                                        class="px-2 py-1 w-fit rounded-lg text-rose-500 border border-rose-500">
+                                                        <?=$trip['status']?>
+                                                    </div>
+                                                    <?php }elseif($trip['status'] == 'pending'){ ?>
+                                                    <div
+                                                        class="px-2 py-1 w-fit rounded-lg text-orange-peel-500 border border-orange-peel-500">
+                                                        <?=$trip['status']?>
+                                                    </div>
+                                                    <?php }else{ ?>
+                                                    <div
+                                                        class="px-2 py-1 w-fit rounded-lg text-como-500 border border-como-500">
+                                                        <?=$trip['status']?>
+                                                    </div>
+                                                    <?php } ?>
+
+                                                    <div class="border-b-2 border-como-700 pb-4 mt-2 flex gap-4">
+                                                        <div class="bg-como-200 py-2 px-3 rounded-lg">
+                                                            <?php                                                    
+                                                                $passengerProfile = new Passenger();
+                                                                $passengerData = $passengerProfile->getUserProfile($trip['email']);
+                                                            ?>
+                                                            <h3
+                                                                class="text-sm text-como-500 bg-como-100 w-fit px-2 rounded-lg">
+                                                                <i class="ri-map-pin-user-line me-2"></i>Penumpang
+                                                            </h3>
+                                                            <div class="flex gap-2 items-center mt-2">
+                                                                <div
+                                                                    class="relative aspect-square w-12 h-12 rounded-full overflow-hidden">
+                                                                    <img class="inset-0 absolute "
+                                                                        src="<?= strpos($passengerData['profile_image'], 'data:image') === 0 ? $passengerData['profile_image'] : 'data:image/jpeg;base64,' . $passengerData['profile_image'] ?>"
+                                                                        alt="Profile <?php echo $passengerData['nama']; ?>"
+                                                                        class="rounded-circle">
+                                                                </div>
+                                                                <div class="flex flex-col">
+                                                                    <span
+                                                                        class="text-como-600 font-medium"><?php echo $passengerData['nama']; ?></span>
+                                                                    <span
+                                                                        class="text-como-400 text-sm"><?php echo $passengerData['nomor_telepon']; ?></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="flex gap-2 mt-4">
+                                                        <!-- Start -->
+                                                        <?php
+                                                            $point = json_decode($trip['start_point'], true);
+                                                            $formated_address = $point['formatted_address'];
+                                                            $name =  $point['name'];
+                                                            $lat = $point['lat'];
+                                                            $lng = $point['lng']; 
+                                                        ?>
+                                                        <div>
+                                                            <div class="mb-2">
+                                                                <h4><span class="text-como-500">Titik Awal:
+                                                                    </span><?=$name?></h4>
+                                                                <p class="text-sm leading-relaxed text-gray-500">
+                                                                    <?= $formated_address ?>
+                                                                </p>
+                                                            </div>
+                                                            <iframe
+                                                                src="//maps.google.com/maps?q=<?=$lat?>,<?=$lng?>&z=15&output=embed"></iframe>
+                                                        </div>
+
+                                                        <!-- End -->
+                                                        <?php
+                                                            $point = json_decode($trip['finishing_point'], true);
+                                                            $formated_address = $point['formatted_address'];
+                                                            $name =  $point['name'];
+                                                            $lat = $point['lat'];
+                                                            $lng = $point['lng']; 
+                                                        ?>
+                                                        <div>
+                                                            <div class="mb-2">
+                                                                <h4><span class="text-como-500">Tujuan:
+                                                                    </span><?=$name?></h4>
+                                                                <p class="text-sm leading-relaxed text-gray-500">
+                                                                    <?= $formated_address ?>
+                                                                </p>
+                                                            </div>
+                                                            <iframe
+                                                                src="//maps.google.com/maps?q=<?=$lat?>,<?=$lng?>&z=15&output=embed"></iframe>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="w-full flex justify-betwwen">
+                                                        <div class="flex gap-2 items-center">
+                                                            <div class="font-bold text-xl">Pemasukan:</div>
+                                                            <span><?= $utils->formatCurrency( $trip['driver_profit'])?></span>
+                                                        </div>
+                                                        <button data-driver-id="<?= $trip['driver_id']?>"
+                                                            data-trip-id="<?= $trip['trip_id']?>"
+                                                            onclick="updateTripsByDriverWithIsAccepted(this);"
+                                                            class="text-black bg-red-500 py-2 px-4 rounded-lg text-red-100 ml-auto">Decline</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </tr>
                                 <?php endforeach;
                                 endif;
@@ -201,10 +342,39 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
             </div>
         </div>
     </div>
+
+
+    <!-- Vendor -->
+    <!-- 1. Flowbite -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+    <script>
+    function updateTripsByDriverWithIsAccepted(el) {
+        const driver_id = el.dataset.driverId;
+        const trip_id = el.dataset.tripId;
+
+        fetch("../controller/php/tripsHandler.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "updateTripsByDriverWithIsAccepted",
+                    driver_id: driver_id,
+                    trip_id: trip_id,
+                    is_accepted: 'cancelled',
+                }),
+            }).then(response => response.json())
+            .then(data => {
+                alert(`${data.message}`)
+                location.reload();
+            })
+    }
+    </script>
     <script type="module">
     import Navigator from './script/Navigator.js';
 
     const driverNavigator = new Navigator();
+
 
     // Util Function
     function formatDateTimeForSQL(date) {

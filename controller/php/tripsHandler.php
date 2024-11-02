@@ -9,6 +9,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     if(isset($postJson['action'])) {
         
+        $trip = new TripController();
+        
         if (!isset($postJson['driver_id'])) {
             if(!isset($postJson['trip_id'])) {
                 echo json_encode([
@@ -18,7 +20,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             }
             
-            $trip = new TripController();
             
             $tripId = trim($postJson['trip_id']);
     
@@ -39,6 +40,17 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $driverId = trim($postJson['driver_id']);
                 $trips = $trip->getTripsByDriverID($driverId);
                 echo json_encode($trips);
+                break;
+            case 'updateTripsByDriverWithIsAccepted':
+                $isAccepted = isset($postJson['is_accepted'])? trim($postJson['is_accepted']) : null;
+                $driverId = trim($postJson['driver_id']);
+                
+                $trip->updateTripsByDriverWithIsAccepted($driverId, $isAccepted);
+                
+                echo json_encode([
+                    'status' =>'success',
+                    'message' =>"Trip status updated to $isAccepted successfully"
+                ]);
                 break;
             case 'updateTripStatus':
                 $tripStatus = trim($postJson['status']);

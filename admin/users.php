@@ -266,8 +266,9 @@ if(isset($_SESSION['email'])) {
                                 ?>
                                 <?php if(is_array($allPassengers)):?>
                                 <?php foreach($allPassengers as $passenger):?>
-                                <tr class="bg-white border-b " data-passenger-id="<?= $passenger['id_pengguna'] ?>">
-                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap>
+                                <tr class="bg-white border-b" data-passenger-id="<?= $passenger['id_pengguna'] ?>"
+                                    data-passenger-email="<?= $passenger['email'] ?>">
+                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap>">
                                         <a href=""><?= $passenger['username'] ?></a>
                                     </td>
                                     <td class=" px-6 py-4">
@@ -315,13 +316,25 @@ if(isset($_SESSION['email'])) {
 
         // Check if it passenger or user
         if (dataset.hasOwnProperty('passengerId')) {
-            const id = dataset.passengerId;
+            const email = dataset.passengerEmail;
 
+            fetch("../controller/php/passengerHandler.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        action: "deletePassengerById",
+                        passenger_email: email
+                    }),
+                }).then(response => response.json())
+                .then(data => {
+                    alert(`${data.message}`)
+                    location.reload();
+                })
 
         } else if (dataset.hasOwnProperty('driverId')) {
             const id = dataset.driverId;
-
-
             fetch("../controller/php/driversHandler.php", {
                     method: "POST",
                     headers: {
