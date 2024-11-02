@@ -12,6 +12,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $driver = new Driver();
         
         switch($postJson['action']) {
+            
             case 'updateDriverPosition':
                 $driverId = isset($postJson['driver_id'])? trim($postJson['driver_id']) : null;
                 $latitude = isset($postJson['latitude'])? trim($postJson['latitude']) : null;

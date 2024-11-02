@@ -437,11 +437,11 @@ class ProfileController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         }
     }
-    public function replaceImage($email, $imageString) {
+    public function replaceImage($email, $imageString , $table = "Users") {
         try {
             // Update the user's profile image
             $this->db->query(
-                'UPDATE Users SET profile_image = ? WHERE email = ?', 
+                "UPDATE $table SET profile_image = ? WHERE email = ?", 
                 ['ss', $imageString, $email]
             );
     

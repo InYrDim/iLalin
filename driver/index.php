@@ -96,14 +96,13 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
                         </a>
                     </div>
                     <div id="menu" class="flex flex-col space-y-2">
-                        <a href=""
+                        <a href="profile.php"
                             class="text-sm font-medium text-como-700 py-2 px-2 hover:bg-como-500 hover:text-white hover:text-base rounded-md transition duration-150 ease-in-out">
                             <i class="ri-profile-line text-xl me-2"></i>
                             <span class="">Profile</span>
                         </a>
                     </div>
                 </div>
-
             </div>
         </div>
 
