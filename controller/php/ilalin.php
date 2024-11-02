@@ -553,10 +553,10 @@ class TripController extends IlalinApp {
             if ($trip) {
                 return $trip; // Return user data if found
             } else {
-                return "User not found";
+                return "Trip not found";
             }
         }catch (Exception $e) {
-            echo "Failed to get user profile: " . $e->getMessage();
+            echo "Failed to get Trip profile: " . $e->getMessage();
         }
     }
     public function getTripsFilterByStatus( $status, $email) {
@@ -641,10 +641,13 @@ class TripController extends IlalinApp {
 }
 class Driver extends ProfileController {
     
-    public function getAvaiableDriver() {
+    public function getAvaiableDriverAndCar() {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers WHERE status = "available" ORDER BY RAND() LIMIT 1;', 
+                "SELECT `vehicle`.*, `drivers`.*, `drivers`.`status`, `vehicle`.`status`
+                FROM `vehicle` 
+                    LEFT JOIN `drivers` ON `vehicle`.`driver_id` = `drivers`.`driver_id`
+                WHERE `drivers`.`status` = 'available' AND `vehicle`.`status` = 'available' ORDER BY RAND() LIMIT 1;"
             );
             $drivers = $stmt->get_result()->fetch_assoc();
             

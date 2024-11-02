@@ -104,7 +104,7 @@ if(isset($email)) {
                 $finishing_point = json_decode($trips['finishing_point'], true);
                 
                 $driver = new Driver();
-                $avaiable_driver = $driver->getAvaiableDriver();
+                $avaiable_driver = $driver->getAvaiableDriverAndCar();
                 
                 $vehicle = new Vehicle();
                 $driver_vehicle = $vehicle->getVehicleType($avaiable_driver['driver_id']);

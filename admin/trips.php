@@ -187,13 +187,12 @@ include_once '../controller/php/ilalin.php';
                                 $trips = $tripsObj->getAllTrips();
 
                                 $passengerProfile = new ProfileController();
-                                $driverProfile = new Driver();
-
 
                                 
                                 ?>
-                                <?php if(is_array($trips)):?>
-                                <?php foreach($trips as $trip):?>
+                                <?php if(is_array($trips)) {?>
+                                <?php foreach($trips as $trip){?>
+
                                 <tr class="bg-white" data-trip-Id="<?= $trip['trip_id'] ?>">
                                     <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap r"
                                         data-modal-target="<?= $trip['trip_id'] ?>"
@@ -210,20 +209,20 @@ include_once '../controller/php/ilalin.php';
                                         <?= $trip['distance'] ?>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <?php if($trip['status'] == 'cancelled'): ?>
+                                        <?php if($trip['status'] == 'cancelled'){ ?>
                                         <div class="px-2 py-1 w-fit rounded-lg text-rose-500 border border-rose-500">
                                             <?=$trip['status']?>
                                         </div>
-                                        <?php elseif($trip['status'] == 'pending'): ?>
+                                        <?php }elseif($trip['status'] == 'pending'){ ?>
                                         <div
                                             class="px-2 py-1 w-fit rounded-lg text-orange-peel-500 border border-orange-peel-500">
                                             <?=$trip['status']?>
                                         </div>
-                                        <?php else: ?>
+                                        <?php }else{ ?>
                                         <div class="px-2 py-1 w-fit rounded-lg text-como-500 border border-como-500">
                                             <?=$trip['status']?>
                                         </div>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                     </td>
                                     <td class="px-6 py-4">
                                         <?= $utils->formatCurrency($trip['total_payment'])  ?>
@@ -246,8 +245,8 @@ include_once '../controller/php/ilalin.php';
                                                 class="flex items-center justify-between p-4 md:p-5 border-b rounded-t gap-2">
                                                 <i class="ri-route-line text-3xl text-orange-peel-500"></i>
                                                 <div>
-                                                    <h3 class="text-xl font-semibold text-como-90
-                                                        id=" trip-name">
+                                                    <h3 class="text-xl font-semibold text-como-90"
+                                                        id=" <?= $trip['name'] ?>">
                                                         <?= $trip['name'] ?>
                                                     </h3>
                                                     <span class="inline-block text-como-300 text-sm italic">TripID:
@@ -272,25 +271,26 @@ include_once '../controller/php/ilalin.php';
 
                                                 <div>
 
-                                                    <?php if($trip['status'] == 'cancelled'): ?>
+                                                    <?php if($trip['status'] == 'cancelled'){ ?>
                                                     <div
                                                         class="px-2 py-1 w-fit rounded-lg text-rose-500 border border-rose-500">
                                                         <?=$trip['status']?>
                                                     </div>
-                                                    <?php elseif($trip['status'] == 'pending'): ?>
+                                                    <?php }elseif($trip['status'] == 'pending'){ ?>
                                                     <div
                                                         class="px-2 py-1 w-fit rounded-lg text-orange-peel-500 border border-orange-peel-500">
                                                         <?=$trip['status']?>
                                                     </div>
-                                                    <?php else: ?>
+                                                    <?php }else{ ?>
                                                     <div
                                                         class="px-2 py-1 w-fit rounded-lg text-como-500 border border-como-500">
                                                         <?=$trip['status']?>
                                                     </div>
-                                                    <?php endif; ?>
+                                                    <?php } ?>
                                                     <div class="border-b-2 border-como-700 pb-4 mt-2 flex gap-4">
                                                         <div class="bg-como-200 py-2 px-3 rounded-lg">
-                                                            <?php                                                                                                      
+                                                            <?php                                                    
+                                                                     
                                                                 $passengerData = $passengerProfile->getUserProfile($trip['email']);
                                                             ?>
                                                             <h3
@@ -313,13 +313,17 @@ include_once '../controller/php/ilalin.php';
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <?php if($trip['driver_id'] != '0'): ?>
+                                                        <!-- Get Driver -->
+                                                        <!--  -->
+                                                        <?php if($trip['driver_id'] != 0) { ?>
+                                                        <?php                           
+                                                                $driverProfile = new Driver();                                                                                 
+                                                                $myDriver = $driverProfile->getDriverById($trip['driver_id']);
+                                                                
+                                                                if(isset($myDriver["name"])) {
+                                                        ?>
                                                         <div
                                                             class="border border-como-200 bg-como-50 py-2 px-3 rounded-lg">
-                                                            <?php                                                                                                      
-                                                                $driver = $driverProfile->getDriverById($trip['driver_id']);
-
-                                                            ?>
                                                             <h3
                                                                 class="text-sm text-como-500 bg-como-100 w-fit px-2 rounded-lg">
                                                                 <i class="ri-steering-2-line me-2"></i>Pengemudi
@@ -328,19 +332,20 @@ include_once '../controller/php/ilalin.php';
                                                                 <div
                                                                     class="relative aspect-square w-12 h-12 rounded-full overflow-hidden">
                                                                     <img class="inset-0 absolute "
-                                                                        src="<?= strpos($driver['profile_image'], 'data:image') === 0 ? $driver['profile_image'] : 'data:image/jpeg;base64,' . $driver['profile_image'] ?>"
-                                                                        alt="Profile <?php echo $driver['nama']; ?>"
+                                                                        src="<?= strpos($myDriver['profile_image'], 'data:image') === 0 ? $myDriver['profile_image'] : 'data:image/jpeg;base64,' . $myDriver['profile_image'] ?>"
+                                                                        alt="Profile <?=$myDriver['name']; ?>"
                                                                         class="rounded-circle">
                                                                 </div>
                                                                 <div class="flex flex-col">
                                                                     <span
-                                                                        class="text-como-600 font-medium"><?php echo $driver['name']; ?></span>
+                                                                        class="text-como-600 font-medium"><?=$myDriver['name']; ?></span>
                                                                     <span
-                                                                        class="text-como-400 text-sm"><?php echo $driver['phone_number']; ?></span>
+                                                                        class="text-como-400 text-sm"><?=$myDriver['phone_number']; ?></span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <?php endif;?>
+                                                        <?php } ?>
+                                                        <?php } ?>
                                                     </div>
                                                     <div class="flex gap-2 mt-4">
                                                         <!-- Start -->
@@ -389,8 +394,9 @@ include_once '../controller/php/ilalin.php';
                                         </div>
                                     </div>
                                 </div>
-                                <?php endforeach; ?>
-                                <?php endif; ?>
+
+                                <?php } ?>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
