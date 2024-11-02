@@ -26,10 +26,12 @@ if($isSubmit) {
         $tel = $_POST['telepon'];
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
- 
-        function duplicate($email) {
+        
+        $table = $role == 'penumpang' ? 'users' : 'drivers';
+
+        function duplicate($email, $tab) {
             $db = new Database();
-            $result = $db->fetch('users', "*", 'email = ?', [$email]);
+            $result = $db->fetch($tab, "*", 'email = ?', [$email]);
 
             if ($result) {
                 return true;
@@ -39,7 +41,7 @@ if($isSubmit) {
         };
 
         // Check for duplicated email addresss
-        if(duplicate($email)) { 
+        if(duplicate($email, $table)) { 
 ?>
 
 <!-- Popup Duplicated Email -->
@@ -61,29 +63,58 @@ if($isSubmit) {
             $db = new Database();
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+            function getRandomProfileImage($imageFolder) {
+                // Define the folder where images are stored
+                $images = glob( $imageFolder.'*.*', GLOB_BRACE);
+            
+                if (!$images) {
+                    return null; // Or handle as needed if no images are found
+                }
+            
+                $randomImage = $images[array_rand($images)];
+                return getBase64($randomImage);
+            }
             
             function getBase64($image_path) {
                 $image_data = file_get_contents($image_path);
                 return base64_encode($image_data);
             }
-
-            $data = [
+            
+            $data;
+            
+           
+            if($table == 'users') {
+                $data = [
                 'nama' => $username, 
                 'email' => $email,
                 'nomor_telepon' => $tel,
                 'password' => $hashed_password, 
                 'peran' => $role,        
-                'profile_image' => getBase64('../images/default_profile.png')
+                'profile_image' => getRandomProfileImage('../assets/images/__DEFAULTs/user_profile_images/')
             ];
-            $insertResult = $db->insert('users', $data);
+
+            } else if($table == 'drivers'){
+                $data = [
+                'name' => $username,
+                'email' => $email,
+                'phone_number' => $tel,
+                'password_hash' => $hashed_password,
+                'profile_image' => getRandomProfileImage('../assets/images/__DEFAULTs/driver_profile_images/')
+                ];
+            }
+            
+            $insertResult = $db->insert($table , $data);
             
             if ($insertResult !== false) {
                 $message = "Data inserted successfully!";
+                session_regenerate_id(true);
                 
                 $_SESSION['message'] = $message;
                 $_SESSION['email'] = $email;
                 $_SESSION['username'] = $username;
-
+                
+                $_SESSION['logged_in'] = true;
+                
                 unset($_SESSION['message']);
                 ?>
 
@@ -101,13 +132,29 @@ if($isSubmit) {
     <div class="toast-body">We will redirect you to user page in a few seconds
     </div>
 </div>
+<?php
+if ($table == 'users'){
+    
+?>
 <script>
 setTimeout(function() {
     window.location.href = '../users/index.php';
 }, 3000);
 </script>
-
-<?php
+<?php 
+}elseif ($table == 'drivers'){
+    $_SESSION['nama'] = $username;
+    $_SESSION['email'] = $email;
+    $_SESSION['user_type'] = 'driver';
+    $_SESSION['logged_in'] = true;
+?>
+<script>
+setTimeout(function() {
+    window.location.href = '../driver/index.php';
+}, 3000);
+</script>
+<?php 
+}
 
             } else {
                 echo "Error inserting data";

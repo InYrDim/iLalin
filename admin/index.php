@@ -48,7 +48,7 @@ if (!$auth->isLoggedIn()) {
 
     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
         type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 ">
         <span class="sr-only ">Open sidebar</span>
         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg">
@@ -61,41 +61,33 @@ if (!$auth->isLoggedIn()) {
     <aside id="logo-sidebar"
         class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-mineral-green-500 "
         aria-label="Sidebar">
-        <div class="h-full pt-4 overflow-y-auto bg-como-500 dark:bg-gray-800 flex flex-col justify-between">
+        <div class="h-full pt-4 overflow-y-auto bg-como-500  flex flex-col justify-between">
             <div class=" px-3">
                 <a href="" class="flex items-center ps-2.5 mb-5 border-b-2 border-como-700">
                     <img src="../assets/images/logo/logo-ilalin.png" class="h-6 me-3 sm:h-12" alt="Ilalin Logo" />
-                    <span
-                        class="self-center text-xl font-semibold whitespace-nowrap text-como-100 dark:text-como-100">Ilalin
+                    <span class="self-center text-xl font-semibold whitespace-nowrap text-como-100 ">Ilalin
                         Admin</span>
                 </a>
                 <ul class="space-y-2 font-medium">
                     <li>
                         <a href="index.php"
-                            class="flex items-center p-2 text-como-50 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            class="flex items-center p-2 text-como-50 rounded-lg hover:bg-como-600 group">
                             <i class="ri-dashboard-fill text-xl"></i>
                             <span class="ms-3">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <a href="users.php"
-                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            class="flex items-center p-2 text-como-200 rounded-lg hover:bg-como-600 group">
                             <i class="ri-group-fill text-xl"></i>
                             <span class="ms-3">Users</span>
                         </a>
                     </li>
                     <li>
                         <a href="trips.php"
-                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            class="flex items-center p-2 text-como-200 rounded-lg hover:bg-como-600 group">
                             <i class="ri-steering-2-line text-xl"></i>
                             <span class="ms-3">Trips</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="analytics.php"
-                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
-                            <i class="ri-bubble-chart-fill text-xl"></i>
-                            <span class="ms-3">Analytics</span>
                         </a>
                     </li>
                 </ul>
@@ -109,13 +101,14 @@ if (!$auth->isLoggedIn()) {
 
                 </div>
                 <a href="../controller/php/utils/session.destroy.php?home=../../../auth/admin-login.php"
-                    class="mt-2 flex items-center p-2 text-como-50 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                    class="mt-2 flex items-center p-2 text-como-50 rounded-lg hover:bg-como-600 group">
                     <i class="ri-logout-box-r-line"></i>
                     <span class="ms-3">Logout</span>
                 </a>
             </div>
         </div>
     </aside>
+
 
     <!-- Content Wrapper -->
     <div class="sm:ml-64 p-4 h-screen ">

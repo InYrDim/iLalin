@@ -704,6 +704,23 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
+    public function getDriverByEmail($email) {
+        try {
+            $stmt = $this->db->query(
+                'SELECT * FROM Drivers WHERE email = ?',
+                ['s', $email]
+            );
+            $driver = $stmt->get_result()->fetch_assoc();
+        
+            if ($driver) {
+                return $driver;
+            } else {
+                return "No drivers by that id";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get drivers: " . $e->getMessage();
+        }
+    }
     public function getDriversGroupedByCreationDate() {
         try {
             $stmt = $this->db->query(

@@ -56,7 +56,7 @@ if(isset($_SESSION['email'])) {
 
     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
         type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 ">
         <span class="sr-only ">Open sidebar</span>
         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg">
@@ -69,41 +69,33 @@ if(isset($_SESSION['email'])) {
     <aside id="logo-sidebar"
         class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-mineral-green-500 "
         aria-label="Sidebar">
-        <div class="h-full pt-4 overflow-y-auto bg-como-500 dark:bg-gray-800 flex flex-col justify-between">
+        <div class="h-full pt-4 overflow-y-auto bg-como-500  flex flex-col justify-between">
             <div class=" px-3">
                 <a href="" class="flex items-center ps-2.5 mb-5 border-b-2 border-como-700">
                     <img src="../assets/images/logo/logo-ilalin.png" class="h-6 me-3 sm:h-12" alt="Ilalin Logo" />
-                    <span
-                        class="self-center text-xl font-semibold whitespace-nowrap text-como-100 dark:text-como-100">Ilalin
+                    <span class="self-center text-xl font-semibold whitespace-nowrap text-como-100 ">Ilalin
                         Admin</span>
                 </a>
                 <ul class="space-y-2 font-medium">
                     <li>
                         <a href="index.php"
-                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            class="flex items-center p-2 text-como-200 rounded-lg hover:bg-como-600 group">
                             <i class="ri-dashboard-fill text-xl"></i>
                             <span class="ms-3">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <a href="users.php"
-                            class="flex items-center p-2 text-como-50 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            class="flex items-center p-2 text-como-50 rounded-lg hover:bg-como-600 group">
                             <i class="ri-group-fill text-xl"></i>
                             <span class="ms-3">Users</span>
                         </a>
                     </li>
                     <li>
                         <a href="trips.php"
-                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                            class="flex items-center p-2 text-como-200 rounded-lg hover:bg-como-600 group">
                             <i class="ri-steering-2-line text-xl"></i>
                             <span class="ms-3">Trips</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="analytics.php"
-                            class="flex items-center p-2 text-como-200 rounded-lg dark:text-como-200 hover:bg-como-600 dark:hover:bg-gray-700 group">
-                            <i class="ri-bubble-chart-fill text-xl"></i>
-                            <span class="ms-3">Analytics</span>
                         </a>
                     </li>
                 </ul>
@@ -117,7 +109,7 @@ if(isset($_SESSION['email'])) {
 
                 </div>
                 <a href="../controller/php/utils/session.destroy.php?home=../../../auth/admin-login.php"
-                    class="mt-2 flex items-center p-2 text-como-50 rounded-lg dark:text-como-50 hover:bg-como-600 dark:hover:bg-gray-700 group">
+                    class="mt-2 flex items-center p-2 text-como-50 rounded-lg hover:bg-como-600 group">
                     <i class="ri-logout-box-r-line"></i>
                     <span class="ms-3">Logout</span>
                 </a>
@@ -139,7 +131,7 @@ if(isset($_SESSION['email'])) {
                         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                             <li class="inline-flex items-center">
                                 <a href=""
-                                    class="inline-flex items-center text-sm font-medium text-como-300 hover:text-orange-peel-600 dark:text-como-400 dark:hover:text-white">
+                                    class="inline-flex items-center text-sm font-medium text-como-300 hover:text-orange-peel-600">
                                     iLalin Admin
                                 </a>
                             </li>
@@ -151,7 +143,7 @@ if(isset($_SESSION['email'])) {
                                             stroke-width="2" d="m1 9 4-4-4-4" />
                                     </svg>
                                     <a href=""
-                                        class="ms-1 text-sm text-como-700 hover:text-orange-peel-600 md:ms-2 dark:text-como-400 dark:hover:text-white">Users</a>
+                                        class="ms-1 text-sm text-como-700 hover:text-orange-peel-600 md:ms-2">Users</a>
                                 </div>
                             </li>
                         </ol>
@@ -177,15 +169,13 @@ if(isset($_SESSION['email'])) {
 
                     <!-- Driver Content -->
                     <div class="mt-4 relative border-2 border-como-500 overflow-auto h-96 rounded-lg ">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
-                            <caption
-                                class="p-5 text-lg font-semibold text-left rtl:text-right text-como-700 bg-white dark:text-white dark:bg-gray-800">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                            <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-como-700 bg-white ">
                                 Driver
-                                <p class="mt-1 text-sm font-normal text-como-300 dark:text-como-400">List driver ilalin
+                                <p class="mt-1 text-sm font-normal text-como-300">List driver ilalin
                                 </p>
                             </caption>
-                            <thead
-                                class="text-xs text-como-700 uppercase bg-como-100 dark:bg-como-700 dark:text-como-400">
+                            <thead class="text-xs text-como-700 uppercase bg-como-100">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">
                                         Nama
@@ -210,12 +200,11 @@ if(isset($_SESSION['email'])) {
                             <tbody>
                                 <?php if(is_array($allDriver)):?>
                                 <?php foreach($allDriver as $driver):?>
-                                <tr class="bg-white border-b dark:bg-como-800 dark:border-como-700"
-                                    data-driver-id="<?= $driver['driver_id'] ?>">
-                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap dark:text-white">
+                                <tr class="bg-white " data-driver-id="<?= $driver['driver_id'] ?>">
+                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap>
                                         <a href=""><?= $driver['name'] ?></a>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class=" px-6 py-4">
                                         <?= $driver['email'] ?>
                                     </td>
                                     <td class="px-6 py-4">
@@ -229,8 +218,7 @@ if(isset($_SESSION['email'])) {
                                         <?= $driver['created_at'] ?>
                                     </td>
                                     <td class="px-6 py-4" onClick="editUser(this)">
-                                        <span
-                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</span>
+                                        <span class="font-medium text-red-600 hover:underline">Delete</span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -241,16 +229,14 @@ if(isset($_SESSION['email'])) {
 
                     <!-- Passenger Content -->
                     <div class="mt-4 relative border-2 border-como-500 overflow-x-auto rounded-lg ">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
-                            <caption
-                                class="p-5 text-lg font-semibold text-left rtl:text-right text-como-700 bg-white dark:text-white dark:bg-gray-800">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                            <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-como-700 bg-white ">
                                 Pengguna Kita
-                                <p class="mt-1 text-sm font-normal text-como-300 dark:text-como-400">List pengguna
+                                <p class="mt-1 text-sm font-normal text-como-300">List pengguna
                                     ilalin selain driver
                                 </p>
                             </caption>
-                            <thead
-                                class="text-xs text-como-700 uppercase bg-como-100 dark:bg-como-700 dark:text-como-400">
+                            <thead class="text-xs text-como-700 uppercase bg-como-100">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">
                                         Username
@@ -280,12 +266,11 @@ if(isset($_SESSION['email'])) {
                                 ?>
                                 <?php if(is_array($allPassengers)):?>
                                 <?php foreach($allPassengers as $passenger):?>
-                                <tr class="bg-white border-b dark:bg-como-800 dark:border-como-700"
-                                    data-passenger-id="<?= $passenger['id_pengguna'] ?>">
-                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap dark:text-white">
+                                <tr class="bg-white border-b " data-passenger-id="<?= $passenger['id_pengguna'] ?>">
+                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap>
                                         <a href=""><?= $passenger['username'] ?></a>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class=" px-6 py-4">
                                         <?= $passenger['alamat'] ?>
                                     </td>
                                     <td class="px-6 py-4">
@@ -298,8 +283,7 @@ if(isset($_SESSION['email'])) {
                                         <?= $passenger['nomor_telepon'] ?>
                                     </td>
                                     <td class="px-6 py-4" onClick="editUser(this)">
-                                        <span
-                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</span>
+                                        <span class="font-medium text-red-600 hover:underline">Delete</span>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

@@ -34,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("s", $email);
             $stmt->execute();    
             $user = $stmt->get_result()->fetch_assoc();
-            var_dump($_POST);
             if ($user && password_verify($password, $user['password_hash'])) {
                 session_regenerate_id(true);
                 $_SESSION['driver_id'] = $user['driver_id'];
@@ -42,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['user_type'] = 'driver';
                 $_SESSION['logged_in'] = true;
-                header("Location:../driver/idx.php"); // Redirect to a protected page
+                header("Location:../driver/index.php"); // Redirect to a protected page
                 echo "Logged in successfully!";
                 exit();
             } else {
