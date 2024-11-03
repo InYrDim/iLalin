@@ -717,6 +717,21 @@ class Driver extends ProfileController {
             echo "Failed to update driver positiob: ". $e->getMessage();
         }
     }
+    public function updateDriverPassword($driverId, $password) {
+        try {
+            $drivers = $this->db->query(
+                'UPDATE Drivers SET password_hash =? WHERE driver_id =?',
+                ['si', $password, $driverId]
+            );
+            if ($drivers) {
+                return $drivers;
+            } else {
+                return "No drivers available";
+            }
+        } catch (Exception $e) {
+            echo "Failed to update driver password: ". $e->getMessage();
+        }
+    }
     public function getDriverById($driverId) {
         try {
             $stmt = $this->db->query(
@@ -815,6 +830,22 @@ class Driver extends ProfileController {
             echo "Error fetching trips: " . $e->getMessage();
         }
     }
+
+    public function updateDriverProfile($driverId, $name, $email, $phone_number) {
+        try {
+            $drivers = $this->db->query(
+                "UPDATE `drivers` SET `name` = ?, `email` = ?, `phone_number` = ? WHERE driver_id = ?",
+                ['sssi', $name, $email, $phone_number, $driverId]
+            );
+            if ($drivers) {
+                return $drivers;
+            } else {
+                return "No drivers available";
+            }
+        } catch (Exception $e) {
+            echo "Failed to get user profile: ". $e->getMessage();
+        }
+    }
 }
 class Passenger extends IlalinApp {
     
@@ -894,6 +925,36 @@ class Vehicle extends IlalinApp {
             return $vehicle;
         } catch (Exception $e) {
             echo "Failed to get vehicle: " . $e->getMessage();
+        }
+    }
+    public function updateVehicle($driver_id, $vehicle_name, $plat_number) {
+        try {
+            $vehicle = $this->db->query(
+                'UPDATE vehicle SET vehicle_name =?, plate_number =? WHERE driver_id =?',
+                ['ssi', $vehicle_name, $plat_number, $driver_id]
+            );
+            if ($vehicle) {
+                return $vehicle;
+            } else {
+                return "No vehicle found";
+            }
+        } catch (Exception $e) {
+            echo "Failed to update vehicle: ". $e->getMessage();
+        }
+    }
+    public function insertVehicle($driver_id, $vehicle_name, $plat_number) {
+        try {
+            $vehicle = $this->db->query(
+                'INSERT INTO vehicle (driver_id, vehicle_name, plate_number) VALUES (?,?,?)',
+                ['iss', $driver_id, $vehicle_name, $plat_number]
+            );
+            if ($vehicle) {
+                return $vehicle;
+            } else {
+                return "Failed to insert vehicle";
+            }
+        } catch (Exception $e) {
+            echo "Failed to insert vehicle: ". $e->getMessage();
         }
     }
 }

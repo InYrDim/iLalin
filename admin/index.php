@@ -146,17 +146,26 @@ if (!$auth->isLoggedIn()) {
 
                 <!-- Data Total Content -->
                 <div class="col-span-8 row-start-2 flex gap-4 ">
+                    <?php
+                    $db = new Database();
+
+                    $countTrip = $db->query("SELECT COUNT(trip_id) as trip_count from trips");
+                    $tripsCount = $countTrip->get_result()->fetch_assoc();
+
+                    $countDriver = $db->query("SELECT COUNT(driver_id) as driver_count from drivers");
+                    $driversCount = $countDriver->get_result()->fetch_assoc();
+                    ?>
                     <div
                         class="flex flex-col flex-1 min-h-24 border-2 border-como-500 p-4 rounded-lg transition-all bg-como-50 hover:shadow-[5px_5px_0px_0px_#3b5d50]">
                         <h3 class="text-como-600 text-xl">Total Perjalanan</h3>
-                        <span class="text-orange-peel-500 font-bold text-4xl mt-2">189</span>
-                        <div class="text-como-600 mt-4"><span>18%</span> Peningkatan</div>
+                        <span
+                            class="text-orange-peel-500 font-bold text-4xl mt-2"><?= $tripsCount['trip_count'] ?></span>
                     </div>
                     <div
                         class="flex flex-col flex-1 min-h-24 border-2 border-como-500 p-4 rounded-lg transition-all bg-como-50 hover:shadow-[5px_5px_0px_0px_#3b5d50]">
                         <h3 class="text-como-600 text-xl">Total Driver</h3>
-                        <span class="text-orange-peel-500 font-bold text-4xl mt-2">86</span>
-                        <div class="text-como-600 mt-4"><span>18%</span> Peningkatan</div>
+                        <span
+                            class="text-orange-peel-500 font-bold text-4xl mt-2"><?= $driversCount['driver_count'] ?></span>
                     </div>
                 </div>
 
@@ -253,7 +262,10 @@ if (!$auth->isLoggedIn()) {
                                 display: true,
                                 text: 'Jumlah Pengemudi'
                             },
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
                         }
                     },
                     plugins: {

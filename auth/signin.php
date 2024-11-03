@@ -134,7 +134,6 @@ if($isSubmit) {
 </div>
 <?php
 if ($table == 'users'){
-    
 ?>
 <script>
 setTimeout(function() {

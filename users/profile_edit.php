@@ -3,7 +3,7 @@ session_start();
 
 $active_page = "users";
 
-include '../controller/php/database.php'  ;
+include '../controller/php/ilalin.php'  ;
 
 $email = $_SESSION['email'];
 
@@ -23,21 +23,27 @@ if(isset($email)) {
             $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
             $nomor_telepon = filter_input(INPUT_POST, 'nomor_telepon', FILTER_SANITIZE_STRING);
             $alamat = filter_input(INPUT_POST, 'alamat', FILTER_SANITIZE_STRING);
-        
+            
+            $sesEmail = $_SESSION['email'];
+            $getUerId = $db->query(
+                "SELECT * FROM users WHERE email = ?",
+                ['s', $sesEmail]
+            );
+            $userIdData = $getUerId->get_result()->fetch_assoc();
+
+            $_SESSION['user_id'] = $userIdData['id_pengguna'];
+
             $id_pengguna = $_SESSION['user_id'];
 
             // Check if email is valid
             if ($email === false) {
                 echo "Email is not valid.";
             } else {
-                $updateDb = $db->update('users', [
-                    'nama' => $nama_lengkap,
-                    'username' => $nama_pengguna,
-                    'email' => $email,
-                    'nomor_telepon' => $nomor_telepon,
-                    'alamat' => $alamat,
-                ], 'id_pengguna = ?', [$id_pengguna]);
-                
+                $updateDb = $db->query(
+                    'UPDATE users SET nama = ?, username = ?, email = ?, nomor_telepon = ?, alamat = ?  WHERE id_pengguna =?',
+                    ['sssssi', $nama_lengkap, $nama_pengguna, $email, $nomor_telepon,  $alamat, $id_pengguna]
+                );
+  
                 if ($updateDb) {
                     echo "Profile updated successfully.";
                     
@@ -61,7 +67,11 @@ if(isset($email)) {
             
     }
 
-    $profile = $db->fetch('users', "*", 'email = ?', [$email]);
+    $getProfile = $db->query(
+        'SELECT * from users  WHERE email =?',
+        ['s',$email]
+    );
+    $profile = $getProfile->get_result()->fetch_assoc();
 
 ?>
 
@@ -135,9 +145,13 @@ if(isset($email)) {
             </div>
 
             <div style="">
-                <div style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;"></div>
+                <div
+                    style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;">
+                </div>
                 <div style="margin-top: 200px;">
-                    <img id="profileImage" src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>" style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
+                    <img id="profileImage"
+                        src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
+                        style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-top:30px;">
                     <div>
@@ -145,10 +159,11 @@ if(isset($email)) {
                         <span><?= $profile["email"] ?></span>
                     </div>
                     <div>
-                        <input type="file" id="fileInput" style="display: none;"
-                        onchange="changePhoto(event)">
+                        <input type="file" id="fileInput" style="display: none;" onchange="changePhoto(event)">
                         <a onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                        data-bs-target="#cropImage" style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit Foto</a>
+                            data-bs-target="#cropImage"
+                            style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit
+                            Foto</a>
                     </div>
                 </div>
                 <div style="margin-top:20px;">
@@ -157,33 +172,46 @@ if(isset($email)) {
                         <a href="keamanan.php">Password</a>
                         <a href="pembayaran.php">Pembayaran</a>
                     </div>
-                    <form action="" method="POST" >
-                        <div style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
-                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                    <form action="" method="POST">
+                        <div
+                            style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
+                            <div
+                                style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                                 <div style="font-weight:500;">Nama Lengkap</div>
-                                <input name="nama_lengkap" type="text" value="<?= $profile["nama"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                                <input name="nama_lengkap" type="text" value="<?= $profile["nama"] ?>"
+                                    style="border: none; border-bottom: 1px solid black; background: none;">
                             </div>
-                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                            <div
+                                style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                                 <div style="font-weight:500;">Nama Pengguna</div>
-                                <input name="nama_pengguna"type="text" value="<?= $profile["username"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                                <input name="nama_pengguna" type="text" value="<?= $profile["username"] ?>"
+                                    style="border: none; border-bottom: 1px solid black; background: none;">
                             </div>
-                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                            <div
+                                style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                                 <div style="font-weight:500;">Email</div>
-                                <input name="email" type="email" value="<?= $profile["email"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                                <input name="email" type="email" value="<?= $profile["email"] ?>"
+                                    style="border: none; border-bottom: 1px solid black; background: none;">
                             </div>
-                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                            <div
+                                style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                                 <div style="font-weight:500;">Nomor Telepon</div>
-                                <input name="nomor_telepon" type="text" value="<?= $profile["nomor_telepon"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                                <input name="nomor_telepon" type="text" value="<?= $profile["nomor_telepon"] ?>"
+                                    style="border: none; border-bottom: 1px solid black; background: none;">
                             </div>
-                            <div style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
+                            <div
+                                style="display:flex; justify-content: space-between; border-bottom: 2px solid #4D7767; padding-bottom: 10px;">
                                 <div style="font-weight:500;">Alamat</div>
-                                <input name="alamat" type="text" value="<?= $profile["alamat"] ?>" style="border: none; border-bottom: 1px solid black; background: none;">
+                                <input name="alamat" type="text" value="<?= $profile["alamat"] ?>"
+                                    style="border: none; border-bottom: 1px solid black; background: none;">
                             </div>
 
                         </div>
                         <div style="display:flex; justify-content: end; margin-top: 20px;gap: 5px;">
-                            <a href="profile.php" style="background-color:red; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Batal</a>
-                            <button type="submit" name="ubah_profile" style="outline:none; border:none; background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</button>
+                            <a href="profile.php"
+                                style="background-color:red; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Batal</a>
+                            <button type="submit" name="ubah_profile"
+                                style="outline:none; border:none; background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -213,7 +241,7 @@ if(isset($email)) {
                     </div>
                 </div> -->
 
-        
+
             </div>
 
 
@@ -224,14 +252,14 @@ if(isset($email)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-        <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
         integrity="sha256-noEeBltqVSH78NQZV6+oF9BnLEtCY7cKc0U90dQVF6c=" crossorigin="anonymous">
-        </script>
-        <!-- Sidebar -->
-        <script src="script/sidebar.js"></script>
+    </script>
+    <!-- Sidebar -->
+    <script src="script/sidebar.js"></script>
 
-        <!-- Custom -->
-        <script src="./script/profile/custom.js"></script>
+    <!-- Custom -->
+    <script src="./script/profile/custom.js"></script>
 </body>
 
 </html>

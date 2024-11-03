@@ -175,9 +175,6 @@ include_once '../controller/php/ilalin.php';
                                     <th scope="col" class="px-6 py-3">
                                         Total Pembayaran
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <span class="sr-only">Edit</span>
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -188,7 +185,6 @@ include_once '../controller/php/ilalin.php';
 
                                 $passengerProfile = new ProfileController();
 
-                                
                                 ?>
                                 <?php if(is_array($trips)) {?>
                                 <?php foreach($trips as $trip){?>
@@ -227,9 +223,9 @@ include_once '../controller/php/ilalin.php';
                                     <td class="px-6 py-4">
                                         <?= $utils->formatCurrency($trip['total_payment'])  ?>
                                     </td>
-                                    <td class="px-6 py-4" onClick="editUser(this)">
+                                    <!-- <td class="px-6 py-4" onClick="seeTrip(this)">
                                         <span class="font-medium text-red-600 hover:underline">Delete</span>
-                                    </td>
+                                    </td> -->
                                 </tr>
 
 
@@ -408,6 +404,7 @@ include_once '../controller/php/ilalin.php';
         <!-- Vendor -->
         <!-- 1. Flowbite -->
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
 
         <!-- Custom -->
         <!-- <script>

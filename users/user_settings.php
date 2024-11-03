@@ -27,9 +27,6 @@ if(isset($email)) {
     <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
     <script src="../assets/vendor/tailwind/tailwindcss" defer></script>
 
-    <!-- Leafet -->
-    <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css" />
-    <link rel="stylesheet" href="../assets/vendor/leaflet-routing-machine/leaflet-routing-machine.css" />
 
     <!-- Bootstrap CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
@@ -84,6 +81,10 @@ if(isset($email)) {
         <!--Container Main start-->
         <div class="p-5 d-flex flex-column">
             <h1 class="my-4 fw-bold">Settings</h1>
+
+            <div style="display: grid;">
+                Saat ini belum ada pengaturan yang dapat di atur😊
+            </div>
         </div>
 
         <!-- Custom Script -->

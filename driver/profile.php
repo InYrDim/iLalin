@@ -5,6 +5,8 @@ include_once '../controller/php/ilalin.php';
 
 $auth = new Auth();
 
+$referer = $_SERVER['HTTP_REFERER'];
+
 if (!$auth->isLoggedIn()) {
     
     header('Location:/ilalin/auth/login.php');
@@ -25,15 +27,93 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Checkcropper.toStringf the file is uploaded
     if(isset($_POST['update_profile'])) {
+        $driverId = $_POST['driver_id'];
+        $dEmail = $_POST['email'];
+        $dName = $_POST['name'];
+        $dPhone = $_POST['phone_number'];
 
-        exit();
+        $resp = $driver->updateDriverProfile($driverId, $dName, $dEmail, $dPhone);
+        
+        if($resp) {
+            echo "<script>alert('Succesfuly Updating Driver Data')</script>";
+            echo "<script>location.href='$referer'</script>";
+            exit();
+        }
+
     }
     elseif(isset($_POST['update_password'])) {
+    
+        // Password Handling
+        $password_saat_ini = filter_input(INPUT_POST, 'current_password', FILTER_SANITIZE_STRING);
+        $password_baru = filter_input(INPUT_POST, 'new_password', FILTER_SANITIZE_STRING);
+        $konfirmasi_password_baru = filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_STRING);
+        
+        $driverId = $_POST['driver_id'];
 
-        exit();
+        if ($driverId && password_verify($password_saat_ini,  $driverData['password_hash'])) {
+                    
+            // Check if new password matches confirmation
+            if ($password_baru === $konfirmasi_password_baru) {
+            
+                // Hash the new password
+                $hashedPassword = password_hash($password_baru, PASSWORD_DEFAULT);
+                
+                // Prepare the update query
+                $updateDb = $driver->updateDriverPassword($driverId, $hashedPassword);
+
+                if ($updateDb) {
+                    echo "<script>alert('Update Password Succesfuly')</script>";
+                    echo "<script>location.href='$referer'</script>";
+                    exit();
+                } else {
+                    echo "<script>alert('Failed to update profile.')</script>";
+                }
+            } else {
+                echo "<script>alert('New password and confirmation do not match.')</script>";
+            }
+        } else {
+            echo "<script>alert('Current password is incorrect.')</script>";
+        }
+        
     }
     elseif(isset($_POST['update_vehicle'])) {
+        
+        $driverId = $_POST['driver_id'];
+        $vehicle_name = $_POST['vehicle_name'];
+        $plat_number = $_POST['plate_number'];
 
+        // Handle vehicle update
+        // if driver had vehicle update it, if not insert it
+
+        // first select the vehicle where driver_id, if result is not empty that means driver has vehicle, then updateit
+        // else insert it.
+        
+
+        $vehicle = new Vehicle();
+
+        $vehicleWithDriver = $vehicle->getVehicleType($driverId);
+
+
+        if($vehicleWithDriver) {
+            $updateVehicle = $vehicle->updateVehicle($driverId, $vehicle_name, $plat_number);
+
+            if($updateVehicle) {
+                echo "<script>alert('Succesfuly Updating Driver Data')</script>";
+                echo "<script>location.href='$referer'</script>";
+                exit();
+            }
+
+        } else {
+            $insertVehicle = $vehicle->insertVehicle($driverId, $vehicle_name, $plat_number);
+
+            if($insertVehicle) {
+                echo "<script>alert('Succesfuly Updating Driver Data')</script>";
+                echo "<script>location.href='$referer'</script>";
+                exit();
+            }
+        }
+
+        
         exit();
     } else {
         $json_data = json_decode(file_get_contents('php://input'), true);
@@ -204,15 +284,17 @@ $vehicleData = $vehicleObj->getVehicleType($driverData['driver_id']);
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="bg-como-100 p-4 rounded flex-1">
-                                    <form>
+                                    <form action="" method="POST">
+                                        <input type="hidden" name="driver_id" value="<?=$driverData['driver_id']?>">
                                         <div class="w-full">
                                             <div class="mb-6">
                                                 <label for="name"
                                                     class="block mb-2 text-sm font-medium text-como-900">Nama</label>
-                                                <input type="name" id="name" name="fullname"
+                                                <input type="name" id="name" name="name"
                                                     class="focus:outline-como-300 border border-como-300 text-como-900 text-sm rounded-lg  block w-full p-2.5"
-                                                    placeholder="<?=$driverData['name']?>" required />
+                                                    value="<?=$driverData['name']?>" required />
                                             </div>
                                             <div class="mb-6">
                                                 <label for="email"
@@ -220,15 +302,15 @@ $vehicleData = $vehicleObj->getVehicleType($driverData['driver_id']);
                                                     address</label>
                                                 <input type="email" id="email" name="email"
                                                     class="focus:outline-como-300 bg-como-50 border border-como-300 text-como-900 text-sm rounded-lg block w-full p-2.5"
-                                                    placeholder="<?=$driverData['email']?>" required />
+                                                    value="<?=$driverData['email']?>" required />
                                             </div>
                                             <div class="mb-6">
-                                                <label for="telp"
+                                                <label for="telp" name="phone_number"
                                                     class="block mb-2 text-sm font-medium text-como-900">No.
                                                     Telepon</label>
                                                 <input type="text" id="telp" name="phone_number"
                                                     class="focus:outline-como-300 bg-como-50 border border-como-300 text-como-900 text-sm rounded-lg block w-full p-2.5"
-                                                    placeholder="<?=$driverData['phone_number']?>" required />
+                                                    value="<?=$driverData['phone_number']?>" required />
                                             </div>
 
 
@@ -246,7 +328,8 @@ $vehicleData = $vehicleObj->getVehicleType($driverData['driver_id']);
                         <div x-show="selectedTab === 'security'" id="tabpanelsecurity" role="tabpanel"
                             aria-label="security">
                             <div class="bg-como-100 p-4 rounded">
-                                <form>
+                                <form action="" method="POST">
+                                    <input type="hidden" name="driver_id" value="<?=$driverData['driver_id']?>">
                                     <div>
                                         <h3 class="mb-4 text-xl text-como-700 font-semibold">Ganti Password</h3>
                                         <div class="relative mb-6">
@@ -284,8 +367,8 @@ $vehicleData = $vehicleObj->getVehicleType($driverData['driver_id']);
                         <!-- Vehicle Tab Content -->
                         <div x-show="selectedTab === 'vehicle'" id="tabpanelComments" role="tabpanel"
                             aria-label="comments">
-                            <form>
-                                <input type="hidden" name="vehicle_id" value="<?=$vehicleData['vehicle_id']?>">
+                            <form action="" method="POST">
+                                <input type="hidden" name="driver_id" value="<?=$driverData['driver_id']?>">
                                 <div class="flex gap-4 flex-col">
                                     <div class="w-full">
                                         <div class="mb-4">
@@ -321,13 +404,6 @@ $vehicleData = $vehicleObj->getVehicleType($driverData['driver_id']);
             </div>
         </div>
 
-        <!--  -->
-        <!-- Modal -->
-
-
-
-
-
         <!-- Main modal -->
         <div id="cropImage" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
             class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -337,7 +413,7 @@ $vehicleData = $vehicleObj->getVehicleType($driverData['driver_id']);
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                         <h3 class="text-xl font-semibold text-como-900 ">
-                            Static modal
+                            Picture
                         </h3>
                         <button type="button"
                             class="text-como-400 bg-transparent hover:bg-como-200 hover:text-como-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
