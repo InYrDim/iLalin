@@ -41,17 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $email = trim($postJson['email']);
                 $password = trim($postJson['password']);
-                $loginResult = $auth->login($email, $password);
+                $loginResult = $auth->login($email, $password, 'admins');
 
-                if ($loginResult === "Logged in successfully!") {
-                    $referer = $_SERVER['HTTP_REFERER'];
-                    echo "<script>alert('$loginResult'); setTimeout(()=>{window.location.href = '$referer'},1000)</script>";
-                    exit();
-                } else {
-                    $referer = $_SERVER['HTTP_REFERER'];
-                    echo "<script>alert('$loginResult'); window.location.href = '$referer'</script>";
-                    exit();
-                }
+                header('Content-Type: application/json');                
+                echo json_encode([
+                    'status' => $loginResult === "Logged in successfully!" ? 'success' : 'failed',
+                    'message' => $loginResult
+                ]);
+                exit(); 
             
             case 'passengerLogin':
             
