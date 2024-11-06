@@ -34,7 +34,7 @@ session_start();
     <style>
     .bg-mitra {
         background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(28, 56, 39, 0.641)),
-            url("../assets/images/supir/tr5.png");
+            url("https://i.ibb.co.com/Dz3N9Qc/tr5.png");
         background-repeat: no-repeat;
         background-size: cover;
         background-position: top;
