@@ -245,15 +245,24 @@ class Auth extends IlalinApp {
             $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
             $user = $stmt->get_result()->fetch_assoc();
 
-
+            if(!isset($user['password'])) {
+                if(isset($user['password_hash'])) {
+                    $user['password'] = $user['password_hash'];
+                }
+            }
+            if(!isset($user['nama'])) {
+                if(isset($user['name'])) {
+                    $user['nama'] = $user['name'];
+                }
+            }
             if ($user && password_verify($password, $user['password'])) {
                 session_start();
                 session_regenerate_id(true);
-                $_SESSION['user_id'] = $this->userType === 'admin' ? $user['id_admin'] : ($this->userType === 'driver' ? $user['driver_id'] : $user['id_pengguna']);
+                $_SESSION['user_id'] = $table === 'admin' ? $user['id_admin'] : ($table === 'drivers' ? $user['driver_id'] : $user['id_pengguna']);
                 $_SESSION['nama'] = $user['nama'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['profile_image'] = $user['profile_image'];
-                $_SESSION['user_type'] = $this->userType;
+                $_SESSION['user_type'] = $table;
                 $_SESSION['logged_in'] = true;
                 return "Logged in successfully!";
             } else {

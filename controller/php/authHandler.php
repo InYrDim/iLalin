@@ -20,6 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userType = $postJson['type'] === 'user' ? 'user' : 'admin';
         $auth = new Auth($userType); // Initialize Auth with specified user type
 
+        if (!isset($postJson['email']) || !isset($postJson['password'])) {
+            echo json_encode([
+                'status' => 'failed',
+                'message' => 'Email or password not provided'
+            ])
+            ;
+        }
+        
         switch ($postJson['action']) {
             case 'adminLogin':
                 // Login Action
@@ -46,15 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             
             case 'passengerLogin':
-                // Login Action
-                if (!isset($postJson['email']) || !isset($postJson['password'])) {
-                    echo json_encode([
-                        'status' => 'failed',
-                        'message' => 'Email or password not provided'
-                    ]);
-                    exit();
-                } 
-
+            
                 $email = trim($postJson['email']);
                 $password = trim($postJson['password']);
                 $loginResult = $auth->login($email, $password, 'users');
@@ -65,7 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'status' => $loginResult === "Logged in successfully!" ? 'success' : 'failed',
                     'message' => $loginResult
                 ]);
-                exit();            
+                exit();    
+            case 'driverLogin':
+                
+                $email = trim($postJson['email']);
+                $password = trim($postJson['password']);
+                $loginResult = $auth->login($email, $password, 'drivers');
+
+                // add response as json
+                header('Content-Type: application/json');                
+                echo json_encode([
+                    'status' => $loginResult === "Logged in successfully!" ? 'success' : 'failed',
+                    'message' => $loginResult
+                ]);
+                exit();
             case 'logout':
                 // Logout Action
                 $logoutResult = $auth->logout();

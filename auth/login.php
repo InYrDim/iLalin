@@ -288,7 +288,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             //manually add action and method
                             const formData = new FormData(form);
-                            formData.append('action', 'passengerLogin');
+                            formData.append('action', role === 'pengemudi' ? 'driverLogin' : 'passengerLogin');
                             formData.append('type', 'user');
 
                             fetch('../controller/php/authHandler.php', {
@@ -315,7 +315,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         document.body.appendChild(toast);
                                         setTimeout(() => {
                                             toast.remove();
-                                            window.location.href = '../users/index.php';
+                                            role === 'pengemudi' ? window.location.href =
+                                                '../driver/index.php' : window.location.href =
+                                                '../users/index.php'
                                         }, 3000);
                                     } else {
                                         toast.innerHTML = `<div class="toast-header">
