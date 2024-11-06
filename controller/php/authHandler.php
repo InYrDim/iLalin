@@ -2,6 +2,26 @@
 
 include_once 'ilalin.php';
 
+function getRandomProfileImage($imageFolder) {
+    // Define the folder where images are stored
+    $images = glob( $imageFolder.'*.*', GLOB_BRACE);
+    
+    if (!$images) {
+        return null; // Or handle as needed if no images are found
+    }
+
+    $randomImage = $images[array_rand($images)];
+    return getBase64($randomImage);
+}
+
+function getBase64($image_path) {
+    $image_data = file_get_contents($image_path);
+    return base64_encode($image_data);
+}
+
+$data;
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
@@ -84,34 +104,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => $logoutResult
                 ]);
                 break;
-
+                
             case 'register':
                 // Register Action
-                if (!isset($postJson['email']) || !isset($postJson['password']) || !isset($postJson['name'])) {
+                if (!isset($postJson['email']) || !isset($postJson['password']) || !isset($postJson['username'])) {
                     echo json_encode([
                         'status' => 'failed',
                         'message' => 'Email, password, or name not provided'
                     ]);
                     exit();
                 }
-
-                $name = trim($postJson['name']);
-                $email = trim($postJson['email']);
-                $password = trim($postJson['password']);
-                $registerResult = $auth->register($name, $email, $password);
-
-                if ($registerResult === "Registration successful!") {
-                    echo json_encode([
-                        'status' => 'success',
-                        'message' => $registerResult
-                    ]);
-                } else {
+                
+                if (!isset($postJson['role']) || ($postJson['role'] !== 'penumpang' && $postJson['role'] !== 'pengemudi')) {
                     echo json_encode([
                         'status' => 'failed',
-                        'message' => $registerResult
+                        'message' => 'Invalid role, please choose penumpang or pengemudi'
                     ]);
+                    exit();
                 }
-                break;
+
+                $name = trim($postJson['username']);
+                $email = trim($postJson['email']);
+                $password = trim($postJson['password']);
+                $nomor_telepon = trim($postJson['phone']);
+
+  
+                
+                $data = [
+                    'username' => $name,
+                    'email' => $email, 
+                    'password' => $password, 
+                    'phone'=> $nomor_telepon
+                ];
+                
+                $registerResult;
+                if ($postJson['role'] === 'penumpang') {
+                    $imageString = getRandomProfileImage("../../assets/images/__DEFAULTs/user_profile_images/");
+                    $data['image'] = $imageString;
+                    $registerResult = $auth->register('users', $data);
+                } else if ($postJson['role'] === 'pengemudi') {    
+                    $imageString = getRandomProfileImage("../../assets/images/__DEFAULTs/driver_profile_images/");
+                    $data['image'] = $imageString;
+                    $registerResult = $auth->register('drivers', $data);
+                }
+                header('Content-Type: application/json');                
+                echo json_encode([
+                    'status' => $registerResult === "Created in successfully!" ? 'success' : 'failed',
+                    'message' => $registerResult
+                ]);
+                exit();
 
             default:
                 echo json_encode([

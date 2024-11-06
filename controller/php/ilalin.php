@@ -214,9 +214,15 @@ class Auth extends IlalinApp {
 
 
     // Register a new user or admin
-    public function register($username, $email, $password) {
+    public function register($table, $data = []) {
         try {
-            $table = $this->getTableName();
+            $username = $data['username'];
+            $email = $data['email'];
+            $password = $data['password'];
+            $phone = $data['phone'];
+            $imageString = $data['image'];
+
+            
             $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
             
             if ($stmt->get_result()->num_rows > 0) {
@@ -226,13 +232,25 @@ class Auth extends IlalinApp {
             // Hash the password
             $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
-            // Insert the new user or admin
-            $this->db->query(
-                "INSERT INTO $table (username, email, password_hash) VALUES (?, ?, ?)",
-                ['sss', $username, $email, $passwordHash]
-            );
-
-            return "User registered successfully!";
+            if ($table === 'users') {
+                $this->db->query(
+                    "INSERT INTO Users (username, email, nomor_telepon,  password, profile_image ) VALUES (?, ?, ?, ?, ?)",
+                    ['sssss', $username, $email, $phone, $passwordHash, $imageString]
+                );
+            } elseif ($table === 'drivers') {
+                $this->db->query(
+                    "INSERT INTO Drivers (name, email, phone_number, password_hash, profile_image) VALUES (?, ?, ?, ?, ?)",
+                    ['sssss', $username, $email, $phone, $passwordHash, $imageString]
+                );
+            }
+            session_start();
+            session_regenerate_id(true);
+            $_SESSION['nama'] = $data['username'];
+            $_SESSION['email'] = $data['email'];
+            $_SESSION['user_type'] = $table;
+            $_SESSION['logged_in'] = true;
+            
+            return "Created in successfully!";
         } catch (Exception $e) {
             return "Failed to register user: " . $e->getMessage();
         }

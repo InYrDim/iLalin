@@ -262,9 +262,9 @@ setTimeout(function() {
                         </div>
 
                         <!-- Manual Sigin -->
-                        <form action="" method="POST">
-                            <div class="row gy-2">
+                        <form id="signin-form">
 
+                            <div class="row gy-2">
                                 <!-- Username -->
                                 <div class="col-lg-6">
                                     <div class="form-floating mb-1">
@@ -298,7 +298,7 @@ setTimeout(function() {
                                 <!-- No Telepon -->
                                 <div class="col-lg-6">
                                     <div class="form-floating mb-1">
-                                        <input type="tel" id="telepon" name="telepon" class="form-control" value=""
+                                        <input type="tel" id="telepon" name="phone" class="form-control" value=""
                                             placeholder="Telepon" required />
                                         <label for="telepon" class="form-label">Telepon</label>
                                     </div>
@@ -345,6 +345,66 @@ setTimeout(function() {
                                 </div>
                             </div>
                         </form>
+
+                        <script>
+                        const signinForm = document.getElementById('signin-form');
+
+                        signinForm.addEventListener('submit', async (e) => {
+
+                            e.preventDefault();
+                            const form = document.querySelector('form');
+                            const role = form.role.value;
+
+                            const toast = document.createElement('div');
+                            toast.classList.add('toast', 'fade', 'show');
+                            toast.setAttribute('role', 'alert');
+                            toast.setAttribute('aria-live', 'assertive');
+                            toast.setAttribute('aria-atomic', 'true');
+                            toast.style =
+                                "position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);";
+
+
+                            const formData = new FormData(signinForm);
+                            formData.append('action', 'register');
+                            formData.append('type', 'user');
+
+                            const response = await fetch('../controller/php/authHandler.php', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            const data = await response.json();
+
+                            console.log(data)
+
+                            if (data.status === "success") {
+                                toast.innerHTML = `<div class="toast-header">
+                                                            <strong class="me-auto">Success</strong>
+                                                        </div>
+                                                        <div class="toast-body">
+                                                            ${data.message}
+                                                        </div>`;
+                                document.body.appendChild(toast);
+                                setTimeout(() => {
+                                    toast.remove();
+                                    role === 'pengemudi' ? window.location.href =
+                                        '../driver/index.php' : window.location.href =
+                                        '../users/index.php'
+                                }, 3000);
+                            } else {
+                                toast.innerHTML = `<div class="toast-header">
+                                                            <strong class="me-auto">Error</strong>
+                                                        </div>
+                                                        <div class="toast-body">
+                                                            ${data.message}
+                                                        </div>`;
+                                document.body.appendChild(toast);
+                                setTimeout(() => {
+                                    toast.remove();
+                                }, 3000);
+                            }
+                        });
+                        </script>
 
                         <!-- Forgot Password -->
                         <div class="row mt-2">
