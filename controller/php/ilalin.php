@@ -132,9 +132,6 @@ class IlalinApp {
         $this->utils = $utils ?? new IlalinUtils(); // Use the provided $utils or create a new instance.
     }    
 
-    
-    
-
     public function deleteUser($userId) {
         try {
             $this->db->beginTransaction(); // Start a transaction
@@ -454,6 +451,7 @@ class ProfileController extends IlalinApp {
 class TripController extends IlalinApp {
     
     public function addTrip($data) {
+        
         try {
             if (!is_array($data) || 
             !isset($data['name'], $data['time'], $data['distance'], 
@@ -496,7 +494,7 @@ class TripController extends IlalinApp {
                 $profits['companyProfit'], 
                 $data['status']
             ];
-    
+            
             // Execute query with parameters
             $this->db->query($sql, $params);
     

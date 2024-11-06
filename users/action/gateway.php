@@ -36,8 +36,7 @@ if(isset($email)) {
             try {
                 // Read the raw input data from the request body
                 $rawData = file_get_contents("php://input");
-            
-                
+                                
                 // Decode JSON into an associative array
                 $data = json_decode($rawData, true);
                 
@@ -60,17 +59,20 @@ if(isset($email)) {
                         throw new Exception("Missing required field: $field");
                     }
                 }
+
                 
                 // If validation passes, add the trip
                 $tripId = $tripsController->addTrip($data);
-               
+                
                 // Return a success response
-                http_response_code(200); // 200 OK
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'Trip added successfully',
-                    'id' => $tripId
-                ]);
+                if($tripId) {
+                    http_response_code(200); // 200 OK
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => 'Trip added successfully',
+                        'id' => $tripId
+                    ]);
+                }
             
             } catch (Exception $e) {
                 // Handle errors and return a meaningful response
@@ -95,7 +97,6 @@ if(isset($email)) {
                 // Process payment information
                 $il_util = new PaymentsUtils();
                 
-           
                 //payment information
 
                 $total_payment = $il_util->formatCurrency($trips['total_payment']);
@@ -107,8 +108,9 @@ if(isset($email)) {
                 $avaiable_driver = $driver->getAvaiableDriverAndCar();
                 
                 $vehicle = new Vehicle();
+
                 $driver_vehicle = $vehicle->getVehicleType($avaiable_driver['driver_id']);
-      
+                
                 // Search for driver
                 // update payment databse, add founded driver when payed
                 // update trip status to 'paid'
@@ -244,8 +246,9 @@ if(isset($email)) {
                             </div>
                         </div>
                         <div class="aspect-square h-full ">
-                            <img src="../../admin/assets/img/messages-2.jpg" alt="Foto Sopir"
-                                class="h-full aspect-square">
+
+                            <img src="<?= strpos($avaiable_driver['profile_image'], 'data:image') === 0 ? $avaiable_driver['profile_image'] : 'data:image/jpeg;base64,' . $avaiable_driver['profile_image'] ?>"
+                                alt="Foto Sopir" class="h-full aspect-square">
                         </div>
                     </div>
                     <div class="border-black border-2 pb-2 pr-4 flex justify-between  rounded">
