@@ -14,6 +14,57 @@ function createElement(elname, classList) {
   return el;
 }
 
+// RapidAPIClient class to interact with RapidAPI services
+class RapidAPIClient {
+  /**
+   * Create a new instance of RapidAPIClient.
+   *
+   * @param {string} apiKey - The API key to use for all requests
+   * @param {string} url - The base URL of the API
+   * @param {string} rapidhost - The RapidAPI host to use for all requests
+   */
+  constructor(apiKey, url, rapidhost) {
+    this.apiKey = apiKey;
+    this.baseUrl = url;
+    this.rapidapihost = rapidhost;
+  }
+
+  /**
+   * Perform a GET request to the given endpoint with the provided parameters.
+   *
+   * @param {string} endpoint - The endpoint to call
+   * @param {Object} [params={}] - The parameters to pass in the query string
+   *
+   * @returns {Promise<Object>} - The parsed JSON response
+   *
+   * @throws {Error} - If the response status is not 200
+   */
+  async get(endpoint, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${this.baseUrl}/${endpoint}?${queryString}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "x-rapidapi-key": this.apiKey,
+          "x-rapidapi-host": this.rapidapihost,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error calling API:", error);
+      throw error;
+    }
+  }
+}
+
 // Class to represent a point on the map (like starting or finishing points).
 class MapPoint {
   constructor(name, lat, ing, icon, place) {
@@ -33,7 +84,9 @@ class MapPoint {
   }
 }
 
-// LeafletMap class manages the map creation and current position tracking.
+/* 
+========== LeafletMap class manages the map creation and current position tracking.
+*/
 class LeafletMap {
   constructor(
     mapId,
@@ -104,7 +157,9 @@ class LeafletMap {
   }
 }
 
-// Routing class extends LeafletMap and adds search and routing functionality.
+/*  
+========== Routing class extends LeafletMap and adds search and routing functionality. 
+*/
 class Routing extends LeafletMap {
   constructor(mapId) {
     super(mapId);
@@ -359,39 +414,6 @@ class Routing extends LeafletMap {
       return data;
     } catch (error) {
       console.log(error);
-    }
-  }
-}
-
-class RapidAPIClient {
-  constructor(apiKey, url, rapidhost) {
-    this.apiKey = apiKey;
-    this.baseUrl = url;
-    this.rapidapihost = rapidhost;
-  }
-
-  async get(endpoint, params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const url = `${this.baseUrl}/${endpoint}?${queryString}`;
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "x-rapidapi-key": this.apiKey,
-          "x-rapidapi-host": this.rapidapihost,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json(); // Parse the JSON response
-      return data; // Return the response data
-    } catch (error) {
-      console.error("Error calling API:", error);
-      throw error; // Rethrow the error for further handling
     }
   }
 }

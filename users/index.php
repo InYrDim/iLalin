@@ -1,12 +1,16 @@
-<?php session_start(); 
+<?php 
+session_start(); 
 $active_page="dashboard" ; 
 $email=$_SESSION['email'];
-    include_once '../controller/php/ilalin.php' ; 
+
+include_once '../controller/php/ilalin.php' ; 
+
     if(isset($email)) { 
         $ilalin=new IlalinApp(); 
         $userProfile=$ilalin->getUserProfile($email);
         $profile = $userProfile;
-    ?>
+
+?>
 
 <!DOCTYPE html>
 

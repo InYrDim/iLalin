@@ -221,17 +221,15 @@ class Auth extends IlalinApp {
             $password = $data['password'];
             $phone = $data['phone'];
             $imageString = $data['image'];
-
             
             $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
             
             if ($stmt->get_result()->num_rows > 0) {
                 return "Email already registered!";
             }
-
             // Hash the password
             $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-
+            
             if ($table === 'users') {
                 $this->db->query(
                     "INSERT INTO Users (username, email, nomor_telepon,  password, profile_image ) VALUES (?, ?, ?, ?, ?)",
@@ -243,6 +241,7 @@ class Auth extends IlalinApp {
                     ['sssss', $username, $email, $phone, $passwordHash, $imageString]
                 );
             }
+            
             session_start();
             session_regenerate_id(true);
             $_SESSION['nama'] = $data['username'];
@@ -662,6 +661,20 @@ class TripController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         }
     }
+
+    //function to handle finishTrip
+    public function updateTripsByDriver($driverId) {
+        try {
+            $update = $this->db->query(
+                'UPDATE Trips SET status = ? WHERE driver_id = ?',
+                ['ss', 'completed', $driverId]
+            )
+            ;
+        } catch (Exception $e) {
+            echo "Failed to get user profile: " . $e->getMessage();
+        }
+    }
+
     public function updateTripsByDriverWithIsAccepted($driverId, $isAccepted) {
         try {
             $update = $this->db->query(

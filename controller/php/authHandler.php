@@ -128,8 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $password = trim($postJson['password']);
                 $nomor_telepon = trim($postJson['phone']);
 
-  
-                
                 $data = [
                     'username' => $name,
                     'email' => $email, 
