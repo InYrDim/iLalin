@@ -297,16 +297,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 })
                                 .then(response => response.json())
                                 .then(data => {
-                                    if (data.success) {
-                                        window.location.href = '../index.php';
+                                    const toast = document.createElement('div');
+                                    toast.classList.add('toast', 'fade', 'show');
+                                    toast.setAttribute('role', 'alert');
+                                    toast.setAttribute('aria-live', 'assertive');
+                                    toast.setAttribute('aria-atomic', 'true');
+                                    toast.style =
+                                        "position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);";
+
+                                    if (data.status === "success") {
+                                        toast.innerHTML = `<div class="toast-header">
+                                                            <strong class="me-auto">Success</strong>
+                                                        </div>
+                                                        <div class="toast-body">
+                                                            ${data.message}
+                                                        </div>`;
+                                        document.body.appendChild(toast);
+                                        setTimeout(() => {
+                                            toast.remove();
+                                            window.location.href = '../users/index.php';
+                                        }, 3000);
                                     } else {
-                                        const toast = document.createElement('div');
-                                        toast.classList.add('toast', 'fade', 'show');
-                                        toast.setAttribute('role', 'alert');
-                                        toast.setAttribute('aria-live', 'assertive');
-                                        toast.setAttribute('aria-atomic', 'true');
-                                        toast.style =
-                                            "position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);";
                                         toast.innerHTML = `<div class="toast-header">
                                                             <strong class="me-auto">Error</strong>
                                                         </div>

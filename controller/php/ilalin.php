@@ -249,9 +249,8 @@ class Auth extends IlalinApp {
             if ($user && password_verify($password, $user['password'])) {
                 session_start();
                 session_regenerate_id(true);
-                $_SESSION['user_id'] = $user['id_admin'];
+                $_SESSION['user_id'] = $this->userType === 'admin' ? $user['id_admin'] : ($this->userType === 'driver' ? $user['driver_id'] : $user['id_pengguna']);
                 $_SESSION['nama'] = $user['nama'];
-                $_SESSION['email'] = $user['email'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['profile_image'] = $user['profile_image'];
                 $_SESSION['user_type'] = $this->userType;
