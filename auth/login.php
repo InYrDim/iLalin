@@ -26,8 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = $_POST['password'];
         $role = $_POST['role'];
 
-
-        
         if($role == "pengemudi") {
             
             $stmt = $conn->prepare("SELECT * FROM drivers WHERE email = ?");
@@ -96,16 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     ?>
 <!-- Popup Invalid Credential -->
-<div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true"
-    style="position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);">
-    <div class="toast-header  ">
-        <strong class="me-auto" style="color: var(rgb(--primary-color)) !important;">Error! Invalid Credential</strong>
-        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-        Masukkan Email/Password yang benar.
-    </div>
-</div>
+
 <?php
 
                     $_SESSION['message'] = "Invalid password.";
@@ -223,10 +212,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-                        <form action="" method="POST">
-
+                        <form>
+                            <input type="hidden" name="action" value="passengerLogin">
+                            <input type="hidden" name="type" value="user">
                             <div class="row gy-2">
-
                                 <!-- Email -->
                                 <div class="col-12">
                                     <div class="form-floating mb-1">
@@ -235,7 +224,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <label for="email" class="form-label">Email</label>
                                     </div>
                                 </div>
-
                                 <!-- Password -->
                                 <div class="col-12 ">
                                     <div class="form-floating mb-1">
@@ -255,9 +243,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <label for="floatingSelect">Masuk sebagai: </label>
                                     </div>
                                 </div>
-
-
-
                                 <!-- Keep Login -->
                                 <div class="col-12">
                                     <div class="form-check d-flex align-items-center gap-1">
@@ -272,13 +257,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <!-- Login BTN -->
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <button class="btn btn-primary" type="submit">
+                                        <button class="btn btn-primary" type="button" id="login-btn">
                                             Masuk
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </form>
+
+                        <script>
+                        //Handle login on above form element, by using loginHandler function
+                        document.querySelector('#login-btn').addEventListener('click', loginHandler);
+
+                        function loginHandler(e) {
+                            const form = document.querySelector('form');
+                            const email = form.email.value;
+                            const password = form.password.value;
+                            const role = form.role.value;
+                            const simpan_kredensial = form.simpan_kredensial.checked;
+
+                            if (simpan_kredensial) {
+                                localStorage.setItem('email', email);
+                                localStorage.setItem('password', password);
+                                localStorage.setItem('role', role);
+                            } else {
+                                localStorage.removeItem('email');
+                                localStorage.removeItem('password');
+                                localStorage.removeItem('role');
+                            }
+
+                            //manually add action and method
+                            const formData = new FormData(form);
+                            formData.append('action', 'passengerLogin');
+                            formData.append('type', 'user');
+
+                            fetch('../controller/php/authHandler.php', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        window.location.href = '../index.php';
+                                    } else {
+                                        const toast = document.createElement('div');
+                                        toast.classList.add('toast', 'fade', 'show');
+                                        toast.setAttribute('role', 'alert');
+                                        toast.setAttribute('aria-live', 'assertive');
+                                        toast.setAttribute('aria-atomic', 'true');
+                                        toast.style =
+                                            "position: fixed;z-index: 2;bottom: 0;left: 0;margin-block-end: 1rem;margin-inline-start: 1rem; border-color: var(--primary-color-name);";
+                                        toast.innerHTML = `<div class="toast-header">
+                                                            <strong class="me-auto">Error</strong>
+                                                        </div>
+                                                        <div class="toast-body">
+                                                            ${data.message}
+                                                        </div>`;
+                                        document.body.appendChild(toast);
+                                        setTimeout(() => {
+                                            toast.remove();
+                                        }, 3000);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                });
+                        }
+                        </script>
 
                         <div class="row mt-2">
                             <div class="col-12">
@@ -288,35 +333,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             </div>
                         </div>
-
-                        <!-- Google Sign In -->
-                        <!-- <div class="d-flex justify-content-center  ">
-                            <button class="gsi-material-button mt-3">
-                                <div class="gsi-material-button-state"></div>
-                                <div class="gsi-material-button-content-wrapper">
-                                    <div class="gsi-material-button-icon">
-                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
-                                            xmlns:xlink="http://www.w3.org/1999/xlink" style="display: block;">
-                                            <path fill="#EA4335"
-                                                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z">
-                                            </path>
-                                            <path fill="#4285F4"
-                                                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z">
-                                            </path>
-                                            <path fill="#FBBC05"
-                                                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z">
-                                            </path>
-                                            <path fill="#34A853"
-                                                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z">
-                                            </path>
-                                            <path fill="none" d="M0 0h48v48H0z"></path>
-                                        </svg>
-                                    </div>
-                                    <span class="gsi-material-button-contents">Sign in with Google</span>
-                                    <span style="display: none;">Sign in with Google</span>
-                                </div>
-                            </button>
-                        </div> -->
 
                     </div>
                 </div>

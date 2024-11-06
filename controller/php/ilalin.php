@@ -239,9 +239,9 @@ class Auth extends IlalinApp {
     }
 
     // Log in a user or admin
-    public function login($email, $password) {
+    public function login($email, $password, $table = null) {
         try {
-            $table = $this->getTableName();
+            $table = $table ?? $this->getTableName();
             $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
             $user = $stmt->get_result()->fetch_assoc();
 

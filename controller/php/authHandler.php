@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle form data
         $postJson = $_POST;
     }
-
     if (isset($postJson['action']) && isset($postJson['type'])) {
         // Dynamically set user type based on `type` from request
         //  type is handle table name like 'admins' or 'users
@@ -45,8 +44,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo "<script>alert('$loginResult'); window.location.href = '$referer'</script>";
                     exit();
                 }
-                
             
+            case 'passengerLogin':
+                // Login Action
+                if (!isset($postJson['email']) || !isset($postJson['password'])) {
+                    echo json_encode([
+                        'status' => 'failed',
+                        'message' => 'Email or password not provided'
+                    ]);
+                    exit();
+                } 
+
+                $email = trim($postJson['email']);
+                $password = trim($postJson['password']);
+                $loginResult = $auth->login($email, $password, 'users');
+
+                // add response as json
+                header('Content-Type: application/json');                
+                echo json_encode([
+                    'status' => $loginResult === "Logged in successfully!" ? 'success' : 'failed',
+                    'message' => $loginResult
+                ]);
+                exit();            
             case 'logout':
                 // Logout Action
                 $logoutResult = $auth->logout();
