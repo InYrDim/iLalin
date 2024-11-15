@@ -302,7 +302,6 @@ class Auth extends IlalinApp {
         return "User logged out successfully!";
     }
 }
-
 class UserController extends IlalinApp {
     
     // Update user profile information
@@ -948,7 +947,6 @@ class Admins extends IlalinApp {
         }
     }
 }
-
 class Vehicle extends IlalinApp {
     
     public function getVehicleType($driver_id ) {
