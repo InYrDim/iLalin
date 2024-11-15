@@ -138,26 +138,26 @@ class IlalinApp {
     
             // Find related trips
             $trips = $this->db->query(
-                'SELECT * FROM Trips WHERE user_id = ? OR driver_id = ?', 
+                'SELECT * FROM trips WHERE user_id = ? OR driver_id = ?', 
                 ['ii', $userId, $userId]
             )->get_result()->fetch_all(MYSQLI_ASSOC);
     
             // Update trips to set status to 'cancelled'
             foreach ($trips as $trip) {
                 $this->db->query(
-                    'UPDATE Trips SET status = ? WHERE id = ?', 
+                    'UPDATE trips SET status = ? WHERE id = ?', 
                     ['si', 'cancelled', $trip['id']]
                 );
             }
     
             // Remove payments associated with the user
             $this->db->query(
-                'DELETE FROM Payments WHERE user_id = ? OR driver_id = ?', 
+                'DELETE FROM payments WHERE user_id = ? OR driver_id = ?', 
                 ['ii', $userId, $userId]
             );
     
             // Remove user record
-            $this->db->query('DELETE FROM Users WHERE id = ?', ['i', $userId]);
+            $this->db->query('DELETE FROM users WHERE id = ?', ['i', $userId]);
     
             $this->db->commit(); // Commit the transaction
             echo "User deleted successfully!";
@@ -170,7 +170,7 @@ class IlalinApp {
         try {
             // Retrieve user profile based on email
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE email = ?', 
+                'SELECT * FROM users WHERE email = ?', 
                 ['s', $email]
             );
             $user = $stmt->get_result()->fetch_assoc();
@@ -188,7 +188,7 @@ class IlalinApp {
         try {
             // Update the user's profile image
             $this->db->query(
-                'UPDATE Users SET profile_image = ? WHERE email = ?', 
+                'UPDATE users SET profile_image = ? WHERE email = ?', 
                 ['ss', $imageString, $email]
             );
     
@@ -310,7 +310,7 @@ class UserController extends IlalinApp {
         try {
             // Check if email already exists for another user
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE email = ? AND id != ?',
+                'SELECT * FROM users WHERE email = ? AND id != ?',
                 ['si', $email, $userId]
             );
             if ($stmt->get_result()->num_rows > 0) {
@@ -319,7 +319,7 @@ class UserController extends IlalinApp {
 
             // Update user information
             $this->db->query(
-                'UPDATE Users SET username = ?, email = ?, phone = ? WHERE id = ?',
+                'UPDATE users SET username = ?, email = ?, phone = ? WHERE id = ?',
                 ['sssi', $username, $email, $phone, $userId]
             );
 
@@ -334,7 +334,7 @@ class UserController extends IlalinApp {
         try {
             // Retrieve user data
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE id = ?',
+                'SELECT * FROM users WHERE id = ?',
                 ['i', $userId]
             );
             $user = $stmt->get_result()->fetch_assoc();
@@ -345,7 +345,7 @@ class UserController extends IlalinApp {
 
                 // Update the password
                 $this->db->query(
-                    'UPDATE Users SET password = ? WHERE id = ?',
+                    'UPDATE users SET password = ? WHERE id = ?',
                     ['si', $newPasswordHash, $userId]
                 );
 
@@ -362,7 +362,7 @@ class UserController extends IlalinApp {
     public function getUserById($userId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE id = ?',
+                'SELECT * FROM users WHERE id = ?',
                 ['i', $userId]
             );
             $user = $stmt->get_result()->fetch_assoc();
@@ -380,7 +380,7 @@ class UserController extends IlalinApp {
     // List all users (for admin functionality)
     public function listAllUsers() {
         try {
-            $stmt = $this->db->query('SELECT * FROM Users');
+            $stmt = $this->db->query('SELECT * FROM users');
             $users = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             return $users; // Return all users
@@ -393,7 +393,7 @@ class UserController extends IlalinApp {
     public function searchUsers($searchTerm) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE username LIKE ? OR email LIKE ?',
+                'SELECT * FROM users WHERE username LIKE ? OR email LIKE ?',
                 ['ss', "%$searchTerm%", "%$searchTerm%"]
             );
             $users = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -413,21 +413,21 @@ class ProfileController extends IlalinApp {
     
             // Find related trips
             $trips = $this->db->query(
-                'SELECT * FROM Trips WHERE user_id = ? OR driver_id = ?', 
+                'SELECT * FROM trips WHERE user_id = ? OR driver_id = ?', 
                 ['ii', $userId, $userId]
             )->get_result()->fetch_all(MYSQLI_ASSOC);
     
             // Update trips to set status to 'cancelled'
             foreach ($trips as $trip) {
                 $this->db->query(
-                    'UPDATE Trips SET status = ? WHERE id = ?', 
+                    'UPDATE trips SET status = ? WHERE id = ?', 
                     ['si', 'cancelled', $trip['id']]
                 );
             }
     
             // Remove payments associated with the user
             $this->db->query(
-                'DELETE FROM Payments WHERE user_id = ? OR driver_id = ?', 
+                'DELETE FROM payments WHERE user_id = ? OR driver_id = ?', 
                 ['ii', $userId, $userId]
             );
     
@@ -445,7 +445,7 @@ class ProfileController extends IlalinApp {
         try {
             // Retrieve user profile based on email
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE email = ?', 
+                'SELECT * FROM users WHERE email = ?', 
                 ['s', $email]
             );
             $user = $stmt->get_result()->fetch_assoc();
@@ -459,7 +459,7 @@ class ProfileController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         }
     }
-    public function replaceImage($email, $imageString , $table = "Users") {
+    public function replaceImage($email, $imageString , $table = "users") {
         try {
             // Update the user's profile image
             $this->db->query(
@@ -534,7 +534,7 @@ class TripController extends IlalinApp {
     public function getTrips($tripId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE trip_id = ?',
+                'SELECT * FROM trips WHERE trip_id = ?',
                 ['s', $tripId]
             );
             $trip = $stmt->get_result()->fetch_assoc();
@@ -552,7 +552,7 @@ class TripController extends IlalinApp {
     public function getAllTripsById($tripId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE trip_id = ?',
+                'SELECT * FROM trips WHERE trip_id = ?',
                 ['s', $tripId]
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -569,7 +569,7 @@ class TripController extends IlalinApp {
     public function getAllTrips() {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips'
+                'SELECT * FROM trips'
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     
@@ -586,7 +586,7 @@ class TripController extends IlalinApp {
         try {
             // Prepare and execute query to fetch trips with status = 'ongoing'
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE status = ? AND email = ?', ['ss', $status, $email]
+                'SELECT * FROM trips WHERE status = ? AND email = ?', ['ss', $status, $email]
             );
         
             $trip = $stmt->get_result()->fetch_assoc();
@@ -606,7 +606,7 @@ class TripController extends IlalinApp {
     public function getTripsByEmail($email) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE email = ?',
+                'SELECT * FROM trips WHERE email = ?',
                 ['s', $email]
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -624,7 +624,7 @@ class TripController extends IlalinApp {
     public function updateTripStatus($tripId, $status) {
         try {
             $this->db->query(
-                'UPDATE Trips SET status = ? WHERE trip_id = ?',
+                'UPDATE trips SET status = ? WHERE trip_id = ?',
                 ['ss', $status, $tripId]
             );
         } catch (Exception $e) {
@@ -634,7 +634,7 @@ class TripController extends IlalinApp {
     public function updateTripDriver($tripId, $driver_id) {
         try {
             $this->db->query(
-                'UPDATE Trips SET driver_id = ? WHERE trip_id = ?',
+                'UPDATE trips SET driver_id = ? WHERE trip_id = ?',
                 ['ss', $driver_id , $tripId]
             );
         } catch (Exception $e) {
@@ -666,7 +666,7 @@ class TripController extends IlalinApp {
     public function updateTripsByDriver($driverId) {
         try {
             $update = $this->db->query(
-                'UPDATE Trips SET status = ? WHERE driver_id = ?',
+                'UPDATE trips SET status = ? WHERE driver_id = ?',
                 ['ss', 'completed', $driverId]
             )
             ;
@@ -678,7 +678,7 @@ class TripController extends IlalinApp {
     public function updateTripsByDriverWithIsAccepted($driverId, $isAccepted) {
         try {
             $update = $this->db->query(
-                'UPDATE Trips SET is_accepted = ? WHERE driver_id =?',
+                'UPDATE trips SET is_accepted = ? WHERE driver_id =?',
                 ['ss', $isAccepted, $driverId]
             );
             return $update;
@@ -727,7 +727,7 @@ class Driver extends ProfileController {
     public function updateDriverStatus($driverId, $status) {
         try {
             $drivers = $this->db->query(
-                'UPDATE Drivers SET status = ? WHERE driver_id = ?',
+                'UPDATE drivers SET status = ? WHERE driver_id = ?',
                 ['si', $status, $driverId]
             );
             if ($drivers) {
@@ -742,7 +742,7 @@ class Driver extends ProfileController {
     public function updateDriverPosition($driverId, $latitude, $longitude) {
         try {
             $drivers = $this->db->query(
-                'UPDATE Drivers SET latitude =?, longitude =? WHERE driver_id =?',
+                'UPDATE drivers SET latitude =?, longitude =? WHERE driver_id =?',
                 ['ddi', $latitude, $longitude, $driverId]
             );
             if ($drivers) {
@@ -757,7 +757,7 @@ class Driver extends ProfileController {
     public function updateDriverPassword($driverId, $password) {
         try {
             $drivers = $this->db->query(
-                'UPDATE Drivers SET password_hash =? WHERE driver_id =?',
+                'UPDATE drivers SET password_hash =? WHERE driver_id =?',
                 ['si', $password, $driverId]
             );
             if ($drivers) {
@@ -772,7 +772,7 @@ class Driver extends ProfileController {
     public function getDriverById($driverId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers WHERE driver_id = ?',
+                'SELECT * FROM drivers WHERE driver_id = ?',
                 ['i', $driverId]
             );
             $driver = $stmt->get_result()->fetch_assoc();
@@ -789,7 +789,7 @@ class Driver extends ProfileController {
     public function getDriverByEmail($email) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers WHERE email = ?',
+                'SELECT * FROM drivers WHERE email = ?',
                 ['s', $email]
             );
             $driver = $stmt->get_result()->fetch_assoc();
@@ -826,7 +826,7 @@ class Driver extends ProfileController {
         try {
             // No Handler when driver is had foreign keys error
             return $this->db->query(
-                'DELETE FROM Drivers WHERE driver_id =?',
+                'DELETE FROM drivers WHERE driver_id =?',
                 ['i', $driver_id]
             );
         } catch (Exception $e) {
@@ -836,7 +836,7 @@ class Driver extends ProfileController {
     public function getAllDrivers() {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers'
+                'SELECT * FROM drivers'
             );
             $drivers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             
@@ -910,7 +910,7 @@ class Passenger extends IlalinApp {
             
             // Find related trips
             $trips = $this->db->query(
-                'SELECT * FROM Trips WHERE email = ? ', 
+                'SELECT * FROM trips WHERE email = ? ', 
                 ['s', $userEmail]
             )->get_result()->fetch_all(MYSQLI_ASSOC);
     
@@ -934,7 +934,7 @@ class Admins extends IlalinApp {
     public function getAllAdmins() {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Admins'
+                'SELECT * FROM admins'
             );
             $admins = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         
