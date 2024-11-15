@@ -16,26 +16,26 @@ class IlalinApp {
     
             // Find related trips
             $trips = $this->db->query(
-                'SELECT * FROM Trips WHERE user_id = ? OR driver_id = ?', 
+                'SELECT * FROM trips WHERE user_id = ? OR driver_id = ?', 
                 ['ii', $userId, $userId]
             )->get_result()->fetch_all(MYSQLI_ASSOC);
     
             // Update trips to set status to 'cancelled'
             foreach ($trips as $trip) {
                 $this->db->query(
-                    'UPDATE Trips SET status = ? WHERE id = ?', 
+                    'UPDATE trips SET status = ? WHERE id = ?', 
                     ['si', 'cancelled', $trip['id']]
                 );
             }
     
             // Remove payments associated with the user
             $this->db->query(
-                'DELETE FROM Payments WHERE user_id = ? OR driver_id = ?', 
+                'DELETE FROM payments WHERE user_id = ? OR driver_id = ?', 
                 ['ii', $userId, $userId]
             );
     
             // Remove user record
-            $this->db->query('DELETE FROM Users WHERE id = ?', ['i', $userId]);
+            $this->db->query('DELETE FROM users WHERE id = ?', ['i', $userId]);
     
             $this->db->commit(); // Commit the transaction
             echo "User deleted successfully!";
@@ -48,7 +48,7 @@ class IlalinApp {
         try {
             // Retrieve user profile based on email
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE email = ?', 
+                'SELECT * FROM users WHERE email = ?', 
                 ['s', $email]
             );
             $user = $stmt->get_result()->fetch_assoc();
@@ -66,7 +66,7 @@ class IlalinApp {
         try {
             // Update the user's profile image
             $this->db->query(
-                'UPDATE Users SET profile_image = ? WHERE email = ?', 
+                'UPDATE users SET profile_image = ? WHERE email = ?', 
                 ['ss', $imageString, $email]
             );
     

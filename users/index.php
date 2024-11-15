@@ -1,5 +1,6 @@
 <?php 
 session_start(); 
+
 $active_page="dashboard" ; 
 $email=$_SESSION['email'];
 
@@ -9,6 +10,7 @@ include_once '../controller/php/ilalin.php' ;
         $ilalin=new IlalinApp(); 
         $userProfile=$ilalin->getUserProfile($email);
         $profile = $userProfile;
+
 
 ?>
 

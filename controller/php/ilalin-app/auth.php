@@ -14,7 +14,7 @@ class Auth extends IlalinApp {
     }
 
 
-    // Register a new user or admin
+    // Register a new user
     public function register($table, $data = []) {
         try {
             $username = $data['username'];
