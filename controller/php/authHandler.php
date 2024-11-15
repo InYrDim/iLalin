@@ -1,6 +1,7 @@
 <?php
 
-include_once 'ilalin.php';
+
+ include(__DIR__ . '/ilalin.php');
 
 function getRandomProfileImage($imageFolder) {
     // Define the folder where images are stored

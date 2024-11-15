@@ -1,9 +1,6 @@
 <?php
-class IlalinUtils {
-    // Constants
-    protected const PAYMENT_PER_KM = 900; // Rp 900 per km
-    protected const DRIVER_PROFIT_PERCENTAGE = 0.8333; // 83.33%
-
+include_once(__DIR__. '/ilalinUtils.php');
+class PaymentsUtils extends IlalinUtils {
     /**
      * Calculates the total payment for a trip based on distance.
      */
@@ -33,11 +30,12 @@ class IlalinUtils {
     public function formatCurrency(float $amount, string $country = 'ID'): string {
         switch (strtoupper($country)) {
             case 'ID':
-                return 'Rp. ' . number_format($amount, 2, ',', '.');
+                return 'Rp. ' . number_format($amount, 2, ',', '.'); // Indonesia (Rp)
             case 'US':
-                return '$' . number_format($amount, 2, '.', ',');
+                return '$' . number_format($amount, 2, '.', ','); // US Dollar ($)
             default:
-                return number_format($amount, 2);
+                return number_format($amount, 2); // Default formatting
         }
     }
+
 }

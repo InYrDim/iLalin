@@ -186,7 +186,7 @@ session_start();
                             formData.append('action', role === 'pengemudi' ? 'driverLogin' : 'passengerLogin');
                             formData.append('type', 'user');
 
-                            fetch('../controller/php/authHandler.php', {
+                            fetch('/controller/php/authHandler.php', {
                                     method: 'POST',
                                     body: formData
                                 })
