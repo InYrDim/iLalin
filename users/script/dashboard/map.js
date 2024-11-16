@@ -14,57 +14,6 @@ function createElement(elname, classList) {
   return el;
 }
 
-// RapidAPIClient class to interact with RapidAPI services
-class RapidAPIClient {
-  /**
-   * Create a new instance of RapidAPIClient.
-   *
-   * @param {string} apiKey - The API key to use for all requests
-   * @param {string} url - The base URL of the API
-   * @param {string} rapidhost - The RapidAPI host to use for all requests
-   */
-  constructor(apiKey, url, rapidhost) {
-    this.apiKey = apiKey;
-    this.baseUrl = url;
-    this.rapidapihost = rapidhost;
-  }
-
-  /**
-   * Perform a GET request to the given endpoint with the provided parameters.
-   *
-   * @param {string} endpoint - The endpoint to call
-   * @param {Object} [params={}] - The parameters to pass in the query string
-   *
-   * @returns {Promise<Object>} - The parsed JSON response
-   *
-   * @throws {Error} - If the response status is not 200
-   */
-  async get(endpoint, params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const url = `${this.baseUrl}/${endpoint}?${queryString}`;
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "x-rapidapi-key": this.apiKey,
-          "x-rapidapi-host": this.rapidapihost,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error calling API:", error);
-      throw error;
-    }
-  }
-}
-
 // Class to represent a point on the map (like starting or finishing points).
 class MapPoint {
   constructor(name, lat, ing, icon, place) {
@@ -393,23 +342,21 @@ class Routing extends LeafletMap {
   }
 
   async searchPlaces({ input }) {
-    const MAPS_API_URL = "https://google-map-places.p.rapidapi.com";
-    const RAPID_API_KEY = "b106634ee0msh33f5f53acc4e8a2p1f47cbjsnc4181518ee21";
-    const RAPID_API_HOST = "google-map-places.p.rapidapi.com";
-
-    const client = new RapidAPIClient(
-      RAPID_API_KEY,
-      MAPS_API_URL,
-      RAPID_API_HOST
-    );
-
     try {
-      const data = client.get("maps/api/place/textsearch/json", {
-        radius: "1500",
-        query: input,
+      const response = await fetch("../../../controller/php/utils/rapid.php", {
+        method: "POST",
+        body: JSON.stringify({
+          place: {
+            endpoint: "maps/api/place/textsearch/json",
+            params: {
+              radius: "1500",
+              query: input,
+            },
+          },
+        }),
       });
 
-      console.log(data);
+      const data = await response.json();
 
       return data;
     } catch (error) {
@@ -484,7 +431,7 @@ function processRouting() {
   // Function to send data to the server
   async function sendData(data) {
     try {
-      const response = await fetch("action/gateway.php", {
+      const response = await fetch("/users/action/__test_gateway.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -567,7 +514,7 @@ function processRouting() {
 
           const form = document.createElement("form");
           form.method = "POST";
-          form.action = "action/gateway.php";
+          form.action = "action/__test_gateway.php";
 
           const tripIdInput = document.createElement("input");
           tripIdInput.type = "hidden";
@@ -588,74 +535,3 @@ function processRouting() {
 }
 
 processRouting();
-// function preventDefaultHandler(e) {
-//   e.preventDefault();
-
-//   fetch("action/gateway.php", {
-//     method: "POST",
-//     body: JSON.stringify(data),
-//   });
-// }
-// if (processRoutingBtn.hasAttribute("disabled")) {
-//   processRoutingBtn.addEventListener("click", preventDefaultHandler);
-// }
-
-// routingMap.routing.on("routesfound", function (e) {
-//   console.log(e);
-
-//   // Helper function to parse an address string into components
-//   function parseAddress(formatted_address) {
-//     const parts = formatted_address.split(", ");
-//     return {
-//       plus_code: parts.length === 6 ? parts[0] : "",
-//       kelurahan_desa: parts[parts.length - 5] || "",
-//       kecamatan: parts[parts.length - 4] || "",
-//       kabupaten_kota: parts[parts.length - 3] || "",
-//       provinsi: (parts[parts.length - 2] || "").replace(/\d+/, "").trim(),
-//       kode_pos: (parts[parts.length - 2] || "").match(/\d+/)?.[0] || "",
-//       negara: parts[parts.length - 1] || "",
-//     };
-//   }
-
-//   // Disable the default button behavior
-//   processRoutingBtn.removeEventListener("click", preventDefaultHandler);
-
-//   // Extract route data
-//   const route = e.routes[0];
-//   const { totalDistance, totalTime } = route.summary;
-
-//   const distanceInKm = Math.round(totalDistance / 1000);
-//   const timeCostInMinutes = Math.round(totalTime / 60);
-
-//   // Enable the process button and update the UI
-//   processRoutingBtn.removeAttribute("disabled");
-//   document.getElementById("routingDistanceId").innerText = `${distanceInKm} km`;
-
-//   // Function to extract place data with parsed address
-//   function getPlaceData(place) {
-//     const { place_id, name, formatted_address, geometry } = place;
-//     return {
-//       place_id,
-//       name,
-//       formatted_address,
-//       address: parseAddress(formatted_address),
-//       lat: geometry.location.lat,
-//       lng: geometry.location.lng,
-//     };
-//   }
-
-//   // Prepare the data to send
-//   const dataToSend = {
-//     name: route.name,
-//     time: timeCostInMinutes,
-//     distance: distanceInKm,
-//     startPoint: getPlaceData(routingMap.startingPoint.place),
-//     finishingPoint: getPlaceData(routingMap.finishingPoint.place),
-//     status: "pending",
-//   };
-
-//   // Log and send data
-//   console.log(dataToSend);
-//   console.log(JSON.stringify(dataToSend));
-//   sendData(dataToSend); // Uncomment to send data to the database
-// });

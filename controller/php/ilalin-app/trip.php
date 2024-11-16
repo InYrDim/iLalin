@@ -62,7 +62,7 @@ class TripController extends IlalinApp {
     public function getTrips($tripId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE trip_id = ?',
+                'SELECT * FROM trips WHERE trip_id = ?',
                 ['s', $tripId]
             );
             $trip = $stmt->get_result()->fetch_assoc();
@@ -80,7 +80,7 @@ class TripController extends IlalinApp {
     public function getAllTripsById($tripId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE trip_id = ?',
+                'SELECT * FROM trips WHERE trip_id = ?',
                 ['s', $tripId]
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -97,7 +97,7 @@ class TripController extends IlalinApp {
     public function getAllTrips() {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips'
+                'SELECT * FROM trips'
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     
@@ -114,7 +114,7 @@ class TripController extends IlalinApp {
         try {
             // Prepare and execute query to fetch trips with status = 'ongoing'
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE status = ? AND email = ?', ['ss', $status, $email]
+                'SELECT * FROM trips WHERE status = ? AND email = ?', ['ss', $status, $email]
             );
         
             $trip = $stmt->get_result()->fetch_assoc();
@@ -134,7 +134,7 @@ class TripController extends IlalinApp {
     public function getTripsByEmail($email) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Trips WHERE email = ?',
+                'SELECT * FROM trips WHERE email = ?',
                 ['s', $email]
             );
             $trip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -152,7 +152,7 @@ class TripController extends IlalinApp {
     public function updateTripStatus($tripId, $status) {
         try {
             $this->db->query(
-                'UPDATE Trips SET status = ? WHERE trip_id = ?',
+                'UPDATE trips SET status = ? WHERE trip_id = ?',
                 ['ss', $status, $tripId]
             );
         } catch (Exception $e) {
@@ -162,7 +162,7 @@ class TripController extends IlalinApp {
     public function updateTripDriver($tripId, $driver_id) {
         try {
             $this->db->query(
-                'UPDATE Trips SET driver_id = ? WHERE trip_id = ?',
+                'UPDATE trips SET driver_id = ? WHERE trip_id = ?',
                 ['ss', $driver_id , $tripId]
             );
         } catch (Exception $e) {
@@ -194,7 +194,7 @@ class TripController extends IlalinApp {
     public function updateTripsByDriver($driverId) {
         try {
             $update = $this->db->query(
-                'UPDATE Trips SET status = ? WHERE driver_id = ?',
+                'UPDATE trips SET status = ? WHERE driver_id = ?',
                 ['ss', 'completed', $driverId]
             )
             ;
@@ -206,7 +206,7 @@ class TripController extends IlalinApp {
     public function updateTripsByDriverWithIsAccepted($driverId, $isAccepted) {
         try {
             $update = $this->db->query(
-                'UPDATE Trips SET is_accepted = ? WHERE driver_id =?',
+                'UPDATE trips SET is_accepted = ? WHERE driver_id =?',
                 ['ss', $isAccepted, $driverId]
             );
             return $update;

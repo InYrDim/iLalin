@@ -76,7 +76,7 @@ function startRouting() {
     setTimeout(() => {
       const form = document.createElement("form");
       form.method = "POST";
-      form.action = "action/gateway.php";
+      form.action = "action/__test_gateway.php";
 
       const tripIdInput = document.createElement("input");
       tripIdInput.type = "hidden";

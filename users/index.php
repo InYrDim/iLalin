@@ -220,7 +220,7 @@ include_once '../controller/php/ilalin.php' ;
                             <div class="form-floating mt-4 mb-4 d-flex justify-content-between align-items-center py-2 px-3"
                                 style="border-radius: .6rem; background-color: white; background-color: white; filter: drop-shadow(0px 00px 5.5px #0000001f);">
                                 <div style="font-size: 1rem;" class="text-primary">Jarak</div>
-                                <span id="routingDistanceId">200M</span>
+                                <span id="routingDistanceId">-</span>
                             </div>
                         </div>
                         <div class="d-flex gap-2">

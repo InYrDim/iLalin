@@ -16,7 +16,7 @@ class Driver extends ProfileController {
             if ($drivers) {
                 return $drivers;
             } else {
-                return "No drivers available";
+                return false;
             }
         } catch (Exception $e) {
             echo "Failed to get drivers: " . $e->getMessage();
@@ -25,7 +25,7 @@ class Driver extends ProfileController {
     public function updateDriverStatus($driverId, $status) {
         try {
             $drivers = $this->db->query(
-                'UPDATE Drivers SET status = ? WHERE driver_id = ?',
+                'UPDATE drivers SET status = ? WHERE driver_id = ?',
                 ['si', $status, $driverId]
             );
             if ($drivers) {
@@ -40,7 +40,7 @@ class Driver extends ProfileController {
     public function updateDriverPosition($driverId, $latitude, $longitude) {
         try {
             $drivers = $this->db->query(
-                'UPDATE Drivers SET latitude =?, longitude =? WHERE driver_id =?',
+                'UPDATE drivers SET latitude =?, longitude =? WHERE driver_id =?',
                 ['ddi', $latitude, $longitude, $driverId]
             );
             if ($drivers) {
@@ -55,7 +55,7 @@ class Driver extends ProfileController {
     public function updateDriverPassword($driverId, $password) {
         try {
             $drivers = $this->db->query(
-                'UPDATE Drivers SET password_hash =? WHERE driver_id =?',
+                'UPDATE drivers SET password_hash =? WHERE driver_id =?',
                 ['si', $password, $driverId]
             );
             if ($drivers) {
@@ -70,7 +70,7 @@ class Driver extends ProfileController {
     public function getDriverById($driverId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers WHERE driver_id = ?',
+                'SELECT * FROM drivers WHERE driver_id = ?',
                 ['i', $driverId]
             );
             $driver = $stmt->get_result()->fetch_assoc();
@@ -87,7 +87,7 @@ class Driver extends ProfileController {
     public function getDriverByEmail($email) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers WHERE email = ?',
+                'SELECT * FROM drivers WHERE email = ?',
                 ['s', $email]
             );
             $driver = $stmt->get_result()->fetch_assoc();
@@ -124,7 +124,7 @@ class Driver extends ProfileController {
         try {
             // No Handler when driver is had foreign keys error
             return $this->db->query(
-                'DELETE FROM Drivers WHERE driver_id =?',
+                'DELETE FROM drivers WHERE driver_id =?',
                 ['i', $driver_id]
             );
         } catch (Exception $e) {
@@ -134,7 +134,7 @@ class Driver extends ProfileController {
     public function getAllDrivers() {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Drivers'
+                'SELECT * FROM drivers'
             );
             $drivers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             

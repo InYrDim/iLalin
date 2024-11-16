@@ -1,136 +1,3 @@
-users/action/gateway.php<?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-
-if($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo "Test";
-    exit;
-}
-
-session_start();
-
-$email = $_SESSION['email'];
-
-include_once(__DIR__ . '/../../controller/php/ilalin.php');
-
-
-if(isset($email)) { 
-    
-    // $ilalin = new IlalinApp(); 
-    $profileController = new ProfileController(); 
-    $userProfile=$profileController->getUserProfile($email);
-    $profile = $userProfile;
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
-        $tripsController = new TripController();
-        $rawData = file_get_contents("php://input");
-        // Decode JSON into an associative array
-        $data = json_decode($rawData, true);
-        
-        //update status payment
-        if(isset($data['trip_id']) && isset($data['status'])) {
-
-            $tripsController->updateTripStatus($data['trip_id'], $data['status']);
-            $tripsController->updateTripDriver($data['trip_id'], $data['driver_id']);
-
-            echo json_encode(['status' => 'success', 'message' => 'Status pembayaran berhasil diubah']);
-
-            exit();
-        }
-        
-        // Check if the trip_id is provided in the POST request
-        // If it not then assume user want to create a new trip_id and save to database
-        if(!isset($_POST['trip_id'])) {
-            header("Content-Type: application/json"); // Ensure the response is JSON formatted
-
-            try {
-                // Read the raw input data from the request body
-                $rawData = file_get_contents("php://input");
-                                
-                // Decode JSON into an associative array
-                $data = json_decode($rawData, true);
-                
-                // Validate JSON decoding
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    throw new Exception("Invalid JSON format.");
-                }
-            
-                // Append email from session if available
-                if (isset($_SESSION['email'])) {
-                    $data['email'] = $_SESSION['email']; // Add the email to the data array
-                } else {
-                    throw new Exception("Email not found in session.");
-                }
-            
-                // Ensure all required fields are present
-                $requiredFields = ['name', 'time', 'distance', 'startPoint', 'finishingPoint', 'status'];
-                foreach ($requiredFields as $field) {
-                    if (!isset($data[$field])) {
-                        throw new Exception("Missing required field: $field");
-                    }
-                }
-                
-                // If validation passes, add the trip
-                $tripId = $tripsController->addTrip($data);
-                
-                // Return a success response
-                if($tripId) {
-                    http_response_code(200); // 200 OK
-                    echo json_encode([
-                        'status' => 'success',
-                        'message' => 'Trip added successfully',
-                        'id' => $tripId
-                    ]);
-                }
-            
-            } catch (Exception $e) {
-                // Handle errors and return a meaningful response
-                http_response_code(400); // 400 Bad Request
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'Failed to add trip: ' . $e->getMessage()
-                ]);
-            } finally {
-                exit(); // Ensure script execution is terminated after response
-            }
-        }
-
-        // Check if the trip_id is provided in the POST request
-        // If it set, assume that user wants to proceed with the trip
-        if (isset($_POST['trip_id'])) {
-            
-            $trips = $tripsController->getTrips($_POST['trip_id']);
-            
-            if ($trips['email'] === $_SESSION['email']) {
-
-                // Process payment information
-                $il_util = new PaymentsUtils();
-                
-                //payment information
-
-                $total_payment = $il_util->formatCurrency($trips['total_payment']);
-                
-                $starting_point = json_decode($trips['start_point'], true);
-                $finishing_point = json_decode($trips['finishing_point'], true);
-                
-                $driver = new Driver();
-                $avaiable_driver = $driver->getAvaiableDriverAndCar();
-                
-                $vehicle = new Vehicle();
-
-                $driver_vehicle = $vehicle->getVehicleType($avaiable_driver['driver_id']);
-                
-                // Search for driver
-                // update payment databse, add founded driver when payed
-                // update trip status to 'paid'
-                // add trip_id to user's trip history
-                // add driver's information to user's profile
-
-                //Run HTML Below Only When trip_id is SET and email is equal to current session of user.
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -173,7 +40,7 @@ if(isset($email)) {
                     <span class="nav_logo-name fw-bold text-3xl text-primary font-bold">iLalin</span>
                 </a>
                 <div class="flex gap-3 items-center">
-                    <span class="text-primary fw-bold "><?= $profile['nama'] ?></span>
+                    <span class="text-primary fw-bold "><?= $profile['username'] ?></span>
                     <div class="header_img">
                         <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
                             alt="<?= $profile["nama"] ?>" style="width: 36px; border-radius: 100%; aspect-ratio: 1/1;">
@@ -193,7 +60,8 @@ if(isset($email)) {
                 <div class="flex flex-col gap-4 flex-1">
                     <div class="border-2 border-black py-2 px-4 flex justify-between items-center rounded">
                         <span class="info-label"><strong class="font-light">Nama</strong></span>
-                        <span class="info-value" data-user="fullname"><?= $userProfile['nama'] ?></span>
+                        <span class="info-value"
+                            data-user="fullname"><?= isset($userProfile['nama']) ? $userProfile['nama'] : $userProfile['username'] ?></span>
                     </div>
                     <div class="border-2 border-black py-2 px-4 flex justify-between items-center rounded">
                         <span class="info-label"><strong class="font-light">Nomor Telepon</strong></span>
@@ -337,8 +205,6 @@ if(isset($email)) {
     let token = null;
     async function handlePayment() {
         //check if current user is already had pending payment or not
-
-
         if (!token) {
             const getToken = await fetch('../../controller/php/payment/prosesMidtrans.php', {
                 method: 'POST',
@@ -535,48 +401,3 @@ if(isset($email)) {
 </body>
 
 </html>
-
-<?php
-            }
-        }
-        
-    }
-       
-    
-    if($_SERVER['REQUEST_METHOD'] === 'GET') {
-
-        if(isset($_GET['action']) && isset($_GET['token'])) {
-            switch ($_GET['action']) {
-                case 'clear':
-                    $_SESSION['snapToken'] = null;
-                    break;
-                case 'set_token':
-                    $_SESSION['snapToken'] = null;
-                    break;
-                default:
-                    echo 'Failed to call action: ' . $_GET['action'] ;
-                    break;
-            }
-            exit();
-        }
-        // Should Destroy the session
-        if(isset($_SESSION['snapToken']) && isset($_GET['token'])) {
-            $snapToken = $_SESSION['snapToken'];
-            $_SESSION['snapToken'] = null;
-    
-            echo $snapToken;
-            exit();
-        } else if (isset($_GET['order_id'])) {
-            exit();
-        }
-    
-    }
-?>
-
-
-<?php 
-} else {
-    header(header: "Location: ../auth/login.php");
-    exit();
-}
-?>
