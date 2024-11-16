@@ -210,6 +210,7 @@ session_start();
                                         document.body.appendChild(toast);
                                         setTimeout(() => {
                                             toast.remove();
+
                                             role === 'pengemudi' ? window.location.href =
                                                 '../driver/index.php' : window.location.href =
                                                 '../users/index.php'

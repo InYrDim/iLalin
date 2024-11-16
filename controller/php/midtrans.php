@@ -1,6 +1,6 @@
 <?php
 
-class Midtrans {
+class IlalinMidtrans {
 
     public function getPaymentStatusByOrderId($order_id) {
         // Initialize cURL session
@@ -22,7 +22,7 @@ class Midtrans {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         // Execute cURL session
-        $response = curl_exec(handle: $curl);
+        $response = curl_exec($curl);
 
         // Check for errors
         if ($response === false) {
@@ -45,23 +45,11 @@ class Midtrans {
 
         $paymentData = json_decode($paymentStatus, true);
         $transactionId = $paymentData['transaction_id'];
-        // $grossAmount = $paymentData['gross_amount'];
+        // $grossAmount = $paymentData['gross_amount';
 
-        // header(header: 'Content-Type: application/json');
-        // echo $paymentStatus;
-        // exit();
-
-        
         // Set the URL for the POST request
         curl_setopt($curl, CURLOPT_URL, "https://api.sandbox.midtrans.com/v2/{$transactionId}/refund");
-        
-        // Set the URL for the POST body
-        // $body = [
-        //     "amount" => $grossAmount,
-        // ];
-        // $data_string = json_encode($body);
-        // curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-        
+
         // Set the request method to POST
         curl_setopt($curl, CURLOPT_POST, true);
 
@@ -75,7 +63,7 @@ class Midtrans {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         // Execute cURL session
-        $response = curl_exec(handle: $curl);
+        $response = curl_exec($curl);
 
         // Check for errors
         if ($response === false) {
@@ -93,22 +81,22 @@ class Midtrans {
 
         // Set the URL for the POST request
         curl_setopt($curl, CURLOPT_URL, "https://api.sandbox.midtrans.com/v2/{$order_id}/cancel");
-    
+
         // Set the request method to POST
         curl_setopt($curl, CURLOPT_POST, true);
-    
+
         // Set the headers
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Authorization: Basic U0ItTWlkLXNlcnZlci1XUEppVlZQVmluckREc0JHeVdOQlpHeGY6' // Replace 'ayudga' with your actual authorization token
         ]);
-    
+
         // Return the response instead of outputting it
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    
+
         // Execute cURL session
-        $response = curl_exec(handle: $curl);
-    
+        $response = curl_exec($curl);
+
         // Check for errors
         if ($response === false) {
             echo 'cURL Error: ' . curl_error($curl);
@@ -116,7 +104,7 @@ class Midtrans {
             // Output the response as a JSON object
             return $response;
         }
-    
+
         // Close cURL session
         curl_close($curl);
     }

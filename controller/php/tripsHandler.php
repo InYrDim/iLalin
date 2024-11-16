@@ -74,7 +74,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 if(isset($postJson['clearToken']) && $postJson['clearToken'] == 'yes') {
                     session_start();
-                    $_SESSION['snapToken'] = null;
+                    $_SESSION['token'] = null;
                 }
                 echo json_encode([
                     'status' =>'success',

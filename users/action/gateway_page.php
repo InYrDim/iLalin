@@ -192,144 +192,155 @@
         data-client-key="SB-Mid-client-75iUAElAx67168zX"></script>
     <script type="text/javascript">
     const payButton = document.getElementById('pay-button');
-
     const cancelBtn = document.getElementById('cancelBtn');
 
     function initialCancelBtn(e) {
         window.location.href =
             "../index.php"
-        console.log("awd")
     }
     cancelBtn.addEventListener("click", initialCancelBtn)
 
-    let token = null;
     async function handlePayment() {
-        //check if current user is already had pending payment or not
-        if (!token) {
-            const getToken = await fetch('../../controller/php/payment/prosesMidtrans.php', {
+        async function clearToken() {
+            const clearToken = await fetch(
+                '/controller/php/payment/tokenHandler.php', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "delete"
+                    })
+                }
+            )
+            return await clearToken.json()
+        }
+
+        async function getToken() {
+            const getTokenBody = {
+                "transaction_details": {
+                    "order_id": document.getElementById("order_id").value,
+                    "gross_amount": Math.max(1000, parseInt(document.getElementById("gross_amount")
+                        .value))
+                },
+                "credit_card": {
+                    "secure": true
+                },
+                "customer_details": {
+                    "passenger_details": {
+                        "usernames": document.getElementById("passenger_id").value,
+                        "name": document.getElementById("passenger_fullname").value,
+                        "email": document.getElementById("passenger_email").value,
+                        "phone": document.getElementById("passenger_phone").value,
+                        "address": document.getElementById("passenger_address")
+                            .value,
+                    },
+                    "driver_details": {
+                        "name": document.getElementById("driver_fullname").value,
+                        "email": document.getElementById("driver_email").value,
+                        "phone": document.getElementById("driver_phone").value,
+                    },
+                    "vehicle_details": {
+                        "vehicle_name": document.getElementById("vehicle_name")
+                            .value,
+                        "plate_number": document.getElementById(
+                                "vehicle_plate_number")
+                            .value,
+                    }
+                }
+            }
+            const token = await fetch('/controller/php/payment/tokenHandler.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    "transaction_details": {
-                        "order_id": document.getElementById("order_id").value,
-                        "gross_amount": parseInt(document.getElementById("gross_amount")
-                            .value)
-                    },
-                    "credit_card": {
-                        "secure": true
-                    },
-                    "customer_details": {
-                        "passenger_details": {
-                            "usernames": document.getElementById("passenger_id").value,
-                            "name": document.getElementById("passenger_fullname").value,
-                            "email": document.getElementById("passenger_email").value,
-                            "phone": document.getElementById("passenger_phone").value,
-                            "address": document.getElementById("passenger_address")
-                                .value,
-                        },
-                        "driver_details": {
-                            "name": document.getElementById("driver_fullname").value,
-                            "email": document.getElementById("driver_email").value,
-                            "phone": document.getElementById("driver_phone").value,
-                        },
-                        "vehicle_details": {
-                            "vehicle_name": document.getElementById("vehicle_name")
-                                .value,
-                            "plate_number": document.getElementById(
-                                    "vehicle_plate_number")
-                                .value,
-                        }
-                    }
-
-
-                })
+                body: JSON.stringify(getTokenBody)
             })
-
-
-            token = await getToken.text();
+            return await token.json();
         }
+        //check if current user is already had pending payment or not
+        const token = await getToken();
+
         const snapContainer = document.getElementById('snap-container');
         snapContainer.style.display = 'grid';
 
         function enableCancelPayment(result) {
 
             async function handleCancelPayment() {
-                const response = await fetch(
-                    `../../controller/php/payment/prosesMidtrans.php?order_id=${result.order_id}`
-                )
-                if (response.ok) {
-                    const data = await response
-                        .json(); // Use json() since the response is a JSON object
 
-                    if (data.status_code === '200') {
-                        fetch("gateway.php?token=" + token).then(async function(
-                            response) {
-                            const trip_id = document.getElementById(
-                                "trip_id").value
-                            const updatePaymentStatus = await fetch(
-                                `gateway.php`, {
+                const userConfirm = confirm(
+                    'Yakin membatalkan perjalanan?');
+                if (!userConfirm) return;
+
+                // 1. Get The Transaction First
+                // 2. Refunding the Transaction using transaction id that was previously get from transaction
+                // 3. Update the Transaction status on database
+                try {
+
+                    const cancelPayment = await fetch(
+                        `../../controller/php/paymentHandler.php`, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                action: 'cancelPayment',
+                                order_id: document.getElementById("order_id").value,
+                            })
+                        }
+                    )
+                    const refundData = await cancelPayment.json();
+
+                    // using || cancelPayment.status == "200" to hanlder just for sanbox midtrans
+                    // for production, remove it
+                    if (refundData.status_code === '200' || cancelPayment
+                        .status == "200") {
+                        // refund successful
+                        const clearTokenResponse = await clearToken();
+                        if (clearTokenResponse.status !== "success") {
+                            throw new Error("Failed to clear token");
+                        }
+
+                        // Update canceling on databse then update trip status in database
+                        const updatePaymentStatus = fetch(
+                                `../../controller/php/tripsHandler.php`, {
                                     method: 'POST',
                                     body: JSON.stringify({
-                                        trip_id: trip_id,
+                                        action: 'updateTripStatus',
+                                        trip_id: document.getElementById("trip_id").value,
                                         status: "cancelled",
-                                        driver_id: document
-                                            .getElementById(
-                                                "driver_id"
-                                            )
-                                            .value
+                                        clearToken: "yes"
                                     })
                                 })
+                            .then(resp => resp.json())
+                            .then(data => {
 
-                            const paymentStatusRespons =
-                                await updatePaymentStatus
-                                .json()
+                                document.body.innerHTML += `    <!-- Cancel Alert Componet -->
+    <div id="alert-modal" tabindex="-1"
+        class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bottom-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="py-10 text-center">
+                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 class="text-lg font-normal text-gray-500 dark:text-gray-400">Trip Cancelled Succesfully
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>`
 
-                            if (paymentStatusRespons.status ==
-                                'success') {
-
-
-                                document.body.innerHTML += `
-                                    <div class="bg-red-50 border-s-4 border-red-500 p-4 dark:bg-red-800/30 fixed bottom-0 mb-4 ml-4" role="alert"
-                                        tabindex="-1" aria-labelledby="hs-bordered-red-style-label">
-                                        <div class="flex">
-                                            <div class="shrink-0">
-                                                <!-- Icon -->
-                                                <span
-                                                    class="inline-flex justify-center items-center size-8 rounded-full border-4 border-red-100 bg-red-200 text-red-800 dark:border-red-900 dark:bg-red-800 dark:text-red-400">
-                                                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                        <path d="M18 6 6 18"></path>
-                                                        <path d="m6 6 12 12"></path>
-                                                    </svg>
-                                                </span>
-                                                <!-- End Icon -->
-                                            </div>
-                                            <div class="ms-3">
-                                                <h3 id="hs-bordered-red-style-label" class="text-gray-800 font-semibold dark:text-white">
-                                                    Berhasil!
-                                                </h3>
-                                                <p class="text-sm text-gray-700 dark:text-neutral-400">
-                                                    Proses Pembayaran Dibatalkan.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>                      
-                                    `
 
                                 setTimeout(() => {
-                                    window.location.href =
-                                        "../index.php"
+                                    location.href = "../index.php";
                                 }, 3000)
-                            }
-                        })
+                            })
+
+                    } else {
+                        // refund failed
+                        alert('Pembatalan trip gagal');
                     }
-                } else {
-                    console.error('HTTP Error:', response.statusText);
+                } catch (error) {
+                    console.log(error)
                 }
-                cancelBtn.setAttribute('disabled', true);
+
             }
 
             cancelBtn.removeEventListener("click", initialCancelBtn)
@@ -340,41 +351,47 @@
 
         }
 
-        window.snap.embed(token, {
+        const snapOptions = {
             embedId: 'snap-container',
             onSuccess: async function(result) {
-                token = null;
-                //Clear previous payments using token
-                const clearToken = await fetch(`gateway.php?token=${token}action=clear`)
-                if (clearToken.status == 200) {
-                    const trip_id = document.getElementById("trip_id").value
+                // clear token
+                const clearTokenResponse = await clearToken();
 
-                    // Update database by adding driver information
-                    const updatePaymentStatus = await fetch(
-                        `gateway.php`, {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                trip_id: trip_id,
-                                status: "ongoing",
-                                driver_id: document.getElementById("driver_id")
-                                    .value
-                            })
-                        })
-
-                    const paymentStatusRespons = await updatePaymentStatus.json()
-
-                    console.log(paymentStatusRespons)
-                    if (paymentStatusRespons.status == 'success') {
-                        window.location.href = "../index.php"
-                    }
-
+                if (clearTokenResponse.status !== 'success') {
+                    console.log("Failed To Clear Token");
+                    return;
                 }
+
+                const trip_id = document.getElementById("trip_id").value
+
+                // Update database by adding driver information
+                const updatePaymentStatus = await fetch(
+                    `__test_gateway.php`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            trip_id: trip_id,
+                            status: "ongoing",
+                            driver_id: document.getElementById("driver_id")
+                                .value
+                        })
+                    })
+
+                const paymentStatusRespons = await updatePaymentStatus.json()
+
+                console.log(paymentStatusRespons)
+                if (paymentStatusRespons.status == 'success') {
+                    window.location.href = "../index.php"
+                }
+
+
             },
             onPending: function(result) {
-                const urlParams = new URLSearchParams(result)
-                const url = "pembayaran.php?" + urlParams.toString();
-                fetch(url)
-
+                // const urlParams = new URLSearchParams(result);
+                // const url = "pembayaran.php?" + urlParams.toString();
+                // fetch(url)
                 snapContainer.style.display = 'none';
 
                 enableCancelPayment(result)
@@ -386,12 +403,16 @@
                 window.location.href =
                     "../index.php"
             },
-            onClose: function(e) {
-                console.log("close")
-                fetch("gateway.php?token=" + token);
+            onClose: function(result) {
+                // get payment status on midtrans
+
+
                 snapContainer.style.display = 'none';
             }
-        });
+        }
+
+        console.log(token)
+        window.snap.embed(token.token, snapOptions);
     }
     payButton.addEventListener('click', handlePayment);
     </script>

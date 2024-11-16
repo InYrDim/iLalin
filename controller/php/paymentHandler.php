@@ -1,6 +1,6 @@
 <?php
 
-include 'midtrans.php';
+include('midtrans.php');
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
@@ -24,7 +24,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
         
-        $midtrans = new Midtrans();
+        $midtrans = new IlalinMidtrans();
         
         $order_id = trim($postJson['order_id']);
         
@@ -42,9 +42,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
                 
             case 'cancelPayment':
-                $refundStatus = $midtrans->cancelPaymentByOrderId($order_id);
+                $cancelStatus = $midtrans->cancelPaymentByOrderId($order_id);
                 header('Content-Type: application/json');
-                echo $refundStatus;
+                echo $cancelStatus;
                 break;
                 
             default:

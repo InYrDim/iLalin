@@ -439,6 +439,9 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script>
     function updateTripsByDriverWithIsAccepted(el) {
+        if (!confirm("yakin ingin menolak?")) {
+            return;
+        }
         const driver_id = el.dataset.driverId;
         const trip_id = el.dataset.tripId;
 
@@ -455,8 +458,45 @@ if(isset($_SESSION['driver_id']) && $_SESSION['driver_id']) {
                 }),
             }).then(response => response.json())
             .then(data => {
-                alert(`${data.message}`)
-                location.reload();
+
+                const updatePaymentStatus = fetch(
+                        `../controller/php/tripsHandler.php`, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                action: 'updateTripStatus',
+                                trip_id: trip_id,
+                                status: "cancelled",
+                                clearToken: "yes"
+                            })
+                        })
+                    .then(resp => resp.json())
+                    .then(data => {
+
+                        document.body.innerHTML += `    <!-- Cancel Alert Componet -->
+    <div id="alert-modal" tabindex="-1"
+        class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bottom-0 z-[9999999999999999] flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="py-10 text-center">
+                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 class="text-lg font-normal text-gray-500 dark:text-gray-400">Trip Declined Succesfully
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>`
+
+                        setTimeout(() => {
+                            location.reload();
+                        }, 3000)
+                    })
+
+                // alert(`${data.message}`)
+                // location.reload();
             })
     }
     </script>

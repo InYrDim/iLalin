@@ -193,7 +193,8 @@ $email=$_SESSION['email'];
                                             </td>
 
                                             <!-- Trip Status -->
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 flex justify-center gap-1">
                                                 <p
                                                     class="w-fit px-2 py-1 rounded sm
                                                             <?= $trip['status'] === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' ?>
@@ -201,6 +202,11 @@ $email=$_SESSION['email'];
                                                             <?= $trip['status'] === 'completed' ? 'bg-green-100 text-green-700' : '' ?>
                                                             <?= $trip['status'] === 'cancelled' ? 'bg-red-100 text-red-700' : '' ?>">
                                                     <?= $trip['status'] ?>
+                                                </p>
+                                                <p class="w-fit px-2 py-1 rounded sm
+                                                            <?= isset($trip['is_accepted']) && $trip['is_accepted'] === "accepted" ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' ?>
+                                                    ">
+                                                    <?php echo isset($trip['is_accepted']) && $trip['is_accepted'] === "accepted" ? $trip['is_accepted'] : 'declined' ?>
                                                 </p>
                                             </td>
 
@@ -237,7 +243,7 @@ $email=$_SESSION['email'];
                                                                 `../controller/php/paymentHandler.php`, {
                                                                     method: 'POST',
                                                                     body: JSON.stringify({
-                                                                        action: 'refundPayment',
+                                                                        action: 'cancelPayment',
                                                                         order_id: order_id,
                                                                     })
                                                                 }
@@ -489,7 +495,7 @@ $email=$_SESSION['email'];
     function continueProcessingTrip(trip_id) {
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = "action/gateway.php";
+        form.action = "action/__test_gateway.php";
 
         const tripIdInput = document.createElement("input");
         tripIdInput.type = "hidden";

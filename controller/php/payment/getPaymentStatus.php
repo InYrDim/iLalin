@@ -20,7 +20,7 @@ function paymentStatus($order_id) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
     // Execute cURL session
-    $response = curl_exec(handle: $curl);
+    $response = curl_exec($curl);
 
     // Check for errors
     if ($response === false) {

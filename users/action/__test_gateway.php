@@ -5,7 +5,8 @@ ini_set('display_errors', 1);
 session_start();
 
 if(!isset($_SESSION['email'])) { 
-    echo "no session";
+
+    header("location: /auth/login.php");
     exit;
 }
 
@@ -61,8 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     $driver = new Driver();
                     $avaiable_driver = $driver->getAvaiableDriverAndCar();
-                    
-                   
+
                     if (!$avaiable_driver) {
                         http_response_code(404);
 
