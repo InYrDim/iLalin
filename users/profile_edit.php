@@ -1,17 +1,20 @@
 <?php
 session_start();
 
+
+include ('../controller/php/ilalin.php')  ;
+
+// validate is user logged in
+include('../controller/php/utils/validation/session_validator.php');
+
 $active_page = "users";
-
-include '../controller/php/ilalin.php'  ;
-
 $email = $_SESSION['email'];
 
-if(isset($email)) {
-    
+
     
     
     $db = new Database();
+    $profileHandler = new ProfileController();
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Checkcropper.toStringf the file is uploaded
@@ -45,7 +48,7 @@ if(isset($email)) {
                 );
   
                 if ($updateDb) {
-                    echo "Profile updated successfully.";
+                    // echo "Profile updated successfully.";
                     
                     $_SESSION['email'] = $email;
 
@@ -57,10 +60,11 @@ if(isset($email)) {
         }
         else {
             $json_data = json_decode(file_get_contents('php://input'), true);
+            
             $imageString = $json_data['image'];
-            $updateDb = $db->update('users', [
-                'profile_image' => $imageString,
-            ], 'email = ?', [$email] );
+
+            $updateProfile = $profileHandler->replaceImage($email, $imageString, "users");
+
         }
         
    
@@ -263,11 +267,3 @@ if(isset($email)) {
 </body>
 
 </html>
-
-
-<?php
-} else {
-    echo "ss";
-    exit();
-}
-?>

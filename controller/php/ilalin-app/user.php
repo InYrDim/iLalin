@@ -1,13 +1,22 @@
 <?php
-include_once(__DIR__.'/ilalin_app.php');
+
 class UserController extends IlalinApp {
-    
-    // Update user profile information
+
+    /**
+     * Update user profile information.
+     *
+     * @param int $userId User ID to update.
+     * @param string $username New username.
+     * @param string $email New email address.
+     * @param string $phone New phone number.
+     *
+     * @return string Status message.
+     */
     public function updateUserProfile($userId, $username, $email, $phone) {
         try {
             // Check if email already exists for another user
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE email = ? AND id != ?',
+                'SELECT * FROM users WHERE email = ? AND id != ?',
                 ['si', $email, $userId]
             );
             if ($stmt->get_result()->num_rows > 0) {
@@ -16,7 +25,7 @@ class UserController extends IlalinApp {
 
             // Update user information
             $this->db->query(
-                'UPDATE Users SET username = ?, email = ?, phone = ? WHERE id = ?',
+                'UPDATE users SET username = ?, email = ?, phone = ? WHERE id = ?',
                 ['sssi', $username, $email, $phone, $userId]
             );
 
@@ -26,23 +35,31 @@ class UserController extends IlalinApp {
         }
     }
 
-    // Change user password
+    /**
+     * Change user password.
+     *
+     * @param int $userId User ID to change password.
+     * @param string $currentPassword Current password.
+     * @param string $newPassword New password.
+     *
+     * @return string Status message.
+     */
     public function changePassword($userId, $currentPassword, $newPassword) {
         try {
             // Retrieve user data
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE id = ?',
+                'SELECT * FROM users WHERE id_pengguna = ?',
                 ['i', $userId]
             );
             $user = $stmt->get_result()->fetch_assoc();
 
             if ($user && password_verify($currentPassword, $user['password'])) {
                 // Hash the new password
-                $newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+                $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
                 // Update the password
                 $this->db->query(
-                    'UPDATE Users SET password = ? WHERE id = ?',
+                    'UPDATE users SET password = ? WHERE id_pengguna = ?',
                     ['si', $newPasswordHash, $userId]
                 );
 
@@ -55,11 +72,17 @@ class UserController extends IlalinApp {
         }
     }
 
-    // Get user by ID
+    /**
+     * Get user by ID.
+     *
+     * @param int $userId User ID to retrieve.
+     *
+     * @return array|bool User data if found, false otherwise.
+     */
     public function getUserById($userId) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE id = ?',
+                'SELECT * FROM users WHERE id = ?',
                 ['i', $userId]
             );
             $user = $stmt->get_result()->fetch_assoc();
@@ -74,10 +97,14 @@ class UserController extends IlalinApp {
         }
     }
 
-    // List all users (for admin functionality)
+    /**
+     * List all users (for admin functionality).
+     *
+     * @return array All users.
+     */
     public function listAllUsers() {
         try {
-            $stmt = $this->db->query('SELECT * FROM Users');
+            $stmt = $this->db->query('SELECT * FROM users');
             $users = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             return $users; // Return all users
@@ -86,11 +113,17 @@ class UserController extends IlalinApp {
         }
     }
 
-    // Search users by name or email
+    /**
+     * Search users by name or email.
+     *
+     * @param string $searchTerm Search term to search for users.
+     *
+     * @return array Matched users.
+     */
     public function searchUsers($searchTerm) {
         try {
             $stmt = $this->db->query(
-                'SELECT * FROM Users WHERE username LIKE ? OR email LIKE ?',
+                'SELECT * FROM users WHERE username LIKE ? OR email LIKE ?',
                 ['ss', "%$searchTerm%", "%$searchTerm%"]
             );
             $users = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

@@ -1,57 +1,55 @@
 <?php
 session_start();
 
+
+include ('../controller/php/ilalin.php')  ;
+
+// validate is user logged in
+include('../controller/php/utils/validation/session_validator.php');
+
 $active_page = "users";
-
-include '../controller/php/database.php'  ;
-
 $email = $_SESSION['email'];
 
-if(isset($email)) {
     
-    $db = new Database();
+$db = new Database();
+$profileController = new UserController();
+
+// get Current User Logged In data
+$profile = $profileController->getUserProfile($email);
+
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+        include_once('../controller/php/utils/alertUtils.php');
+        $utils = new AlertUtils();
+
         // Checkcropper.toStringf the file is uploaded
         if (isset($_POST["ubah_password"])) {
             // Password Handling
             $password_saat_ini = filter_input(INPUT_POST, 'password_saat_ini', FILTER_SANITIZE_STRING);
             $password_baru = filter_input(INPUT_POST, 'password_baru', FILTER_SANITIZE_STRING);
             $konfirmasi_password_baru = filter_input(INPUT_POST, 'konfirmasi_password_baru', FILTER_SANITIZE_STRING);
-        
-            // Validate email
-            if ($email === false) {
-                echo "Email is not valid.";
-            } else {
-                // Check current password
-                $user = $db->fetch('users', "password", 'email = ?', [$email]);
-                
-                if ($user && password_verify($password_saat_ini, $user['password'])) {
+            
+            $user = $profileController->getUserProfile($email);
+
+            if ($user && password_verify($password_saat_ini, $user['password'])) {
+                if ($password_baru === $konfirmasi_password_baru) {
+                    $updatePassword = $profileController->changePassword($user['id_pengguna'], $password_saat_ini, $password_baru);
+
                     
-                    // Check if new password matches confirmation
-                    if ($password_baru === $konfirmasi_password_baru) {
+                    $utils->alertComponent("Password Notif!", $updatePassword);
+                    $utils->renderRedirectScript(1000, "keamanan.php");
                     
-                        // Hash the new password
-                        $hashedPassword = password_hash($password_baru, PASSWORD_DEFAULT);
-                        
-                        // Prepare the update query
-                        $updateDb = $db->update('users', [
-                            'password' => $hashedPassword,
-                        ], 'email = ?', [$email]);
-        
-                        if ($updateDb) {
-                            echo "<script>alert('Update Password Succesfuly')</script>";
-                        } else {
-                            echo "<script>alert('Failed to update profile.')</script>";
-                        }
-                    } else {
-                        echo "<script>alert('New password and confirmation do not match.')</script>";
-                    }
                 } else {
-                    echo "<script>alert('Current password is incorrect.')</script>";
+                    $utils->alertComponent("New password and confirmation do not match.");
+                    $utils->renderRedirectScript(1000, "keamanan.php");
                 }
+            } else {
+                $utils->alertComponent("'Current password is incorrect.");
+                $utils->renderRedirectScript(1000, "keamanan.php");
             }
         }
+
         else {
             $json_data = json_decode(file_get_contents('php://input'), true);
             $imageString = $json_data['image'];
@@ -62,7 +60,7 @@ if(isset($email)) {
             
     }
 
-    $profile = $db->fetch('users', "*", 'email = ?', [$email]);
+   
 
 ?>
 
@@ -83,11 +81,6 @@ if(isset($email)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Leafet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 
     <!-- Bootstrap CSS -->
     <!-- <link href="../css/bootstrap.min.css" rel="stylesheet" /> -->
@@ -136,9 +129,13 @@ if(isset($email)) {
             </div>
 
             <div style="">
-                <div style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;"></div>
+                <div
+                    style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;">
+                </div>
                 <div style="margin-top: 200px;">
-                    <img id="profileImage" src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>" style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
+                    <img id="profileImage"
+                        src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
+                        style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-top:30px;">
                     <div>
@@ -146,10 +143,11 @@ if(isset($email)) {
                         <span><?= $profile["email"] ?></span>
                     </div>
                     <div>
-                        <input type="file" id="fileInput" style="display: none;"
-                        onchange="changePhoto(event)">
+                        <input type="file" id="fileInput" style="display: none;" onchange="changePhoto(event)">
                         <a onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                        data-bs-target="#cropImage" style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit Foto</a>
+                            data-bs-target="#cropImage"
+                            style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit
+                            Foto</a>
                     </div>
                 </div>
                 <div style="margin-top:20px;">
@@ -158,8 +156,9 @@ if(isset($email)) {
                         <a href="keamanan.php" style="color:black; font-weight:400;">Password</a>
                         <a href="pembayaran.php">Pembayaran</a>
                     </div>
-                    <form action="" method="POST" >
-                        <div style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
+                    <form action="" method="POST">
+                        <div
+                            style="margin-top:20px; display:flex; flex-direction:column; gap:30px; color:black; padding-left: 30px;">
                             <div style="display:flex; justify-content: space-between; padding-bottom: 10px;">
                                 <div style="font-weight:500;">Password Saat Ini</div>
                                 <input name="password_saat_ini" type="password">
@@ -172,11 +171,12 @@ if(isset($email)) {
                                 <div style="font-weight:500;">Konfirmasi Password Baru</div>
                                 <input name="konfirmasi password baru" type="password">
                             </div>
-                            
+
 
                         </div>
                         <div style="display:flex; justify-content: end; margin-top: 20px;">
-                            <button type="submit" name="ubah_password" style="outline:none; border:none; background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</button>
+                            <button type="submit" name="ubah_password"
+                                style="outline:none; border:none; background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -206,7 +206,7 @@ if(isset($email)) {
                     </div>
                 </div> -->
 
-        
+
             </div>
 
 
@@ -217,22 +217,14 @@ if(isset($email)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-        <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
         integrity="sha256-noEeBltqVSH78NQZV6+oF9BnLEtCY7cKc0U90dQVF6c=" crossorigin="anonymous">
-        </script>
-        <!-- Sidebar -->
-        <script src="script/sidebar.js"></script>
+    </script>
+    <!-- Sidebar -->
+    <script src="script/sidebar.js"></script>
 
-        <!-- Custom -->
-        <script src="./script/profile/custom.js"></script>
+    <!-- Custom -->
+    <script src="./script/profile/custom.js"></script>
 </body>
 
 </html>
-
-
-<?php
-} else {
-    echo "ss";
-    exit();
-}
-?>

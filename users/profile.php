@@ -1,15 +1,18 @@
 <?php
 session_start();
 
-$active_page = "users";
+
 
 // include '../controller/php/database.php';
 include '../controller/php/ilalin.php';
 
+// validate is user logged in
+include('../controller/php/utils/validation/session_validator.php');
+
+$active_page = "users";
 $email = $_SESSION['email'];
 
-if(isset($email)) {
-    
+
     $ilalin = new IlalinApp();
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,7 +21,7 @@ if(isset($email)) {
         $imageString = $json_data['image'];
         
         // update/replace image
-        $ilalin->replaceImage($email, $imageString)    ;
+        $ilalin->replaceImage($email, $imageString);
         
     }
     
@@ -211,11 +214,3 @@ if(isset($email)) {
 </body>
 
 </html>
-
-
-<?php
-} else {
-    echo "ss";
-    exit();
-}
-?>

@@ -1,5 +1,5 @@
 <script>
-var redirectTimeout = <?= isset($redirect_location_timeout) ? $redirect_location_timeout : 0 ?>;
+var redirectTimeout = parseInt(<?= isset($redirect_location_timeout) ? $redirect_location_timeout : 1000 ?>);
 if (redirectTimeout > 0) {
     setTimeout(function() {
         location.href = "<?= $location_url ?>";

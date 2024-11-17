@@ -10,6 +10,7 @@ class Database {
     public function __construct() {
         $this->conn = new mysqli($this->host, $this->username, $this->password, $this->dbname);
         if ($this->conn->connect_error) {
+            http_response_code(500);
             die('Connection failed: ' . $this->conn->connect_error);
         }
     }
@@ -18,6 +19,7 @@ class Database {
         $stmt = $this->conn->prepare($sql);
         
         if (!$stmt) {
+            http_response_code(500);
             throw new Exception("Query preparation failed: " . $this->conn->error);
         }
     
