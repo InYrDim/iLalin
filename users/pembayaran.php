@@ -10,7 +10,6 @@ include('../controller/php/utils/validation/session_validator.php');
 $active_page = "users";
 $email = $_SESSION['email'];
 
-$ilalin = new IlalinApp();
 $profileHandler = new ProfileController();
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
 }
 
-$userProfile = $ilalin->getUserProfile($email);
+$userProfile = $profileHandler->getUserProfile($email);
 $profile = $userProfile;
 
 ?>

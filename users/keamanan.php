@@ -9,7 +9,6 @@ include('../controller/php/utils/validation/session_validator.php');
 $active_page = "users";
 $email = $_SESSION['email'];
 
-$db = new Database();
 $profileHandler = new UserController();
 
 // get Current User Logged In data
@@ -32,6 +31,7 @@ $profile = $profileHandler->getUserProfile($email);
 
             if ($user && password_verify($password_saat_ini, $user['password'])) {
                 if ($password_baru === $konfirmasi_password_baru) {
+                    
                     $updatePassword = $profileHandler->changePassword($user['id_pengguna'], $password_saat_ini, $password_baru);
                     
                     $utils->alertComponent("Password Notif!", $updatePassword);
@@ -55,7 +55,7 @@ $profile = $profileHandler->getUserProfile($email);
             
     }
 
-   
+
 
 ?>
 

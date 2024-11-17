@@ -1,13 +1,18 @@
 <?php
 session_start();
 
+// include '../controller/php/database.php';
+include '../controller/php/ilalin.php';
+
+// validate is user logged in
+include('../controller/php/utils/validation/session_validator.php');
+
 $active_page = "user_settings";
-include '../controller/php/database.php';
 $email = $_SESSION['email'];
 
-if(isset($email)) {
-    $db = new Database();
-    $profile = $db->fetch('users', '*', 'email = ?',[$email]);
+$userProfileHandler = new UserController();
+$userProfile = $userProfileHandler->getUserProfile($email);
+$profile = $userProfile;
 ?>
 
 <!DOCTYPE html>
@@ -94,10 +99,3 @@ if(isset($email)) {
 </body>
 
 </html>
-
-<?php 
-} else {
-    header("Location: ../auth/login.php");
-    exit();
-}
-?>
