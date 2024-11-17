@@ -12,21 +12,19 @@ include('../controller/php/utils/validation/session_validator.php');
 $active_page = "users";
 $email = $_SESSION['email'];
 
-
-    $ilalin = new IlalinApp();
-    // Check if the request method is POST
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Checkcropper.toStringf the file is uploaded
-        $json_data = json_decode(file_get_contents('php://input'), true);
-        $imageString = $json_data['image'];
-        
-        // update/replace image
-        $ilalin->replaceImage($email, $imageString);
-        
-    }
+$ilalin = new IlalinApp();
+$profileHandler = new ProfileController();
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Checkcropper.toStringf the file is uploaded
+    $json_data = json_decode(file_get_contents('php://input'), true);            
+    $imageString = $json_data['image'];
+    $updateProfile = $profileHandler->replaceImage($email, $imageString, "users");
     
-    $userProfile = $ilalin->getUserProfile($email);
-    $profile = $userProfile;
+}
+
+$userProfile = $ilalin->getUserProfile($email);
+$profile = $userProfile;
 ?>
 
 <!DOCTYPE html>
@@ -98,7 +96,7 @@ $email = $_SESSION['email'];
                 </div>
             </div>
 
-            <div style="">
+            <div class="mb-5">
                 <div
                     style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;">
                 </div>
@@ -163,32 +161,6 @@ $email = $_SESSION['email'];
                 </div>
             </div>
 
-            <div class="row gutters-sm pt-5">
-                <!-- <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center text-center">
-                                <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
-                                    alt="User" id="profileImage">
-                                <div class="mt-3">
-
-                                    <h4><?= $profile['nama'] ?></h4>
-                                    <p class="text-secondary mb-1"><?= $profile['email'] ?></p>
-                                    <p class="text-muted font-size-sm">Sulawesi Selatan, Indonesia</p>
-                                    <button class="btn btn-primary"
-                                        onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                                        data-bs-target="#cropImage"><i class="ri-edit-box-line"></i> Edit Foto</button>
-                                    <input type="file" id="fileInput" style="display: none;"
-                                        onchange="changePhoto(event)">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-
-            </div>
 
 
         </div>

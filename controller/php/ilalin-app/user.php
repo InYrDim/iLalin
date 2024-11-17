@@ -1,6 +1,6 @@
 <?php
-
-class UserController extends IlalinApp {
+include_once(__DIR__.'/profile.php');
+class UserController extends ProfileController {
 
     /**
      * Update user profile information.

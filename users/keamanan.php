@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 include ('../controller/php/ilalin.php')  ;
 
 // validate is user logged in
@@ -10,12 +9,11 @@ include('../controller/php/utils/validation/session_validator.php');
 $active_page = "users";
 $email = $_SESSION['email'];
 
-    
 $db = new Database();
-$profileController = new UserController();
+$profileHandler = new UserController();
 
 // get Current User Logged In data
-$profile = $profileController->getUserProfile($email);
+$profile = $profileHandler->getUserProfile($email);
 
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -30,12 +28,11 @@ $profile = $profileController->getUserProfile($email);
             $password_baru = filter_input(INPUT_POST, 'password_baru', FILTER_SANITIZE_STRING);
             $konfirmasi_password_baru = filter_input(INPUT_POST, 'konfirmasi_password_baru', FILTER_SANITIZE_STRING);
             
-            $user = $profileController->getUserProfile($email);
+            $user = $profileHandler->getUserProfile($email);
 
             if ($user && password_verify($password_saat_ini, $user['password'])) {
                 if ($password_baru === $konfirmasi_password_baru) {
-                    $updatePassword = $profileController->changePassword($user['id_pengguna'], $password_saat_ini, $password_baru);
-
+                    $updatePassword = $profileHandler->changePassword($user['id_pengguna'], $password_saat_ini, $password_baru);
                     
                     $utils->alertComponent("Password Notif!", $updatePassword);
                     $utils->renderRedirectScript(1000, "keamanan.php");
@@ -51,11 +48,9 @@ $profile = $profileController->getUserProfile($email);
         }
 
         else {
-            $json_data = json_decode(file_get_contents('php://input'), true);
+            $json_data = json_decode(file_get_contents('php://input'), true);            
             $imageString = $json_data['image'];
-            $updateDb = $db->update('users', [
-                'profile_image' => $imageString,
-            ], 'email = ?', [$email] );
+            $updateProfile = $profileHandler->replaceImage($email, $imageString, "users");
         }
             
     }
@@ -63,6 +58,7 @@ $profile = $profileController->getUserProfile($email);
    
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +77,11 @@ $profile = $profileController->getUserProfile($email);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Leafet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 
     <!-- Bootstrap CSS -->
     <!-- <link href="../css/bootstrap.min.css" rel="stylesheet" /> -->
@@ -128,7 +129,7 @@ $profile = $profileController->getUserProfile($email);
                 </div>
             </div>
 
-            <div style="">
+            <div class="mb-5">
                 <div
                     style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;">
                 </div>
@@ -182,32 +183,6 @@ $profile = $profileController->getUserProfile($email);
                 </div>
             </div>
 
-            <div class="row gutters-sm pt-5">
-                <!-- <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center text-center">
-                                <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
-                                    alt="User" id="profileImage">
-                                <div class="mt-3">
-
-                                    <h4><?= $profile['nama'] ?></h4>
-                                    <p class="text-secondary mb-1"><?= $profile['email'] ?></p>
-                                    <p class="text-muted font-size-sm">Sulawesi Selatan, Indonesia</p>
-                                    <button class="btn btn-primary"
-                                        onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                                        data-bs-target="#cropImage"><i class="ri-edit-box-line"></i> Edit Foto</button>
-                                    <input type="file" id="fileInput" style="display: none;"
-                                        onchange="changePhoto(event)">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-
-            </div>
 
 
         </div>

@@ -1,32 +1,31 @@
 <?php
 session_start();
 
+
+include ('../controller/php/ilalin.php')  ;
+
+// validate is user logged in
+include('../controller/php/utils/validation/session_validator.php');
+
 $active_page = "users";
-
-include '../controller/php/database.php'  ;
-
 $email = $_SESSION['email'];
 
-if(isset($email)) {
+$ilalin = new IlalinApp();
+$profileHandler = new ProfileController();
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Checkcropper.toStringf the file is uploaded
+    $json_data = json_decode(file_get_contents('php://input'), true);            
+    $imageString = $json_data['image'];
+    $updateProfile = $profileHandler->replaceImage($email, $imageString, "users");
     
-    
-    $db = new Database();
-    // Check if the request method is POST
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Checkcropper.toStringf the file is uploaded
-        $json_data = json_decode(file_get_contents('php://input'), true);
+}
 
-        $imageString = $json_data['image'];
-        
-        $updateDb = $db->update('users', [
-            'profile_image' => $imageString,
-        ], 'email = ?', [$email] );
-            
-    }
-
-    $profile = $db->fetch('users', "*", 'email = ?', [$email]);
+$userProfile = $ilalin->getUserProfile($email);
+$profile = $userProfile;
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -95,10 +94,14 @@ if(isset($email)) {
                 </div>
             </div>
 
-            <div style="">
-                <div style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;"></div>
+            <div class="mb-5">
+                <div
+                    style="background-color: #23321F; height: 230px; position: absolute; bottom:90%; left:0; right:0; z-index: -100;">
+                </div>
                 <div style="margin-top: 200px;">
-                    <img id="profileImage" src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>" style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
+                    <img id="profileImage"
+                        src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
+                        style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-top:30px;">
                     <div>
@@ -106,23 +109,26 @@ if(isset($email)) {
                         <span><?= $profile["email"] ?></span>
                     </div>
                     <div>
-                        <input type="file" id="fileInput" style="display: none;"
-                        onchange="changePhoto(event)">
+                        <input type="file" id="fileInput" style="display: none;" onchange="changePhoto(event)">
                         <a onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                        data-bs-target="#cropImage" style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit Foto</a>
+                            data-bs-target="#cropImage"
+                            style="background-color:#D9D9D9; color: black; border-radius:10px; padding-inline:20px; padding-block:12px;">Edit
+                            Foto</a>
                     </div>
                 </div>
                 <div style="margin-top:20px;">
                     <div style="display:flex; gap:90px;border-bottom:3px solid #3B5D50; padding-bottom: 2px;">
-                        <a href= "profile.php" style="color:black; font-weight:400;">Profile</a>
-                        <a href= "keamanan.php">Password</a>
-                        <a href= "pembayaran.php">Pembayaran</a>
+                        <a href="profile.php" style="color:black; font-weight:400;">Profile</a>
+                        <a href="keamanan.php">Password</a>
+                        <a href="pembayaran.php">Pembayaran</a>
                     </div>
-                    <div style="display:flex; justify-content: space-between; margin-top:20px;  gap:30px; color:black; padding-left: 30px;">
-                        
+                    <div
+                        style="display:flex; justify-content: space-between; margin-top:20px;  gap:30px; color:black; padding-left: 30px;">
+
                         <div>Metode Pembayaran Default</div>
                         <div class="mb-3">
-                            <select class="form-select" id="metodepembayaran" name="metodepembayaran" style="background-color:#D9D9D9"required>
+                            <select class="form-select" id="metodepembayaran" name="metodepembayaran"
+                                style="background-color:#D9D9D9" required>
                                 <option value="">Pilih Metode Pembayaran</option>
                                 <option value="COD">COD</option>
                                 <option value="BCA">BCA</option>
@@ -135,40 +141,15 @@ if(isset($email)) {
                             </select>
                         </div>
 
-                    
+
                     </div>
                     <div style="display:flex; justify-content: end; margin-top: 200px;gap: 5px;">
-                        <a href="pembayaran.php" style="background-color:red; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Batal</a>
-                        <a style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</a>
+                        <a href="pembayaran.php"
+                            style="background-color:red; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Batal</a>
+                        <a
+                            style="background-color:#37574B; color: white; border-radius:10px; padding-inline:20px; padding-block:10px;">Simpan</a>
                     </div>
                 </div>
-            </div>
-
-            <div class="row gutters-sm pt-5">
-                <!-- <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center text-center">
-                                <img src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
-                                    alt="User" id="profileImage">
-                                <div class="mt-3">
-
-                                    <h4><?= $profile['nama'] ?></h4>
-                                    <p class="text-secondary mb-1"><?= $profile['email'] ?></p>
-                                    <p class="text-muted font-size-sm">Sulawesi Selatan, Indonesia</p>
-                                    <button class="btn btn-primary"
-                                        onclick="document.getElementById('fileInput').click();" data-bs-toggle="modal"
-                                        data-bs-target="#cropImage"><i class="ri-edit-box-line"></i> Edit Foto</button>
-                                    <input type="file" id="fileInput" style="display: none;"
-                                        onchange="changePhoto(event)">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-        
             </div>
 
 
@@ -179,22 +160,14 @@ if(isset($email)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-        <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/croppie@2.6.5/croppie.min.js"
         integrity="sha256-noEeBltqVSH78NQZV6+oF9BnLEtCY7cKc0U90dQVF6c=" crossorigin="anonymous">
-        </script>
-        <!-- Sidebar -->
-        <script src="script/sidebar.js"></script>
+    </script>
+    <!-- Sidebar -->
+    <script src="script/sidebar.js"></script>
 
-        <!-- Custom -->
-        <script src="./script/profile/custom.js"></script>
+    <!-- Custom -->
+    <script src="./script/profile/custom.js"></script>
 </body>
 
 </html>
-
-
-<?php
-} else {
-    echo "ss";
-    exit();
-}
-?>
