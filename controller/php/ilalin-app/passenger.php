@@ -23,7 +23,7 @@ class Passenger extends IlalinApp {
         try {
             // Query to select all users with the role of 'penumpang'
             $stmt = $this->db->query(
-                'SELECT * FROM users WHERE peran = "penumpang"'
+                'SELECT * FROM users'
             );
             $passengers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -52,7 +52,7 @@ class Passenger extends IlalinApp {
 
             // Find related trips for the given email
             $trips = $this->db->query(
-                'SELECT * FROM Trips WHERE email = ? ',
+                'SELECT * FROM trips WHERE email = ? ',
                 ['s', $userEmail]
             )->get_result()->fetch_all(MYSQLI_ASSOC);
 

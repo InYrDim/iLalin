@@ -101,7 +101,7 @@ $profile = $userProfile;
                 <div style="margin-top: 200px;">
                     <img id="profileImage"
                         src="<?= strpos($profile['profile_image'], 'data:image') === 0 ? $profile['profile_image'] : 'data:image/jpeg;base64,' . $profile['profile_image'] ?>"
-                        style="border-radius:100%;overflow:hidden; widht:160px; height:160px;" alt="">
+                        style="border-radius:100%;overflow:hidden; width:160px; height:160px;" alt="">
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-top:30px;">
                     <div>

@@ -29,7 +29,10 @@ if (isset($_SESSION['logged_in'])){
     <meta name="keywords" content="bootstrap, bootstrap4" />
 
     <!-- Vendor -->
-    <link href="../admin/assets/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <!-- 1. Remix Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.4.0/remixicon.min.css"
+        integrity="sha512-6sfYTBLNjOZhwJ5g/J0529qHqIdXxO1BycUHd1LIJjEzVCzX8cHtoXDgd+ylrqCl/OZM/RMDgkn2Dd41lJsJjw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Bootstrap CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />

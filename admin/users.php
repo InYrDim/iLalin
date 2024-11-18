@@ -281,10 +281,10 @@ if(isset($_SESSION['email'])) {
                                         <a href=""><?= $passenger['username'] ?></a>
                                     </td>
                                     <td class=" px-6 py-4">
-                                        <?= $passenger['alamat'] ?>
+                                        <?= $passenger['nama'] ?>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <?= $passenger['nama'] ?>
+                                        <?= $passenger['alamat'] ?>
                                     </td>
                                     <td class="px-6 py-4">
                                         <?= $passenger['email'] ?>
@@ -327,6 +327,12 @@ if(isset($_SESSION['email'])) {
         if (dataset.hasOwnProperty('passengerId')) {
             const email = dataset.passengerEmail;
 
+            const confirmDelete = confirm(`Anda yakin ingin menghapus data penumpang dengan email ${email}?`);
+
+            if (!confirmDelete) {
+                return;
+            }
+
             fetch("../controller/php/passengerHandler.php", {
                     method: "POST",
                     headers: {
@@ -344,6 +350,14 @@ if(isset($_SESSION['email'])) {
 
         } else if (dataset.hasOwnProperty('driverId')) {
             const id = dataset.driverId;
+
+            const confirmDelete = confirm(`Anda yakin ingin menghapus data driver dengan id ${id}?`);
+
+            if (!confirmDelete) {
+                return;
+            }
+
+
             fetch("../controller/php/driversHandler.php", {
                     method: "POST",
                     headers: {

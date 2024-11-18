@@ -1,6 +1,6 @@
 <?php
 
-include_once 'ilalin.php';
+include_once ('ilalin.php');
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
@@ -10,12 +10,17 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(isset($postJson['action'])) {
         
         $passenger = new Passenger();
+
+        include_once('./utils/alertUtils.php');
+        $utils = new AlertUtils();
         
         switch($postJson['action']) {
             case 'deletePassengerById':
                 $passengerEmail = isset($postJson['passenger_email'])? trim($postJson['passenger_email']) : null;
                 if($passengerEmail) {
-                    $passenger->deletePassengerByEmail($passengerEmail);
+
+
+
                     echo json_encode([
                         'status' => 'success',
                         'message' => 'Passenger deleted successfully'

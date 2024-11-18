@@ -190,10 +190,11 @@ include_once '../controller/php/ilalin.php';
                                 <?php foreach($trips as $trip){?>
 
                                 <tr class="bg-white" data-trip-Id="<?= $trip['trip_id'] ?>">
-                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap r"
+                                    <td class="px-6 py-4 font-medium text-como-900 whitespace-nowrap r cursor-pointer hover:underline"
                                         data-modal-target="<?= $trip['trip_id'] ?>"
                                         data-modal-toggle="<?= $trip['trip_id'] ?>">
-                                        <i class="ri-links-line"></i> <?= $trip['name'] ?>
+                                        <i class="ri-links-line"></i>
+                                        <?= !empty($trip['name']) ? $trip['name'] : 'Perjalanan Tanpa Nama' ?>
                                     </td>
                                     <td class="px-6 py-4">
                                         <?= $trip['email'] ?>
@@ -243,7 +244,7 @@ include_once '../controller/php/ilalin.php';
                                                 <div>
                                                     <h3 class="text-xl font-semibold text-como-90"
                                                         id=" <?= $trip['name'] ?>">
-                                                        <?= $trip['name'] ?>
+                                                        <?= !empty($trip['name']) ? $trip['name'] : 'Perjalanan Tanpa Nama' ?>
                                                     </h3>
                                                     <span class="inline-block text-como-300 text-sm italic">TripID:
                                                         <?= $trip['trip_id'] ?></span>

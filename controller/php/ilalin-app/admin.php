@@ -19,7 +19,7 @@ class Admins extends IlalinApp {
     public function getAllAdmins() {
         try {
             // Query to fetch all admin users
-            $stmt = $this->db->query('SELECT * FROM Admins');
+            $stmt = $this->db->query('SELECT * FROM admins');
             
             // Fetch all results as an associative array
             $admins = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

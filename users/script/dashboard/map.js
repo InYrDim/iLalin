@@ -1,4 +1,12 @@
-// Utility function to debounce events.
+/**
+ * Returns a debounced version of the given function. The returned function will
+ * only trigger the given function after a given delay has passed since the last
+ * call to the returned function.
+ * @param {function} func The function to debounce.
+ * @param {number} delay The delay in milliseconds.
+ * @returns {function}
+ */
+
 function debounce(func, delay) {
   let timeoutId;
   return function (...args) {
@@ -7,7 +15,12 @@ function debounce(func, delay) {
   };
 }
 
-// Utility function to create elements with specific classes.
+/**
+ * Creates a new DOM element with the specified name and adds the given classes to it.
+ * @param {string} elname - The name of the element to create.
+ * @param {string[]} classList - An array of class names to add to the element.
+ * @returns {HTMLElement} The created element with the specified classes.
+ */
 function createElement(elname, classList) {
   const el = document.createElement(elname);
   el.classList.add(...classList);
@@ -493,7 +506,6 @@ function processRouting() {
     document.getElementById(
       "routingDistanceId"
     ).innerText = `${distanceInKm} km`;
-
     const dataToSend = {
       name: route.name,
       time: timeCostInMinutes,
