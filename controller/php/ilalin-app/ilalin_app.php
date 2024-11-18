@@ -2,15 +2,47 @@
 
 
 
+/**
+ * IlalinApp
+ *
+ * Handles general operations and utility functions within the app.
+ *
+ * @package IlalinApp
+ * @since   1.0.0
+ */
 class IlalinApp {
+    /**
+     * Database instance
+     * @var Database
+     */
     protected $db;
+    /**
+     * Utilities instance
+     * @var IlalinUtils
+     */
     protected $utils;
 
+    /**
+     * Constructor
+     *
+     * @param IlalinUtils $utils Optional utilities instance to use.
+     */
     public function __construct(IlalinUtils $utils = null) {
         $this->db = new Database();
         $this->utils = $utils ?? new IlalinUtils(); // Use the provided $utils or create a new instance.
     }    
 
+
+    /**
+     * Deletes a user and all associated records.
+     *
+     * This includes removing the user record, trips, and payments associated
+     * with the user.
+     *
+     * @param int $userId User ID to delete.
+     *
+     * @return string Status message.
+     */
     public function deleteUser($userId) {
         try {
             $this->db->beginTransaction(); // Start a transaction
@@ -45,6 +77,13 @@ class IlalinApp {
             echo "Failed to delete user: " . $e->getMessage();
         }
     }
+    /**
+     * Retrieves a user profile by email.
+     *
+     * @param string $email Email address of the user to retrieve.
+     *
+     * @return array|string User data if found, "User not found" if not.
+     */
     public function getUserProfile($email) {
         try {
             // Retrieve user profile based on email
@@ -63,6 +102,14 @@ class IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         }
     }
+    /**
+     * Replace the user's profile image.
+     *
+     * @param string $email Email address of the user to update.
+     * @param string $imageString New image string.
+     *
+     * @return string Status message.
+     */
     public function replaceImage($email, $imageString) {
         try {
             // Update the user's profile image

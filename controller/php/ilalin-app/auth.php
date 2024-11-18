@@ -1,39 +1,70 @@
 <?php
 include_once(__DIR__.'/ilalin_app.php');
+
+
+/**
+ * Class Auth
+ *
+ * Handles user authentication operations such as registration, login,
+ * session management, and logout.
+ *
+ * @package IlalinApp
+ */
 class Auth extends IlalinApp {
+    /**
+     * @var string User type (e.g., 'user', 'admin', 'driver')
+     */
     protected $userType;
 
+    /**
+     * Auth constructor.
+     *
+     * @param string $userType Type of user (default is 'user')
+     * @param IlalinUtils|null $utils Utility class instance
+     */
     public function __construct($userType = 'user', IlalinUtils $utils = null) {
         parent::__construct($utils);
         $this->userType = $userType;
     }
 
-    // Determine table based on user type
+    /**
+     * Determine the table name based on user type.
+     *
+     * @return string Table name
+     */
     private function getTableName() {
         return $this->userType === 'admin' ? 'Admins' : 'Users';
     }
 
-
-    // Register a new user
+    /**
+     * Register a new user or driver.
+     *
+     * @param string $table Table name ('users' or 'drivers')
+     * @param array $data User data containing 'username', 'email', 'password', 'phone', 'image'
+     * @return string Status message
+     */
     public function register($table, $data = []) {
         try {
+            // Extract user data
             $username = $data['username'];
             $email = $data['email'];
             $password = $data['password'];
             $phone = $data['phone'];
             $imageString = $data['image'];
-            
+
+            // Check if the email is already registered
             $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
-            
             if ($stmt->get_result()->num_rows > 0) {
                 return "Email already registered!";
             }
+
             // Hash the password
             $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-            
+
+            // Insert user data into the appropriate table
             if ($table === 'users') {
                 $this->db->query(
-                    "INSERT INTO users (username, email, nomor_telepon,  password, profile_image ) VALUES (?, ?, ?, ?, ?)",
+                    "INSERT INTO users (username, email, nomor_telepon, password, profile_image) VALUES (?, ?, ?, ?, ?)",
                     ['sssss', $username, $email, $phone, $passwordHash, $imageString]
                 );
             } elseif ($table === 'drivers') {
@@ -42,37 +73,44 @@ class Auth extends IlalinApp {
                     ['sssss', $username, $email, $phone, $passwordHash, $imageString]
                 );
             }
-            
+
+            // Initialize session
             session_start();
             session_regenerate_id(true);
             $_SESSION['nama'] = $data['username'];
             $_SESSION['email'] = $data['email'];
             $_SESSION['user_type'] = $table;
             $_SESSION['logged_in'] = true;
-            
+
             return "Created in successfully!";
         } catch (Exception $e) {
             return "Failed to register user: " . $e->getMessage();
         }
     }
 
-    // Log in a user or admin
+    /**
+     * Log in a user or driver.
+     *
+     * @param string $email User's email
+     * @param string $password User's password
+     * @param string|null $table Table name (defaults to userType's table)
+     * @return string Status message
+     */
     public function login($email, $password, $table = null) {
         try {
             $table = $table ?? $this->getTableName();
             $stmt = $this->db->query("SELECT * FROM $table WHERE email = ?", ['s', $email]);
             $user = $stmt->get_result()->fetch_assoc();
 
-            if(!isset($user['password'])) {
-                if(isset($user['password_hash'])) {
-                    $user['password'] = $user['password_hash'];
-                }
+            // Adjust field names for different user types
+            if (!isset($user['password'])) {
+                $user['password'] = $user['password_hash'] ?? null;
             }
-            if(!isset($user['nama'])) {
-                if(isset($user['name'])) {
-                    $user['nama'] = $user['name'];
-                }
+            if (!isset($user['nama'])) {
+                $user['nama'] = $user['name'] ?? null;
             }
+
+            // Verify password and initialize session if successful
             if ($user && password_verify($password, $user['password'])) {
                 session_start();
                 session_regenerate_id(true);
@@ -91,12 +129,20 @@ class Auth extends IlalinApp {
         }
     }
 
-    // Check if a user or admin is logged in
+    /**
+     * Check if a user is logged in.
+     *
+     * @return bool True if user is logged in, false otherwise
+     */
     public function isLoggedIn() {
         return isset($_SESSION['logged_in']) && $_SESSION['logged_in'];
     }
 
-    // Log out the user or admin
+    /**
+     * Log out the current user.
+     *
+     * @return string Status message
+     */
     public function logout() {
         session_unset();
         session_destroy();

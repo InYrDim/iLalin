@@ -133,4 +133,52 @@ class UserController extends ProfileController {
             return "Failed to search users: " . $e->getMessage();
         }
     }
+
+    
+    /**
+     * Update user profile information.
+     *
+     * @param int $userId User ID to update.
+     * @param string $nama New full name.
+     * @param string $username New username.
+     * @param string $email New email address.
+     * @param string $nomorTelepon New phone number.
+     * @param string $alamat New address.
+     *
+     * @return string Status message.
+     */
+    public function updateProfile($userId, $nama, $username, $email, $nomorTelepon, $alamat) {
+        try {
+            // Check if email already exists for another user
+            $stmt = $this->db->query(
+                'SELECT * FROM users WHERE email = ? AND id_pengguna != ?',
+                ['si', $email, $userId]
+            );
+            if ($stmt->get_result()->num_rows > 0) {
+                return "Email already registered to another user!";
+            }
+
+            try {
+                // start trnsaction
+                $this->db->query("START TRANSACTION");
+                
+                $this->db->query(
+                    'UPDATE users SET nama = ?, username = ?, email = ?, nomor_telepon = ?, alamat = ? WHERE id_pengguna = ?',
+                    ['sssssi', $nama, $username, $email, $nomorTelepon, $alamat, $userId]
+                    
+                );
+
+                $this->db->query("COMMIT");
+
+                return true;
+            } catch (Exception $e) {
+                $this->db->query("ROLLBACK");
+                return "Failed to update user profile: " . $e->getMessage();
+            }
+
+        
+        } catch (Exception $e) {
+            return "Failed to update user profile: " . $e->getMessage();
+        }
+    }
 }

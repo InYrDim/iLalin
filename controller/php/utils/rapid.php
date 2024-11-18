@@ -39,68 +39,68 @@ class RapidAPIClient {
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     //read php input parameters using php://infput
     header('Content-Type: application/json');
-    echo '{
-    "html_attributions" : [],
-    "results" : 
-    [
-        {
-            "business_status" : "OPERATIONAL",
-            "formatted_address" : "Pantai Tanjung Bayang, Selat, Tj. Merdeka, Kec. Tamalate, Kota Makassar, Sulawesi Selatan 90225, Indonesia",
-            "geometry" : 
-            {
-                "location" : 
-                {
-                "lat" : -5.1835531,
-                "lng" : 119.3892559
-                },
-                "viewport" : 
-                {
-                "northeast" : 
-                {
-                    "lat" : -5.1724406,
-                    "lng" : 119.4052633
-                },
-                "southwest" : 
-                {
-                    "lat" : -5.1946654,
-                    "lng" : 119.3732485
-                }
-                }
-            },
-            "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
-            "icon_background_color" : "#7B9EB0",
-            "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name" : "Pantai Tanjung Bayang",
-            "opening_hours" : 
-            {
-                "open_now" : true
-            },
-            "photos" : 
-            [
-                {
-                "height" : 393,
-                "html_attributions" : 
-                [
-                    "\u003ca href=\"https://maps.google.com/maps/contrib/108933192699493680127\"\u003eA Google User\u003c/a\u003e"
-                ],
-                "photo_reference" : "AdDdOWrYkMtfc8taqRZUkfQNo5nKItNMsPxDDbxvI11tfCQOvoR-RYdEUaz7zpyJchPlbA-VcFIXwDbAuRIjOJrUPYeVM8IyVlvzCxyle20obsCnLDQXQyqjVq9E3pAxXb7SAcVHr20entidU6MunCbEYYo0zbu1mrhi56FzPII1pXYWgopX",
-                "width" : 700
-                }
-            ],
-            "place_id" : "ChIJpxOy4aYdvy0R52UkJNsip8M",
-            "rating" : 4.1,
-            "reference" : "ChIJpxOy4aYdvy0R52UkJNsip8M",
-            "types" : 
-            [
-                "natural_feature",
-                "establishment"
-            ],
-            "user_ratings_total" : 1583
-        }
-    ],
-    "status" : "OK"
-}';
-    exit;
+//     echo '{
+//     "html_attributions" : [],
+//     "results" : 
+//     [
+//         {
+//             "business_status" : "OPERATIONAL",
+//             "formatted_address" : "Pantai Tanjung Bayang, Selat, Tj. Merdeka, Kec. Tamalate, Kota Makassar, Sulawesi Selatan 90225, Indonesia",
+//             "geometry" : 
+//             {
+//                 "location" : 
+//                 {
+//                 "lat" : -5.1835531,
+//                 "lng" : 119.3892559
+//                 },
+//                 "viewport" : 
+//                 {
+//                 "northeast" : 
+//                 {
+//                     "lat" : -5.1724406,
+//                     "lng" : 119.4052633
+//                 },
+//                 "southwest" : 
+//                 {
+//                     "lat" : -5.1946654,
+//                     "lng" : 119.3732485
+//                 }
+//                 }
+//             },
+//             "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
+//             "icon_background_color" : "#7B9EB0",
+//             "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+//             "name" : "Pantai Tanjung Bayang",
+//             "opening_hours" : 
+//             {
+//                 "open_now" : true
+//             },
+//             "photos" : 
+//             [
+//                 {
+//                 "height" : 393,
+//                 "html_attributions" : 
+//                 [
+//                     "\u003ca href=\"https://maps.google.com/maps/contrib/108933192699493680127\"\u003eA Google User\u003c/a\u003e"
+//                 ],
+//                 "photo_reference" : "AdDdOWrYkMtfc8taqRZUkfQNo5nKItNMsPxDDbxvI11tfCQOvoR-RYdEUaz7zpyJchPlbA-VcFIXwDbAuRIjOJrUPYeVM8IyVlvzCxyle20obsCnLDQXQyqjVq9E3pAxXb7SAcVHr20entidU6MunCbEYYo0zbu1mrhi56FzPII1pXYWgopX",
+//                 "width" : 700
+//                 }
+//             ],
+//             "place_id" : "ChIJpxOy4aYdvy0R52UkJNsip8M",
+//             "rating" : 4.1,
+//             "reference" : "ChIJpxOy4aYdvy0R52UkJNsip8M",
+//             "types" : 
+//             [
+//                 "natural_feature",
+//                 "establishment"
+//             ],
+//             "user_ratings_total" : 1583
+//         }
+//     ],
+//     "status" : "OK"
+// }';
+//     exit;
     $data = json_decode(file_get_contents('php://input'), true);
   
 

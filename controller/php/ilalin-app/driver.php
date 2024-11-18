@@ -1,8 +1,19 @@
 <?php
 
 include_once(__DIR__.'/ilalin_app.php');
+/**
+ * Handles operations related to drivers.
+ *
+ * @package IlalinApp
+ * @since   1.0.0
+ */
 class Driver extends ProfileController {
-    
+
+    /**
+     * Retrieve a list of all drivers that are available.
+     *
+     * @return array|bool Array of drivers if found, false otherwise.
+     */
     public function getAvaiableDriverAndCar() {
         try {
             $stmt = $this->db->query(
@@ -22,6 +33,15 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
+
+    /**
+     * Update the status of a driver to the given status.
+     *
+     * @param int $driverId   Driver ID to update.
+     * @param string $status  Status to update the driver to.
+     *
+     * @return bool|string    True if successful, error message otherwise.
+     */
     public function updateDriverStatus($driverId, $status) {
         try {
             $drivers = $this->db->query(
@@ -37,6 +57,16 @@ class Driver extends ProfileController {
             echo "Failed to get user profile: ". $e->getMessage();
         }
     }
+
+    /**
+     * Update the position of a driver to the given coordinates.
+     *
+     * @param int $driverId    Driver ID to update.
+     * @param float $latitude  Latitude of the driver's new position.
+     * @param float $longitude Longitude of the driver's new position.
+     *
+     * @return bool|string    True if successful, error message otherwise.
+     */
     public function updateDriverPosition($driverId, $latitude, $longitude) {
         try {
             $drivers = $this->db->query(
@@ -52,6 +82,15 @@ class Driver extends ProfileController {
             echo "Failed to update driver positiob: ". $e->getMessage();
         }
     }
+
+    /**
+     * Update the password of a driver to the given password.
+     *
+     * @param int $driverId    Driver ID to update.
+     * @param string $password Password to update the driver to.
+     *
+     * @return bool|string    True if successful, error message otherwise.
+     */
     public function updateDriverPassword($driverId, $password) {
         try {
             $drivers = $this->db->query(
@@ -67,6 +106,14 @@ class Driver extends ProfileController {
             echo "Failed to update driver password: ". $e->getMessage();
         }
     }
+
+    /**
+     * Get a driver by their ID.
+     *
+     * @param int $driverId Driver ID to retrieve.
+     *
+     * @return array|bool  Array of driver data if found, false otherwise.
+     */
     public function getDriverById($driverId) {
         try {
             $stmt = $this->db->query(
@@ -84,6 +131,14 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
+
+    /**
+     * Get a driver by their email.
+     *
+     * @param string $email  Email address of the driver to retrieve.
+     *
+     * @return array|bool  Array of driver data if found, false otherwise.
+     */
     public function getDriverByEmail($email) {
         try {
             $stmt = $this->db->query(
@@ -101,6 +156,12 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
+
+    /**
+     * Get the count of drivers grouped by their creation date.
+     *
+     * @return array|bool  Array of driver counts if found, false otherwise.
+     */
     public function getDriversGroupedByCreationDate() {
         try {
             $stmt = $this->db->query(
@@ -120,6 +181,14 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: ". $e->getMessage();
         }
     }
+
+    /**
+     * Delete a driver by their ID.
+     *
+     * @param int $driver_id Driver ID to delete.
+     *
+     * @return bool|string    True if successful, error message otherwise.
+     */
     public function deleteDriverById($driver_id) {
         try {
             // No Handler when driver is had foreign keys error
@@ -131,6 +200,12 @@ class Driver extends ProfileController {
             echo "Failed to delete driver: ". $e->getMessage();
         }
     }
+
+    /**
+     * Get all drivers.
+     *
+     * @return array|bool  Array of drivers if found, false otherwise.
+     */
     public function getAllDrivers() {
         try {
             $stmt = $this->db->query(
@@ -147,6 +222,12 @@ class Driver extends ProfileController {
             echo "Failed to get drivers: " . $e->getMessage();
         }
     }
+
+    /**
+     * Get a list of trips with the passenger's location.
+     *
+     * @return array|bool  Array of trip data if found, false otherwise.
+     */
     public function getTripsWithPassengerLocation() {
         try {
             $stmt = $this->db->query(
@@ -166,6 +247,16 @@ class Driver extends ProfileController {
         }
     }
 
+    /**
+     * Update the profile information of a driver.
+     *
+     * @param int $driverId    Driver ID to update.
+     * @param string $name     Name to update the driver to.
+     * @param string $email    Email address to update the driver to.
+     * @param string $phone_number Phone number to update the driver to.
+     *
+     * @return bool|string    True if successful, error message otherwise.
+     */
     public function updateDriverProfile($driverId, $name, $email, $phone_number) {
         try {
             $drivers = $this->db->query(

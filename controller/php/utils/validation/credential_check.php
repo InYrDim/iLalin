@@ -1,10 +1,46 @@
 <?php
 
+/**
+ * CredentialValidator class
+ * 
+ * This class contains methods for validating user credentials.
+ * It keeps track of the validation messages, success status, and the list of
+ * invalid and valid validators.
+ * It also provides methods for checking if the user is logged in and if the
+ * user has a valid email.
+ * It also provides a method for checking all validations.
+ * This class is used by the IlalinApp class.
+ * @package IlalinApp
+ * @since   1.0.0
+ */
 class CredentialValidator {
     
+    /**
+     * Validation messages
+     * 
+     * @var array
+     */
     private static $messages;
+    
+    /**
+     * Whether the validation was successful
+     * 
+     * @var boolean
+     */
     private static $isSuccessful;
+    
+    /**
+     * List of invalid validators
+     * 
+     * @var array
+     */
     private static $invalidValidators = [];
+    
+    /**
+     * List of valid validators
+     * 
+     * @var array
+     */
     private static $validValidators = [];
     
     /**

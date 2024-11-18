@@ -9,66 +9,55 @@ include('../controller/php/utils/validation/session_validator.php');
 
 $active_page = "users";
 $email = $_SESSION['email'];
-
-
-    
     
     $db = new Database();
-    $profileHandler = new ProfileController();
+    $profileHandler = new UserController();
+
+    $userProfile = $profileHandler->getUserProfile($email);
+    
+
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
         // Checkcropper.toStringf the file is uploaded
-
         if (isset($_POST["ubah_profile"])) {
+        
             // Sanitize and validate input data
             $nama_lengkap = filter_input(INPUT_POST, 'nama_lengkap', FILTER_SANITIZE_STRING);
             $nama_pengguna = filter_input(INPUT_POST, 'nama_pengguna', FILTER_SANITIZE_STRING);
-            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+            $new_email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
             $nomor_telepon = filter_input(INPUT_POST, 'nomor_telepon', FILTER_SANITIZE_STRING);
             $alamat = filter_input(INPUT_POST, 'alamat', FILTER_SANITIZE_STRING);
-            
-            $sesEmail = $_SESSION['email'];
-            $getUerId = $db->query(
-                "SELECT * FROM users WHERE email = ?",
-                ['s', $sesEmail]
-            );
-            $userIdData = $getUerId->get_result()->fetch_assoc();
 
-            $_SESSION['user_id'] = $userIdData['id_pengguna'];
-
+            $_SESSION['user_id'] = $userProfile['id_pengguna'];
             $id_pengguna = $_SESSION['user_id'];
-
+            
             // Check if email is valid
-            if ($email === false) {
+            if ($new_email === false) {
                 echo "Email is not valid.";
             } else {
-                $updateDb = $db->query(
-                    'UPDATE users SET nama = ?, username = ?, email = ?, nomor_telepon = ?, alamat = ?  WHERE id_pengguna =?',
-                    ['sssssi', $nama_lengkap, $nama_pengguna, $email, $nomor_telepon,  $alamat, $id_pengguna]
-                );
-  
-                if ($updateDb) {
-                    // echo "Profile updated successfully.";
+                $updateProfile = $profileHandler->updateProfile($id_pengguna, $nama_lengkap, $nama_pengguna, $new_email, $nomor_telepon,  $alamat);    
+                $_SESSION['email'] = $new_email;
+                if ($updateProfile) {
+                    // echo "Profile updated successfully.";                    
+                    $_SESSION['email'] = $new_email;
                     
-                    $_SESSION['email'] = $email;
+                    include_once('../controller/php/utils/alertUtils.php');
+                    $alertUtils = new AlertUtils();
 
-                    header("Location: profile.php");
+                    $alertUtils->showAlertPage("Profile Updated Successfully.");
+                    $alertUtils->renderRedirectScript(1000, 'profile.php');
+                                    
                 } else {
                     echo "Failed to update profile.";
                 }
             }
         }
         else {
-            $json_data = json_decode(file_get_contents('php://input'), true);
-            
+            $json_data = json_decode(file_get_contents('php://input'), true);            
             $imageString = $json_data['image'];
-
             $updateProfile = $profileHandler->replaceImage($email, $imageString, "users");
-
-        }
-        
-   
-            
+        }         
     }
 
     $getProfile = $db->query(

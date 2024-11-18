@@ -5,6 +5,12 @@ include('credential_check.php');
 $validator = new CredentialValidator();
 
 if(!$validator->validAll()) {
-    var_dump($validator->getValidValidators());
+    
+    include_once(__DIR__ . '/../alertUtils.php');
+    $alertUtils = new AlertUtils();
+
+    $alertUtils->showAlertPage('You credential is not valid.', 'Please login again.');
+    $alertUtils->renderRedirectScript(1000, '../../../../auth/login.php');
+
     exit;
 }

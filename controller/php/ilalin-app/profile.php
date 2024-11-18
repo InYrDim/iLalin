@@ -1,8 +1,27 @@
 <?php
 
 include_once(__DIR__.'/ilalin_app.php');
+/**
+ * ProfileController
+ *
+ * Handles user profile management, including deleting and updating user
+ * profiles.
+ *
+ * @package IlalinApp
+ * @since   1.0.0
+ */
 class ProfileController extends IlalinApp {
     
+    /**
+     * Delete a user and all associated records.
+     *
+     * This includes removing the user record, trips, and payments associated
+     * with the user.
+     *
+     * @param int $userId User ID to delete.
+     *
+     * @return string Status message.
+     */
     public function deleteUser($userId) {
         try {
             $this->db->beginTransaction(); // Start a transaction
@@ -37,6 +56,13 @@ class ProfileController extends IlalinApp {
             echo "Failed to delete user: " . $e->getMessage();
         }
     }
+    /**
+     * Retrieve a user profile by email.
+     *
+     * @param string $email Email address of the user to retrieve.
+     *
+     * @return array|bool User data if found, false otherwise.
+     */
     public function getUserProfile($email) {
         try {
             // Retrieve user profile based on email
@@ -55,6 +81,15 @@ class ProfileController extends IlalinApp {
             echo "Failed to get user profile: " . $e->getMessage();
         }
     }
+    /**
+     * Replace the user's profile image.
+     *
+     * @param string $email Email address of the user to update.
+     * @param string $imageString New image string.
+     * @param string $table Table to update. Defaults to 'users'.
+     *
+     * @return string Status message.
+     */
     public function replaceImage($email, $imageString , $table = "users") {
         try {
             // Update the user's profile image
